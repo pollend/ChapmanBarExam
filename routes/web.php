@@ -11,6 +11,19 @@
 |
 */
 
+use App\Http\Controllers\QuizController;
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+
+Route::namespace('Dashboard')->prefix('admin')->group(function () {
+
+});
+
+Route::resource('quiz', 'QuizController')->only([
+    'index', 'show'
+]);
+
+
