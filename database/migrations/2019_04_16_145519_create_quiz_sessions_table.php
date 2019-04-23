@@ -15,11 +15,20 @@ class CreateQuizSessionsTable extends Migration
     {
         Schema::create('quiz_sessions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreign('quiz_id')
-                ->refrences('id')
-                ->on('quiz')
-                ->onDelete('cascade');
             $table->timestamps();
+
+
+            $table->bigInteger('owner_id')->unsigned();
+            $table->foreign('owner_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->bigInteger('quiz_id')->unsigned();
+            $table->foreign('quiz_id')
+                ->references('id')
+                ->on('quizzes')
+                ->onDelete('cascade');
         });
     }
 

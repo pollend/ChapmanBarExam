@@ -18,6 +18,14 @@ class CreateQuizQuestionsTable extends Migration
             $table->unsignedInteger('order');
             $table->json('content');
             $table->timestamps();
+            $table->enum("type",["response","multiple_choice"]);
+            $table->integer("group");
+
+            $table->bigInteger('quiz_id')->unsigned();
+            $table->foreign('quiz_id')
+                ->references('id')
+                ->on('quizzes')
+                ->onDelete('cascade');
         });
     }
 

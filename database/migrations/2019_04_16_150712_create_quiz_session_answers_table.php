@@ -16,6 +16,20 @@ class CreateQuizSessionAnswersTable extends Migration
         Schema::create('quiz_session_answers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
+
+            $table->bigInteger('quiz_session_id')->unsigned();
+            $table->foreign('quiz_session_id')
+                ->references('id')
+                ->on('quiz_sessions')
+                ->onDelete('cascade');
+
+            $table->json('response');
+
+            $table->bigInteger('question_id')->unsigned();
+            $table->foreign('question_id')
+                ->references('id')
+                ->on('quiz_questions')
+                ->onDelete('cascade');
         });
     }
 

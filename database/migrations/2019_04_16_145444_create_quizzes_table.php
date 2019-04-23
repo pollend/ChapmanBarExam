@@ -18,6 +18,9 @@ class CreateQuizzesTable extends Migration
             $table->uuid('uuid');
             $table->string('name', 50);
             $table->longText('description');
+            $table->dateTime("quiz_close_date");
+            $table->boolean("is_open");
+
             $table->softDeletes();
             $table->timestamps();
         });

@@ -13,17 +13,13 @@
 
 use App\Http\Controllers\QuizController;
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', 'HomeController');
+Route::resource('report','ReportController');
 
 
 Route::namespace('Dashboard')->prefix('admin')->group(function () {
 
 });
 
-Route::resource('quiz', 'QuizController')->only([
-    'index', 'show'
-]);
 
 
