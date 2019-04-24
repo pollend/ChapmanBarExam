@@ -15,12 +15,11 @@ class CreateQuizzesTable extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->uuid('uuid');
             $table->string('name', 50);
             $table->longText('description');
-            $table->dateTime("quiz_close_date");
+            $table->dateTime("close_date");
             $table->boolean("is_open");
-
+            $table->smallInteger('num_attempts');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -11,9 +11,6 @@ class QuizzesTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('quizzes')->insert([
-           'uuid' =>  \Ramsey\Uuid\Uuid::generate()->string,
-
-        ]);
+        $quizzes = factory(\App\Quiz::class,10)->create();
     }
 }
