@@ -46,10 +46,18 @@ Route::get('login/azure', 'Auth\SocialAuthController@redirectAzureToProvider')->
 Route::get('login/azure/callback', 'Auth\SocialAuthController@handleAzureProviderCallback');
 
 Route::group(['middleware' => ['auth']], function (){
-    Route::get('/', 'HomeController@index');
+    Route::get('/', 'HomeController@index')->name('home');
     Route::resource('report','ReportController');
 
-    Route::namespace('Dashboard')->prefix('admin')->group(function () {
+    Route::get('quiz/start/{id}','SessionQuizController@startForm')->name('quiz.start');
+    Route::post('quiz/start/{id}','SessionQuizController@start');
+
+    Route::get('session/{$session_id}/page/{$page}','SessionQuizController@questionForm')->name('quiz.question');
+    Route::post('session/{$session_id}/page/{$page}','SessionQuizController@question');
+
+
+
+    Route::namespace('dashboard')->prefix('admin')->group(function () {
 
     });
 });

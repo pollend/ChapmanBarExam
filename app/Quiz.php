@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model
 {
+    protected $dates = ['close_date'];
+
     public function questions(){
         return $this->hasMany('App\QuizQuestion','quiz_id','id');
     }
