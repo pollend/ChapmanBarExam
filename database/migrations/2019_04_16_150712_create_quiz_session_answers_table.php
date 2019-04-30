@@ -25,8 +25,8 @@ class CreateQuizSessionAnswersTable extends Migration
 
             $table->json('response');
 
-            $table->bigInteger('question_id')->unsigned();
-            $table->foreign('question_id')
+            $table->bigInteger('quiz_question_id')->unsigned();
+            $table->foreign('quiz_question_id')
                 ->references('id')
                 ->on('quiz_questions')
                 ->onDelete('cascade');

@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class QuizSession extends Model
 {
 
-    public function owner()
-    {
-        return $this->morphTo();
+    public function quiz(){
+        return $this->belongsTo('App\Quiz');
+    }
+
+    public function owner(){
+        return $this->belongsTo('App\User');
     }
 
     public function sessionAnswers()

@@ -15,7 +15,7 @@ class QuizQuestion extends Model
      */
     public function sessionAnswers()
     {
-        return $this->hasMany('App\QuizSessionAnswer','quiz_session_id','id');
+        return $this->hasMany('App\QuizSessionAnswer','quiz_question_id','id');
     }
 
 

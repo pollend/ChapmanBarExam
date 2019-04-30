@@ -36,11 +36,14 @@ class SocialAuthController extends Controller
         $userData = Socialite::driver($driver)->user();
 
         /** @var User $user */
-        $user = User::query()->where('azure_id',$userData->id)
+        $user = User::query()
+            ->where('azure_id',$userData->id)
             ->where('email',$userData->email)
             ->firstOrCreate([
-                'email' => $userData->email,
-                'azure_id' => $userData->id]);
+                'email' => $userData->getEmail(),
+                'azure_id' => $userData->getId(),
+                'name' => $userData->getName()
+            ]);
         Auth::login($user);
     }
 }
