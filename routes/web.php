@@ -11,7 +11,10 @@
 |
 */
 
-use App\Http\Controllers\QuizController;
+
+Route::get('login/azure', 'Auth\LoginController@redirectToProvider');
+Route::get('login/azure/callback', 'Auth\LoginController@handleProviderCallback');
+
 
 Route::get('/', 'HomeController');
 Route::resource('report','ReportController');

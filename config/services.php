@@ -33,7 +33,11 @@ return [
     'sparkpost' => [
         'secret' => env('SPARKPOST_SECRET'),
     ],
-
+    'azure' => [
+        'client_id' => env('AZURE_KEY'),
+        'client_secret' => env('AZURE_SECRET'),
+        'redirect' => env('AZURE_REDIRECT_URI')
+    ],
     'stripe' => [
         'model' => App\User::class,
         'key' => env('STRIPE_KEY'),
