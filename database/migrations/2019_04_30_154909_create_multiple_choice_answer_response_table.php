@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQuizSessionAnswersTable extends Migration
+class CreateMultipleChoiceAnswerResponseTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,15 @@ class CreateQuizSessionAnswersTable extends Migration
      */
     public function up()
     {
-        Schema::create('quiz_session_answers', function (Blueprint $table) {
+        Schema::create('quiz_multiple_choice_answer_responses', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps();
+
+
+            $table->bigInteger('quiz_multiple_choice_entry_id')->unsigned();
+            $table->foreign('quiz_multiple_choice_entry_id')
+                ->references('id')
+                ->on('quiz_multiple_choice_entries')
+                ->onDelete('cascade');
 
             $table->bigInteger('quiz_session_id')->unsigned();
             $table->foreign('quiz_session_id')
@@ -23,12 +29,11 @@ class CreateQuizSessionAnswersTable extends Migration
                 ->on('quiz_sessions')
                 ->onDelete('cascade');
 
-            $table->json('response');
 
-            $table->bigInteger('quiz_question_id')->unsigned();
-            $table->foreign('quiz_question_id')
+            $table->bigInteger('quiz_multiple_choice_question_id')->unsigned();
+            $table->foreign('quiz_multiple_choice_question_id')
                 ->references('id')
-                ->on('quiz_questions')
+                ->on('quiz_multiple_choice_questions')
                 ->onDelete('cascade');
         });
     }
@@ -40,6 +45,6 @@ class CreateQuizSessionAnswersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quiz_session_answers');
+        Schema::dropIfExists('quiz_multiple_choice_answer_responses');
     }
 }

@@ -1,0 +1,14 @@
+<?php
+
+
+namespace App;
+
+
+use Illuminate\Database\Eloquent\Model;
+
+class QuizMultipleChoiceEntry extends Model
+{
+    public function quizMultipleChoiceQuestion(){
+        return $this->belongsTo('App\QuizMultipleChoiceQuestion');
+    }
+}
