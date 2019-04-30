@@ -26,7 +26,6 @@ class HomeController extends Controller
     {
         $quizzes = Quiz::all();
 
-
         return view('quiz.index',['quizzes' => $quizzes,'test' => 'test']);
     }
 }
