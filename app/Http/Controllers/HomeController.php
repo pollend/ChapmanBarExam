@@ -4,18 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Quiz;
 use App\QuizSession;
+use App\Repositories\QuizRepositoryInterface;
+use App\Repositories\SessionRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+
+    private $quizRepository;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(QuizRepositoryInterface $quizRepository)
     {
+        $this->quizRepository = $quizRepository;
         $this->middleware('auth');
     }
 
@@ -28,15 +34,16 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        $quizzes = Quiz::all();
-        foreach ($quizzes as $quiz) {
+        $quizzes = Quiz::query()->where('is_hidden', false);
+        $quizzes->each(function ($q) use ($user) {
             // get's the number of attempts based off the user
-            $quiz->attempts = $quiz->quizSessions()
-                ->where('owner_id', $user->id)->count();
-            // determines if the quiz is locked
-            $quiz->locked = ($quiz->attempts > $quiz->num_attempts || !$quiz->is_open);
-        }
+            $q->attempts = $q
+                ->quizSessions()
+                ->where('owner_id', $user->id)
+                ->count();
 
-        return view('quiz.index', ['quizzes' => $quizzes, 'test' => 'test']);
+            $q->locked  = $this->quizRepository->isOpen($q,$user);
+        });
+        return view('quiz.index', ['quizzes' => $quizzes]);
     }
 }

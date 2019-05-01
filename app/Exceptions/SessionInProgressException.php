@@ -6,7 +6,7 @@ namespace App\Exceptions;
 
 use Throwable;
 
-class SessionInProgress extends \Exception
+class SessionInProgressException extends \Exception
 {
 
 }
