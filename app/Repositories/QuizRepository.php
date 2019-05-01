@@ -4,36 +4,41 @@
 namespace App\Repositories;
 
 
+use App\Quiz;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class QuizRepository implements QuizRepositoryInterface
 {
     public function isOpen($quiz, $user)
     {
-        if ($quiz->quizSessions()->where('owner_id', $user->id)->count() >= $quiz->num_attempts)
+        if ($quiz->sessions()->where('owner_id', $user->id)->count() >= $quiz->num_attempts)
             return false;
-        if($quiz->close_date < Carbon::today())
+
+        if ($quiz->close_date < Carbon::today())
             return false;
+
         if ($quiz->is_open == false)
             return false;
+
         return true;
     }
 
     public function attempt_count($quiz, $user)
     {
-        return $quiz->quizSessions()->where('owner_id', $user->id)->count();
+        return $quiz->sessions()->where('owner_id', $user->id)->count();
     }
 
-    public function getQuestions($quiz){
-        $collection = new \Illuminate\Support\Collection();
-        foreach ($quiz->multipleChoiceQuestions()->get() as $q){
-            $collection->add($q);
-        }
-        foreach ($quiz->shortAnswerQuestions()->get() as $q){
-            $collection->add($q);
-        }
-        $collection = $collection->sortBy('group');
-        $collection = $collection->groupBy('group');
+    /**
+     * @param \App\Quiz $quiz
+     * @return \Illuminate\Support\Collection
+     */
+    public function getQuestions($quiz)
+    {
+        $collection = \Illuminate\Support\Collection::make()->merge($quiz->multipleChoiceQuestions()->get())
+            ->merge($quiz->shortAnswerQuestions()->get())
+            ->sortBy('group')
+            ->groupBy('group');
 
         $index = 0;
         $final = [];
@@ -41,15 +46,19 @@ class QuizRepository implements QuizRepositoryInterface
         return \Illuminate\Support\Collection::make($final);
     }
 
-    public function getAnswer($user,$question){
-        switch ($question->type){
-            case 'multipleChoice':
-                
-                break;
-            case 'shortAnswer':
-                break;
-        }
+    /**
+     * get the order values for looking up questions
+     *
+     * @param Quiz $quiz
+     * @return \Illuminate\Support\Collection
+     */
+    public function getGroups(Quiz $quiz)
+    {
+       return \Illuminate\Support\Collection::make()
+           ->merge($quiz->multipleChoiceQuestions()->distinct('group')->value('group'))
+           ->merge($quiz->shortAnswerQuestions()->distinct('group')->value('group'))
+           ->unique()
+           ->sort()
+           ->values();
     }
-
-
 }

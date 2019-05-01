@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMultipleChoiceAnswerResponseTable extends Migration
+class CreateMultipleChoiceResponseTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateMultipleChoiceAnswerResponseTable extends Migration
      */
     public function up()
     {
-        Schema::create('quiz_multiple_choice_answer_responses', function (Blueprint $table) {
+        Schema::create('quiz_multiple_choice_responses', function (Blueprint $table) {
             $table->bigIncrements('id');
 
 
@@ -45,6 +45,6 @@ class CreateMultipleChoiceAnswerResponseTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quiz_multiple_choice_answer_responses');
+        Schema::dropIfExists('quiz_multiple_choice_responses');
     }
 }

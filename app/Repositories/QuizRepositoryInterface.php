@@ -4,9 +4,13 @@
 namespace App\Repositories;
 
 
+use App\Quiz;
+
 interface QuizRepositoryInterface
 {
     function isOpen($quiz, $user);
 
-    public function getQuestions($quiz);
+    function getQuestions($quiz);
+
+    function getGroups(Quiz $quiz);
 }

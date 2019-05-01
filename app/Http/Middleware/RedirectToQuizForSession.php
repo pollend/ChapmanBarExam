@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\Auth;
 
 class RedirectToQuizForSession
 {
+
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string|null  $guard
+     * @return mixed
+     */
     public function handle($request, Closure $next)
     {
         $user = Auth::user();
@@ -18,7 +27,7 @@ class RedirectToQuizForSession
         if ($quizSession != null) {
             return redirect()->route('quiz.question', ['session_id' => $quizSession->id, 'page' => 0]);
         }
-        $next($request);
+        return $next($request);
     }
 
 }

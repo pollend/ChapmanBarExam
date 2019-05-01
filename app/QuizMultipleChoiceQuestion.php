@@ -15,12 +15,13 @@ class QuizMultipleChoiceQuestion extends Model implements QuizQuestion
         return $this->hasMany('App\QuizMultipleChoiceEntry','quiz_multiple_choice_question_id','id');
     }
 
-    public function answer(){
-
+    public function answers(){
+        return $this->hasMany('App\QuizMultipleChoiceResponse','quiz_multiple_choice_question_id', 'id');
     }
 
     function getTypeAttribute()
     {
         return 'multipleChoice';
     }
+
 }

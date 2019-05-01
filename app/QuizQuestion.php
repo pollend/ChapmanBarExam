@@ -8,4 +8,7 @@ interface QuizQuestion
 {
     function getTypeAttribute();
 
+    function answers();
+
+
 }

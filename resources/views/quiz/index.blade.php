@@ -14,7 +14,7 @@
                             {{__('Quiz Locked')}}
                         @endif
                         <div class="card-foot">
-                            <div class="attempts float-left">{{$quiz->attempts}}/{{$quiz->num_attempts}}</div>
+                            <div class="attempts float-left">{{$quiz->byOwner($user)->count()}}/{{$quiz->num_attempts}}</div>
                             <div class="due-date float-right">{{ $quiz->close_date->diffForHumans() }}</div>
                         </div>
                     </div>

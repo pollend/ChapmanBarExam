@@ -9,6 +9,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <form method="POST" action="{{ route('quiz.question',['session_id' => $session_id,'page' => $page]) }}">
+                    @csrf
                     @foreach ($questions as $question)
                         @switch($question->type)
                             @case('multipleChoice')

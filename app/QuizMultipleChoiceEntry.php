@@ -13,4 +13,8 @@ class QuizMultipleChoiceEntry extends Model
     public function quizMultipleChoiceQuestion(){
         return $this->belongsTo('App\QuizMultipleChoiceQuestion');
     }
+
+    public function quizMultipleChoiceRespone(){
+        return $this->hasMany('QuizMultipleChoiceAnswerResponse');
+    }
 }
