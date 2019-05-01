@@ -34,16 +34,15 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        $quizzes = Quiz::query()->where('is_hidden', false);
-        $quizzes->each(function ($q) use ($user) {
-            // get's the number of attempts based off the user
+        $quizzes = Quiz::query()->where('is_hidden', false)->get();
+        foreach ($quizzes as $q){
             $q->attempts = $q
                 ->quizSessions()
                 ->where('owner_id', $user->id)
                 ->count();
 
             $q->locked  = $this->quizRepository->isOpen($q,$user);
-        });
+        }
         return view('quiz.index', ['quizzes' => $quizzes]);
     }
 }

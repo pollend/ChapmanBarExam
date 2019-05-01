@@ -26,10 +26,13 @@ class SessionRepository implements SessionRepositoryInterface
         if (!$this->quizRepository->isOpen($quiz, $user))
             throw new QuizClosedException();
 
-        return QuizSession::query()->create([
-            'quiz_id' => $quiz->id,
-            'owner_id' => $user->id
-        ]);
+        $session = new QuizSession();
+        $session->quiz_id = $quiz->id;
+        $session->owner_id = $user->id;
+
+
+        $session->saveOrFail();
+        return $session;
     }
 
     public function getActiveSession($user){

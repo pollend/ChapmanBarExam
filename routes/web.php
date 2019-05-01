@@ -47,7 +47,7 @@ Route::get('login/azure/callback', 'Auth\SocialAuthController@handleAzureProvide
 
 Route::group(['middleware' => ['auth']], function (){
     // redirect if there is an active session
-    Route::group(['middleware' => ['session.active']],function (){
+    Route::group(['middleware' => ['quiz.session']],function (){
         Route::get('/', 'HomeController@index')->name('home');
         Route::resource('report','ReportController');
 
@@ -55,13 +55,10 @@ Route::group(['middleware' => ['auth']], function (){
         Route::post('quiz/start/{id}','SessionQuizController@start');
     });
 
-    Route::get('session/{$session_id}/page/{$page}','SessionQuizController@questionForm')->name('quiz.question');
-    Route::post('session/{$session_id}/page/{$page}','SessionQuizController@question');
-
-
+    Route::get('session/{session_id}/page/{page}','SessionQuizController@questionForm')->name('quiz.question');
+    Route::post('session/{session_id}/page/{page}','SessionQuizController@question');
 
     Route::namespace('dashboard')->prefix('admin')->group(function () {
 
     });
 });
-Route::get('/home', 'HomeController@index')->name('home');
