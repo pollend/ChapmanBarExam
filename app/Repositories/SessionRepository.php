@@ -29,13 +29,14 @@ class SessionRepository implements SessionRepositoryInterface
         $session = new QuizSession();
         $session->quiz_id = $quiz->id;
         $session->owner_id = $user->id;
-
-
         $session->saveOrFail();
         return $session;
     }
 
     public function getActiveSession($user){
-        return QuizSession::query()->where('owner_id',$user->id)->first();
+        return QuizSession::query()
+            ->where('owner_id',$user->id)
+            ->where('is_open',true)
+            ->first();
     }
 }

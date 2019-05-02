@@ -21,12 +21,18 @@
                         @endswitch
                     @endforeach
 
+                    @if($page > 0)
+                    <button type="submit" name="submit" value="back" class="btn btn-primary">
+                        {{ __('Previous') }}
+                    </button>
+                    @endif
+
                     @if($page < $maxPage)
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" name="submit" value="next" class="btn btn-primary">
                                 {{ __('Next') }}
                             </button>
                     @else
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" name="submit" value="next" class="btn btn-primary">
                             {{ __('Submit') }}
                         </button>
                     @endif

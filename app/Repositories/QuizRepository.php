@@ -7,12 +7,13 @@ namespace App\Repositories;
 use App\Quiz;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use mysql_xdevapi\Collection;
 
 class QuizRepository implements QuizRepositoryInterface
 {
     public function isOpen($quiz, $user)
     {
-        if ($quiz->sessions()->where('owner_id', $user->id)->count() >= $quiz->num_attempts)
+        if ($this->attempt_count($quiz,$user) >= $quiz->num_attempts)
             return false;
 
         if ($quiz->close_date < Carbon::today())
@@ -33,16 +34,30 @@ class QuizRepository implements QuizRepositoryInterface
      * @param \App\Quiz $quiz
      * @return \Illuminate\Support\Collection
      */
-    public function getQuestions($quiz)
+    public function getGroupedQuestions($quiz)
     {
-        $collection = \Illuminate\Support\Collection::make()->merge($quiz->multipleChoiceQuestions()->get())
-            ->merge($quiz->shortAnswerQuestions()->get())
+        $collection = $this->getQuestions($quiz)
             ->sortBy('group')
             ->groupBy('group')
             ->transform(function ($entry) {
                 return $entry->sortby('order')->values();
             })->values();
         return $collection;
+    }
+
+    /**
+     * @param Quiz $quiz
+     * @return \Illuminate\Support\Collection
+     */
+    public function getQuestions($quiz,\Closure $callback = null){
+        if($callback){
+            return \Illuminate\Support\Collection::make()
+                ->merge($callback($quiz->multipleChoiceQuestions()))
+                ->merge($callback($quiz->shortAnswerQuestions()));
+        }
+        return \Illuminate\Support\Collection::make()
+            ->merge($quiz->multipleChoiceQuestions()->get())
+            ->merge($quiz->shortAnswerQuestions()->get());
     }
 
     /**
@@ -53,11 +68,10 @@ class QuizRepository implements QuizRepositoryInterface
      */
     public function getGroups(Quiz $quiz)
     {
-       return \Illuminate\Support\Collection::make()
-           ->merge($quiz->multipleChoiceQuestions()->distinct('group')->value('group'))
-           ->merge($quiz->shortAnswerQuestions()->distinct('group')->value('group'))
-           ->unique()
-           ->sort()
-           ->values();
+        return $this->getQuestions($quiz, function ($q) {
+            return $q->distinct('group')->value('group');
+        })->unique()
+            ->sort()
+            ->values();
     }
 }

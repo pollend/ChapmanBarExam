@@ -35,7 +35,7 @@ class HomeController extends Controller
 
         $quizzes = Quiz::query()->where('is_hidden', false)->get();
         foreach ($quizzes as $q){
-            $q->locked  = $this->quizRepository->isOpen($q,$user);
+            $q->is_open  = $this->quizRepository->isOpen($q,$user);
         }
         return view('quiz.index', ['quizzes' => $quizzes,'user' => $user]);
     }

@@ -39,12 +39,9 @@ class SessionQuizController extends Controller
     {
         $quiz = Quiz::query()->where('id', $id)->firstOrFail();
         $user = Auth::user();
-        $session = null;
         $session = $this->sessionRepository->startSession($user, $quiz);
         return redirect()->route('quiz.question', ['session_id' => $session->id, 'page' => 0]);
     }
-
-
 
 
     public function questionForm($session_id, $page)
@@ -56,7 +53,7 @@ class SessionQuizController extends Controller
         }
         /** @var Quiz $quiz */
         $quiz = $session->quiz;
-        $questions = $this->quizRepository->getQuestions($quiz);
+        $questions = $this->quizRepository->getGroupedQuestions($quiz);
         $maxPage = $questions->keys()->max();
 
         return view('quiz.question', [
@@ -76,11 +73,14 @@ class SessionQuizController extends Controller
      */
     public function question(Request $request, $session_id, $page)
     {
+        \Debugbar::info($request->all());
+
         $user = Auth::user();
         $session = $this->sessionRepository->getActiveSession($user);
         /** @var Quiz $quiz */
         $quiz = $session->quiz;
-        $group_id = $this->quizRepository->getGroups($quiz)[$page];
+        $groups = $this->quizRepository->getGroups($quiz);
+        $group_id = $groups[$page];
 
         if ($request->has('short_answer')) {
             foreach ($request->get('short_answer') as $key => $value) {
@@ -94,14 +94,8 @@ class SessionQuizController extends Controller
                         ->where('id', $key)
                         ->first();
                     if ($question) {
-                        $answer = $question->answers()
-                            ->bySession($session)
-                            ->firstOrNew([]);
-                        $answer->quiz_session_id = $session->id;
-                        $answer->quiz_short_answer_question_id = $question->id;
-                        $answer->content = $value;
+                        $this->submitShortAnswer($question, $session, $value);
                     }
-                    $answer->save();
                 }
 
             }
@@ -122,23 +116,49 @@ class SessionQuizController extends Controller
                     ->first();
 
                 if ($question && $entry) {
-                    $answer = $question->answers()
-                        ->bySession($session)
-                        ->firstOrNew([]);
-                    $answer->quiz_session_id = $session->id;
-                    $answer->quiz_short_answer_question_id = $question->id;
-                    $answer->quiz_multiple_choice_entry_id = $entry->id;
-                    $answer->save();
-                    
+                    $this->submitMultipleChoiceAnswer($question, $session, $entry);
                 }
             }
         }
 
-        if($group_id->max() == $group_id)
+        if ($request->has('submit')) {
 
+            if ($request->get('submit') === 'back') {
+                return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page - 1]);
+            }
 
-        return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page + 1]);
+            if ($request->get('submit') === 'next') {
+                // submit and close session
+                if ($group_id >= $groups->max()) {
+                    \Debugbar::info('closing Session');
+                    $session->is_open = false;
+                    $session->save();
+                    return redirect()->route('home');
+                }
+                return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page + 1]);
+            }
+        }
+        return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page]);
     }
 
+    private function submitShortAnswer($question,$session,$content){
+        $answer = $question->answers()
+            ->bySession($session)
+            ->firstOrNew([]);
+        $answer->quiz_session_id = $session->id;
+        $answer->quiz_short_answer_question_id = $question->id;
+        $answer->content = $content;
+        $answer->save();
+    }
+
+    private function submitMultipleChoiceAnswer($question,$session,$entry){
+        $answer = $question->answers()
+            ->bySession($session)
+            ->firstOrNew([]);
+        $answer->quiz_session_id = $session->id;
+        $answer->quiz_multiple_choice_question_id = $question->id;
+        $answer->quiz_multiple_choice_entry_id = $entry->id;
+        $answer->save();
+    }
 
 }

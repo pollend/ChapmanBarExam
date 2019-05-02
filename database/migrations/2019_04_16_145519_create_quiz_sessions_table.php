@@ -16,7 +16,8 @@ class CreateQuizSessionsTable extends Migration
         Schema::create('quiz_sessions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
-
+            $table->boolean('is_open')->default(true);
+            $table->dateTime('time_open')->nullable();
 
             $table->bigInteger('owner_id')->unsigned();
             $table->foreign('owner_id')
