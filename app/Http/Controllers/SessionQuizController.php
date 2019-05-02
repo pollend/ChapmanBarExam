@@ -32,6 +32,12 @@ class SessionQuizController extends Controller
 
     public function startForm($id)
     {
+        $user = Auth::user();
+        $quiz = Quiz::query()->where('id',$id)->firstOrFail();
+        if(!$this->quizRepository->isOpen($quiz,$user)) {
+            abort(404);
+        }
+
         return view('quiz.start', ['quiz_id' => $id]);
     }
 
@@ -48,7 +54,7 @@ class SessionQuizController extends Controller
     {
         $user = Auth::user();
         $session = $this->sessionRepository->getActiveSession($user);
-        if ($session->id != $session_id) {
+        if (!isset($session) || $session->id != $session_id) {
             abort(404);
         }
         /** @var Quiz $quiz */
@@ -93,7 +99,7 @@ class SessionQuizController extends Controller
                         ->where('group', $group_id)
                         ->where('id', $key)
                         ->first();
-                    if ($question) {
+                    if (isset($question)) {
                         $this->submitShortAnswer($question, $session, $value);
                     }
                 }
@@ -115,7 +121,7 @@ class SessionQuizController extends Controller
                     ->where('id', $value)
                     ->first();
 
-                if ($question && $entry) {
+                if (isset($question) && isset($entry)) {
                     $this->submitMultipleChoiceAnswer($question, $session, $entry);
                 }
             }

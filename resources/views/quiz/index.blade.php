@@ -1,31 +1,51 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        @foreach ($quizzes as $quiz)
-            <div class="col-md-4">
-                <div class="card quiz-card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            @if($quiz->is_open)
-                                <a href="{{route('quiz.start',['id' => $quiz->id])}}">{{ $quiz->name }}</a>
-                            @else
-                                {{ $quiz->name }}
-                            @endif
-                        </h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                        <p class="card-text">{{ $quiz->description }}</p>
-                        @if(!$quiz->is_open)
-                            {{__('Quiz Locked')}}
-                        @endif
-                        <div class="card-foot">
-                            <div class="attempts float-left">{{$quiz->sessions()->byOwner($user)->count()}}/{{$quiz->num_attempts}}</div>
-                            <div class="due-date float-right">{{ $quiz->close_date->diffForHumans() }}</div>
+<div class="section">
+    <div class="container">
+        @foreach ($quizzes->chunk(4) as  $block)
+                <div class="columns">
+                    @foreach($block as $quiz)
+                        <div class="column is-3">
+                            <div class="card">
+                                <header class="card-header">
+                                    <p class="card-header-title">
+                                        {{ $quiz->name }}
+                                    </p>
+                                    <a href="#" class="card-header-icon" aria-label="more options">
+                                  <span class="icon">
+                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                  </span>
+                                    </a>
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
+                                        <div>
+                                        {{ $quiz->description }}
+                                        </div>
+                                        <div class="is-divider is-divider-margin-4"></div>
+                                        <div class="columns">
+                                            <div class="column is-2">
+                                                <span class="tag is-pulled-left">{{$quiz->sessions()->byOwner($user)->count()}}/{{$quiz->num_attempts}} attempts</span>
+                                            </div>
+                                            <div class="column is-pulled-right">
+                                                <span class="tag is-pulled-right">{{ $quiz->close_date->diffForHumans() }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <footer class="card-footer">
+                                    @if($quiz->is_open)
+                                        <a href="{{route('quiz.start',['id' => $quiz->id])}}" class="card-footer-item">Start</a>
+                                    @else
+                                        <div class="card-footer-item">Locked</div>
+                                    @endif
+                                </footer>
+
+                            </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
         @endforeach
     </div>
 </div>

@@ -7,6 +7,7 @@ use App\QuizSession;
 use App\Repositories\QuizRepositoryInterface;
 use App\Repositories\SessionRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -37,6 +38,6 @@ class HomeController extends Controller
         foreach ($quizzes as $q){
             $q->is_open  = $this->quizRepository->isOpen($q,$user);
         }
-        return view('quiz.index', ['quizzes' => $quizzes,'user' => $user]);
+        return view('quiz.index', ['quizzes' => Collection::make($quizzes),'user' => $user]);
     }
 }

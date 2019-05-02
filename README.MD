@@ -73,6 +73,15 @@ build static javascript
 * `yarn run production` or `yarn run prod`
 
 
+# Libraries
+
+## Frontend
+
+- [Carbon Design System](https://www.carbondesignsystem.com/getting-started/developers/vanilla)
+- [Bulma](https://bulma.io/)
+
+
+
 ## Maintainers
 
 The current maintainers of this repository are:

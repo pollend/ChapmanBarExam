@@ -13,10 +13,10 @@
                     @foreach ($questions as $question)
                         @switch($question->type)
                             @case('multipleChoice')
-                                @include('partials.multiple_choice',['question' => $question])
+                                @include('partials.multiple_choice',['question' => $question,'index' => $loop->iteration])
                                 @break
                             @case('shortAnswer')
-                                @include('partials.short_answer',['question' => $question])
+                                @include('partials.short_answer',['question' => $question,'index' => $loop->iteration])
                                 @break
                         @endswitch
                     @endforeach

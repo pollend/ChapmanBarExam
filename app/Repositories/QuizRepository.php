@@ -11,6 +11,11 @@ use mysql_xdevapi\Collection;
 
 class QuizRepository implements QuizRepositoryInterface
 {
+    /**
+     * @param Quiz $quiz
+     * @param $user
+     * @return bool
+     */
     public function isOpen($quiz, $user)
     {
         if ($this->attempt_count($quiz,$user) >= $quiz->num_attempts)
@@ -25,6 +30,11 @@ class QuizRepository implements QuizRepositoryInterface
         return true;
     }
 
+    /**
+     * @param Quiz $quiz
+     * @param $user
+     * @return mixed
+     */
     public function attempt_count($quiz, $user)
     {
         return $quiz->sessions()->where('owner_id', $user->id)->count();

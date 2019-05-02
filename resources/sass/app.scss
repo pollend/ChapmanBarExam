@@ -5,12 +5,24 @@
 // Variables
 @import 'variables';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+// Bulma
+@import "~bulma/bulma";
+@import "divider";
 
-@import "quiz_user_card";
+// Carbon
+@import "~carbon-components/scss/components/text-area/text-area";
+@import "~carbon-components/scss/components/form/form";
+@import "~carbon-components/scss/components/radio-button/radio-button";
 
+.bx--radio-button-group--vertical.bx--radio-button-group--vertical-left{
+  align-items: baseline;
+}
+
+
+
+  // other
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
