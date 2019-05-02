@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\QuizMultipleChoiceEntry::class, function (Faker $faker) {
     return [
-        'content' => $faker->paragraph($nbSentences = 15, $variableNbSentences = true),
+        'content' => $faker->sentence($nbWords = 10 , $variableNbWords = true),
     ];
 });
 

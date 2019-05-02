@@ -38,12 +38,11 @@ class QuizRepository implements QuizRepositoryInterface
         $collection = \Illuminate\Support\Collection::make()->merge($quiz->multipleChoiceQuestions()->get())
             ->merge($quiz->shortAnswerQuestions()->get())
             ->sortBy('group')
-            ->groupBy('group');
-
-        $index = 0;
-        $final = [];
-        foreach ($collection as $key => $value) $final[$index++] = $value;
-        return \Illuminate\Support\Collection::make($final);
+            ->groupBy('group')
+            ->transform(function ($entry) {
+                return $entry->sortby('order')->values();
+            })->values();
+        return $collection;
     }
 
     /**

@@ -41,6 +41,10 @@ Route::group(['middleware' => ['auth']], function (){
         Route::resource('report','ReportController');
 
         Route::get('/', 'HomeController@index')->name('home');
+
+        Route::get('quiz/end','SessionQuizController@endForm')->name('quiz.end');
+        Route::post('quiz/end','SessionQuizController@end');
+
         Route::get('quiz/start/{id}','SessionQuizController@startForm')->name('quiz.start');
         Route::post('quiz/start/{id}','SessionQuizController@start');
     });

@@ -8,22 +8,20 @@ class Quiz extends Model
 {
     protected $dates = ['close_date'];
 
-    public function sessions(){
-        return $this->hasMany('App\QuizSession','quiz_id','id');
-    }
-
-
-    public function multipleChoiceQuestions(){
-        return $this->hasMany('App\QuizMultipleChoiceQuestion','quiz_id','id');
-    }
-
-    public function shortAnswerQuestions(){
-        return $this->hasMany('App\QuizShortAnswerQuestion','quiz_id','id');
-    }
-
-    public function scopeByOwner($query, $owner)
+    public function sessions()
     {
-        return $query->sessions()->where('owner_id',$owner->id);
+        return $this->hasMany('App\QuizSession', 'quiz_id', 'id');
     }
+
+    public function multipleChoiceQuestions()
+    {
+        return $this->hasMany('App\QuizMultipleChoiceQuestion', 'quiz_id', 'id');
+    }
+
+    public function shortAnswerQuestions()
+    {
+        return $this->hasMany('App\QuizShortAnswerQuestion', 'quiz_id', 'id');
+    }
+
 
 }

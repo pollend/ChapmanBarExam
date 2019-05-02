@@ -44,6 +44,9 @@ class SessionQuizController extends Controller
         return redirect()->route('quiz.question', ['session_id' => $session->id, 'page' => 0]);
     }
 
+
+
+
     public function questionForm($session_id, $page)
     {
         $user = Auth::user();
@@ -54,16 +57,15 @@ class SessionQuizController extends Controller
         /** @var Quiz $quiz */
         $quiz = $session->quiz;
         $questions = $this->quizRepository->getQuestions($quiz);
+        $maxPage = $questions->keys()->max();
 
-        \Debugbar::info($questions);
         return view('quiz.question', [
             'questions' => $questions[$page],
             'page' => $page,
             'session' => $session,
-            'maxPage' => $questions->keys()->max(),
+            'maxPage' => $maxPage,
             'session_id' => $session_id
         ]);
-
     }
 
     /**
@@ -74,9 +76,6 @@ class SessionQuizController extends Controller
      */
     public function question(Request $request, $session_id, $page)
     {
-
-        \Debugbar::info($request->all());
-
         $user = Auth::user();
         $session = $this->sessionRepository->getActiveSession($user);
         /** @var Quiz $quiz */
@@ -110,8 +109,6 @@ class SessionQuizController extends Controller
 
         if ($request->has('multiple_choice')) {
             foreach ($request->get('multiple_choice') as $key => $value) {
-                $entry_id = array_keys($value->keys())[0];
-
                 /** @var QuizMultipleChoiceQuestion $question */
                 $question = $quiz->multipleChoiceQuestions()
                     ->where('quiz_id', $quiz->id)
@@ -121,7 +118,7 @@ class SessionQuizController extends Controller
 
                 $entry = $question->entries()
                     ->where('quiz_multiple_choice_question_id', $question->id)
-                    ->where('id', $entry_id)
+                    ->where('id', $value)
                     ->first();
 
                 if ($question && $entry) {
@@ -135,15 +132,13 @@ class SessionQuizController extends Controller
                     
                 }
             }
-
         }
+
+        if($group_id->max() == $group_id)
+
 
         return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page + 1]);
     }
 
-    public function endForm()
-    {
-
-    }
 
 }
