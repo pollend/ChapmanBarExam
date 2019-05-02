@@ -20,7 +20,7 @@ class SessionRepository implements SessionRepositoryInterface
 
     public function startSession($user, $quiz)
     {
-        if (QuizSession::query()->where('owner_id', $user->id)->count() > 0)
+        if ($this->getActiveSession($user) !== null)
             throw new SessionInProgressException();
 
         if (!$this->quizRepository->isOpen($quiz, $user))
