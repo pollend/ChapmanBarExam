@@ -11,16 +11,6 @@
 |
 */
 
-
-//Route::get('login','Auth\LoginController@showLoginForm')->name('login');
-//
-//Route::namespace('Auth')->prefix('auth')->group(function () {
-//    Route::get('azure', 'Auth\LoginController@redirectToProvider')->name('auth_azure');
-//    Route::get('azure/callback', 'Auth\LoginController@handleProviderCallback');
-//    Route::get('login','Auth\LoginController@login');
-//
-//});
-
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
@@ -46,11 +36,22 @@ Route::get('login/azure', 'Auth\SocialAuthController@redirectAzureToProvider')->
 Route::get('login/azure/callback', 'Auth\SocialAuthController@handleAzureProviderCallback');
 
 Route::group(['middleware' => ['auth']], function (){
-    Route::get('/', 'HomeController@index');
-    Route::resource('report','ReportController');
+    // redirect if there is an active session
+    Route::group(['middleware' => ['quiz.redirect']],function (){
+        Route::resource('report','ReportController');
 
-    Route::namespace('Dashboard')->prefix('admin')->group(function () {
+        Route::get('/', 'HomeController@index')->name('home');
+
+        Route::get('quiz/end','SessionQuizController@endForm')->name('quiz.end');
+        Route::post('quiz/end','SessionQuizController@end');
+
+        Route::get('quiz/start/{id}','SessionQuizController@startForm')->name('quiz.start');
+        Route::post('quiz/start/{id}','SessionQuizController@start');
+    });
+
+    Route::get('session/{session_id}/page/{page}','SessionQuizController@questionForm')->name('quiz.question');
+    Route::post('session/{session_id}/page/{page}','SessionQuizController@question');
+    Route::namespace('dashboard')->prefix('admin')->group(function () {
 
     });
 });
-Route::get('/home', 'HomeController@index')->name('home');

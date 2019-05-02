@@ -19,4 +19,9 @@ class QuizSession extends Model
     {
         return $this->hasMany('App\QuizSessionAnswer', 'quiz_session_id', 'id');
     }
+
+    public function scopeByOwner($query, $user)
+    {
+        return $query->where('owner_id', $user->id);
+    }
 }

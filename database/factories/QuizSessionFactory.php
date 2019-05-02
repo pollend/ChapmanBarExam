@@ -7,5 +7,6 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\QuizSession::class, function (Faker $faker) {
     return [
+
     ];
 });

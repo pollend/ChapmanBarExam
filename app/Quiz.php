@@ -6,11 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model
 {
-    public function questions(){
-        return $this->hasMany('App\QuizQuestion','quiz_id','id');
+    protected $dates = ['close_date'];
+
+    public function sessions()
+    {
+        return $this->hasMany('App\QuizSession', 'quiz_id', 'id');
     }
 
-    public function quizSessions(){
-        return $this->hasMany('App\QuizSession','quiz_id','id');
+    public function multipleChoiceQuestions()
+    {
+        return $this->hasMany('App\QuizMultipleChoiceQuestion', 'quiz_id', 'id');
     }
+
+    public function shortAnswerQuestions()
+    {
+        return $this->hasMany('App\QuizShortAnswerQuestion', 'quiz_id', 'id');
+    }
+
+
 }

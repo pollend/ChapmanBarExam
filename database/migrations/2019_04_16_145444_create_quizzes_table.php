@@ -18,7 +18,8 @@ class CreateQuizzesTable extends Migration
             $table->string('name', 50);
             $table->longText('description');
             $table->dateTime("close_date");
-            $table->boolean("is_open");
+            $table->boolean("is_open")->default(false);
+            $table->boolean("is_hidden")->default(false);
             $table->smallInteger('num_attempts');
             $table->softDeletes();
             $table->timestamps();

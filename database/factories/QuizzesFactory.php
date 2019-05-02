@@ -11,6 +11,7 @@ $factory->define(Quiz::class, function (Faker $faker) {
         'description' => $faker->words($nb = 1, $asText = true),
         'close_date' => $faker->dateTimeBetween('-1 week','+1 month'),
         'num_attempts' => $faker->numberBetween($min = 0, $max = 5),
-        'is_open' => $faker->boolean
+        'is_open' => $faker->boolean,
+        'is_hidden' => $faker->boolean
     ];
 });
