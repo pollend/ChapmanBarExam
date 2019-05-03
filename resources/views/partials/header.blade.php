@@ -12,14 +12,14 @@
         </div>
         <div id="navbarMenu" class="navbar-menu">
             <div class="navbar-end">
-                @section('left-bar-items')
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{route('home')}}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{route('report.index')}}">Reports</a>
-                    </li>
-                @endsection
+{{--                @section('left-bar-items')--}}
+                    <a class="navbar-item" href="{{route('home')}}">
+                        Home
+                    </a>
+                    <a class="navbar-item" href="{{route('report.index')}}">
+                        Reports
+                    </a>
+{{--                @endsection--}}
                 @guest
                     <a class="navbar-item" href="{{ route('login') }}">
                         {{ __('Login') }}

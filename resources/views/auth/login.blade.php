@@ -1,77 +1,49 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+<div class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <form method="POST" class="qz-login-form" action="{{ route('login') }}">
+                @csrf
+                <div class="bx--form-item">
 
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                    @if ($errors->has('email'))
+                        @include('partials.components.notification-error',['title' => 'error','sub_title' => $errors->first('email') ])
+                    @endif
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus>
-
-                                @if ($errors->has('email'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
-
-                                @if ($errors->has('password'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
-
-                    {{-- Replace Login Type--}}
-                    <br>
-
-                    <a href="{{ route('login.azure') }}" class="btn btn-primary btn-lg btn-block">{{__('Chapman Login')}}</a>
+                    <label for="text-email" class="bx--label">{{ __('E-Mail Address') }}</label>
+                    <input id="text-email" type="text" name="email" class="bx--text-input{{ $errors->has('email') ? ' bx--text-input--invalid' : '' }}" required>
                 </div>
-            </div>
+
+                <div class="bx--form-item">
+                    @if ($errors->has('password'))
+                        @include('partials.components.notification-error',['title' => 'error','sub_title' => $errors->first('password') ])
+                    @endif
+
+                    <label for="text-password" class="bx--label">{{ __('Password') }}</label>
+                    <input id="text-password" type="password" class="bx--text-input{{ $errors->has('password') ? ' bx--text-input--invalid' : '' }}" name="password" required>
+                </div>
+
+                <div class="bx--form-item">
+                    <input id="bx--remember" class="bx--checkbox" type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                    <label for="bx--remember" class="bx--checkbox-label">{{ __('Remember Me') }}</label>
+                </div>
+
+
+                <div>
+                    <button class="bx--btn bx--btn--primary" type="submit">
+                        {{ __('Login') }}
+                    </button>
+                    @if (Route::has('password.request'))
+                        <a class="bx--btn bx--btn--primary" href="{{ route('password.request') }}" >
+                            {{ __('Forgot Your Password?')}}
+                        </a>
+                    @endif
+                </div>
+
+            </form>
         </div>
     </div>
 </div>

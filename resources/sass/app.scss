@@ -5,20 +5,34 @@
 // Variables
 @import 'variables';
 
-// Bulma
-@import "~bulma/bulma";
-@import "divider";
-
 // Carbon
 @import "~carbon-components/scss/components/text-area/text-area";
+@import "~carbon-components/scss/components/text-input/text-input";
+@import "~carbon-components/scss/components/notification/toast-notification";
+@import "~carbon-components/scss/components/notification/inline-notification";
 @import "~carbon-components/scss/components/form/form";
 @import "~carbon-components/scss/components/radio-button/radio-button";
+@import "~carbon-components/scss/components/button/button";
+@import "~carbon-components/scss/components/checkbox/checkbox";
+@import "~carbon-components/scss/components/link/link";
+
+// Bulma
+@import "~bulma/sass/utilities/_all";
+@import "~bulma/sass/base/helpers";
+@import "~bulma/sass/elements/_all";
+@import "~bulma/sass/components/_all";
+@import "~bulma/sass/grid/_all";
+@import "~bulma/sass/layout/_all";
+
+@import "divider";
+
+.qz-login-form .bx--form-item, .qz-login-form .bx--form-item {
+  margin-bottom: 1rem;
+}
 
 .bx--radio-button-group--vertical.bx--radio-button-group--vertical-left{
   align-items: baseline;
 }
-
-
 
   // other
 .navbar-laravel {

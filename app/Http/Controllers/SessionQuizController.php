@@ -127,13 +127,12 @@ class SessionQuizController extends Controller
             }
         }
 
-        if ($request->has('submit')) {
-
-            if ($request->get('submit') === 'back') {
+        if ($request->has('action')) {
+            if ($request->get('action') === 'back') {
                 return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page - 1]);
             }
 
-            if ($request->get('submit') === 'next') {
+            if ($request->get('action') === 'next') {
                 // submit and close session
                 if ($group_id >= $groups->max()) {
                     \Debugbar::info('closing Session');
@@ -144,6 +143,7 @@ class SessionQuizController extends Controller
                 return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page + 1]);
             }
         }
+
         return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page]);
     }
 

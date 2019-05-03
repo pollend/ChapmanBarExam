@@ -36,7 +36,7 @@
                                 </div>
                                 <footer class="card-footer">
                                     @if($quiz->is_open)
-                                        <a href="{{route('quiz.start',['id' => $quiz->id])}}" class="card-footer-item">Start</a>
+                                        <a href="{{route('quiz.start',['id' => $quiz->id])}}" class="bx--link card-footer-item">Start</a>
                                     @else
                                         <div class="card-footer-item">Locked</div>
                                     @endif
