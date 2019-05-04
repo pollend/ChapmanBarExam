@@ -5,7 +5,13 @@
 // Variables
 @import 'variables';
 
+@import '~bourbon-neat/core/neat';
+@import "~bourbon/core/bourbon";
+
 // Carbon
+@import "~carbon-components/scss/globals/grid/grid";
+
+// Carbon grid
 @import "~carbon-components/scss/components/text-area/text-area";
 @import "~carbon-components/scss/components/text-input/text-input";
 @import "~carbon-components/scss/components/notification/toast-notification";

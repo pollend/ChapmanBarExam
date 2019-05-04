@@ -11,7 +11,6 @@
     },
     "devDependencies": {
         "axios": "^0.18",
-        "bootstrap": "^4.3.1",
         "cross-env": "^5.1",
         "jquery": "^3.2",
         "laravel-mix": "^4.0.7",
@@ -24,6 +23,9 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "@carbon/grid": "^10.1.1",
+        "bourbon": "^5.1.0",
+        "bourbon-neat": "^3.0.1",
         "bulma": "^0.7.4",
         "carbon-components": "^10.2.0"
     }

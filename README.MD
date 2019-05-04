@@ -79,6 +79,7 @@ build static javascript
 
 - [Carbon Design System](https://www.carbondesignsystem.com/getting-started/developers/vanilla)
 - [Bulma](https://bulma.io/)
+- [Carbon Layout](https://www.carbondesignsystem.com/guidelines/layout)
 
 
 

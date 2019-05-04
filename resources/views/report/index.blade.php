@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="container">
-        @for ($i = 0; $i < 10; $i++)
+        @foreach($sessions as $session)
             <div>
-                Test
+                {{ $session->created_at  }}
             </div>
-        @endfor
+        @endforeach
     </div>
 @endsection
