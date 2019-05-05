@@ -6,7 +6,9 @@ namespace App\Repositories;
 
 use App\Quiz;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Collection;
 
 class QuizRepository implements QuizRepositoryInterface
@@ -16,7 +18,7 @@ class QuizRepository implements QuizRepositoryInterface
      * @param $user
      * @return bool
      */
-    public function isOpen($quiz, $user)
+    public function  isOpen($quiz, $user)
     {
         if ($this->attempt_count($quiz,$user) >= $quiz->num_attempts)
             return false;
@@ -24,7 +26,7 @@ class QuizRepository implements QuizRepositoryInterface
         if ($quiz->close_date < Carbon::today())
             return false;
 
-        if ($quiz->is_open == false)
+        if ($quiz->submitted_at != null)
             return false;
 
         return true;
@@ -83,5 +85,21 @@ class QuizRepository implements QuizRepositoryInterface
         })->unique()
             ->sort()
             ->values();
+    }
+
+
+    function getUnionedQuestions(\Closure $query = null)
+    {
+        $q1 = DB::table('quiz_multiple_choice_questions')
+            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
+            ->selectRaw('\'multiple_choice\' as "type"');
+
+        $q2 = DB::table('quiz_short_answer_questions')
+            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
+            ->selectRaw('\'short_answer\' as "type"');
+
+        if($query != null)
+            return $query($q1)->union($query($q2));
+        return $q1->union($q2);
     }
 }

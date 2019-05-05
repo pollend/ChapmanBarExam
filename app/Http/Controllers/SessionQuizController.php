@@ -11,6 +11,7 @@ use App\QuizSession;
 use App\QuizShortAnswerQuestion;
 use App\Repositories\QuizRepositoryInterface;
 use App\Repositories\SessionRepositoryInterface;
+use Carbon\Carbon;
 use DebugBar\DebugBar;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
@@ -136,7 +137,7 @@ class SessionQuizController extends Controller
                 // submit and close session
                 if ($group_id >= $groups->max()) {
                     \Debugbar::info('closing Session');
-                    $session->is_open = false;
+                    $session->submitted_at = Carbon::now();
                     $session->save();
                     return redirect()->route('home');
                 }

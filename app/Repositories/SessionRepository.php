@@ -18,6 +18,10 @@ class SessionRepository implements SessionRepositoryInterface
 
     }
 
+    public function calculateScore(){
+
+    }
+
     public function startSession($user, $quiz)
     {
         if ($this->getActiveSession($user) !== null)
@@ -36,7 +40,7 @@ class SessionRepository implements SessionRepositoryInterface
     public function getActiveSession($user){
         return QuizSession::query()
             ->where('owner_id',$user->id)
-            ->where('is_open',true)
+            ->where('submitted_at',null)
             ->first();
     }
 }

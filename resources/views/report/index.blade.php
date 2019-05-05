@@ -2,10 +2,6 @@
 
 @section('content')
     <div class="container">
-        @foreach($sessions as $session)
-            <div>
-                {{ $session->created_at  }}
-            </div>
-        @endforeach
+        <report-component route="{{ route('api.report.index')  }}"></report-component>
     </div>
 @endsection

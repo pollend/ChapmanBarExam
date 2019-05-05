@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@carbon/grid": "^10.1.1",
+        "@carbon/vue": "^2.0.6",
         "bourbon": "^5.1.0",
         "bourbon-neat": "^3.0.1",
         "bulma": "^0.7.4",

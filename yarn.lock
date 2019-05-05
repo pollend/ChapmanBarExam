@@ -572,6 +572,18 @@
     "@carbon/import-once" "10.1.0"
     "@carbon/layout" "10.1.1"
 
+"@carbon/icon-helpers@10.1.1":
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/@carbon/icon-helpers/-/icon-helpers-10.1.1.tgz#08affd6f68936ba48beca7a732b0e70bd5ab8ca0"
+  integrity sha512-FwuAuALKOY2XqPoW5aiIsCYLqzERNeFhuSILMlTtlZptHdZnZC/HdUWiNS7jZIvQO+jC1FVUc/UX9FK8Nh36ow==
+
+"@carbon/icons-vue@^10.1.1":
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/@carbon/icons-vue/-/icons-vue-10.1.1.tgz#265b56e29bd441c228b6eaf74dd1113694d269c8"
+  integrity sha512-/30K1eZP083zE+La6fGFJ8x+KOugNuku2gkZAEzrzl4Nwujcf/EFrpnqDsRqg4etgeMQ43HDnQy6Vy7fxr6ypg==
+  dependencies:
+    "@carbon/icon-helpers" "10.1.1"
+
 "@carbon/import-once@10.1.0":
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/@carbon/import-once/-/import-once-10.1.0.tgz#dc6d06d45f77c24461a1a4d48d90f6ba63622f3f"
@@ -581,6 +593,16 @@
   version "10.1.1"
   resolved "https://registry.yarnpkg.com/@carbon/layout/-/layout-10.1.1.tgz#06608c451b222ee89abe3753cca6990690127af2"
   integrity sha512-FC5iOJLR2CwG5gJX5Wz6jpFCdiLOsKaCw949+t3waWRhdb1CJ9B3PDXM8KUOKRuwo4tsXQb2kd8wXkGNfdkWTw==
+
+"@carbon/vue@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@carbon/vue/-/vue-2.0.6.tgz#adb62b7662222a1b85a9f348f64c0b4707311530"
+  integrity sha512-n67Y6/u+ugya/JhEsKXIUvopLIZmuTxvNwYStNKLST5+v2i3+4j0SZdBBJnC0VJzO1i3AQATjBfARZE6XTfOdg==
+  dependencies:
+    "@carbon/icons-vue" "^10.1.1"
+    carbon-components "^10.1.0"
+    flatpickr "4.5.7"
+    vue "^2.6.10"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -1255,7 +1277,7 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000955, caniuse-lite@^1.0.30000957:
   version "1.0.30000959"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000959.tgz#215d3455866da874179c6170202f0cc64f961cfd"
 
-carbon-components@^10.2.0:
+carbon-components@^10.1.0, carbon-components@^10.2.0:
   version "10.2.0"
   resolved "https://registry.yarnpkg.com/carbon-components/-/carbon-components-10.2.0.tgz#a7c3631d31cdbb3e9efe6601f02303e0c704fe45"
   integrity sha512-LAtwYD5LvH60kx+Y7VyWAAL66kzrANrclThKMzv+fwLLO3xNZ6mLmEdvuEbPdjnTiRSUdlHajgA+evVu672F1w==
@@ -5474,7 +5496,7 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
 
-vue@^2.5.17:
+vue@^2.5.17, vue@^2.6.10:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
 

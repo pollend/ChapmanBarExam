@@ -1,6 +1,12 @@
 <?php
 
+use App\Quiz;
+use App\QuizMultipleChoiceEntry;
+use App\QuizMultipleChoiceQuestion;
+use App\QuizShortAnswerQuestion;
+use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,33 +18,52 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 
-        $quizzes = factory(\App\Quiz::class, 10)->create();
-        foreach ($quizzes as $quiz) {
+        $quizzes = factory(Quiz::class, 20)->create();
+        $users = factory(User::class, 10)->create();
+        foreach ($quizzes as $key => $quiz) {
+            print('quiz: '. $key . "\r\n");
             $index = 0;
-            factory(\App\QuizMultipleChoiceQuestion::class, 40)->create([
+
+            $sessions = factory(\App\QuizSession::class,10)->create([
+                'owner_id' => Arr::random($users->toArray())['id'],
+                'quiz_id' => $quiz->id
+            ]);
+
+            factory(QuizMultipleChoiceQuestion::class, 40)->create([
                 'quiz_id' => $quiz->id,
                 'group' => 1,
                 'order' => function (array $i) use (&$index) {
                     return ++$index;
                 }
-            ])->each(function ($q) {
+            ])->each(function ($q) use ($sessions) {
                 $q_index = 0;
 
-                factory(\App\QuizMultipleChoiceEntry::class, rand(3, 4))->create([
+                $entries = factory(QuizMultipleChoiceEntry::class, rand(3, 4))->create([
                     'order' => function (array $i) use (&$q_index) {
                         return ++$q_index;
                     },
                     'quiz_multiple_choice_question_id' => $q->id
                 ]);
+                $q->quiz_multiple_choice_entry_id = Arr::random($entries->toArray())['id'];
+                $q->save();
+
+                foreach ($sessions as $session){
+                    factory(\App\QuizMultipleChoiceResponse::class)->create([
+                        'quiz_multiple_choice_entry_id' => Arr::random($entries->toArray())['id'],
+                        'quiz_session_id' => $session->id,
+                        'quiz_multiple_choice_question_id' => $q->id
+                    ]);
+                }
+
             });
 
-            factory(\App\QuizShortAnswerQuestion::class)->create([
+            factory(QuizShortAnswerQuestion::class)->create([
                 'quiz_id' => $quiz->id,
                 'group' => 1,
                 'order' => 0
             ]);
 
-            factory(\App\QuizShortAnswerQuestion::class, 3)->create([
+            factory(QuizShortAnswerQuestion::class, 3)->create([
                 'quiz_id' => $quiz->id,
                 'group' => 0,
                 'order' => function (array $i) use (&$index) {
@@ -46,8 +71,9 @@ class DatabaseSeeder extends Seeder
                 }
             ]);
 
+
         }
-        $users = factory(\App\User::class, 10)->create();
+
 
     }
 }

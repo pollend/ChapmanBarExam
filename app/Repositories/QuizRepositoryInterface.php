@@ -11,10 +11,11 @@ interface QuizRepositoryInterface
 {
     function isOpen($quiz, $user);
 
-
     function getQuestions($quiz,\Closure $callback = null);
 
     function getGroupedQuestions($quiz);
+
+    function getUnionedQuestions(\Closure $query = null);
 
     /**
      * @param Quiz $quiz

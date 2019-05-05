@@ -15,9 +15,8 @@ class QuizSession extends Model
         return $this->belongsTo('App\User');
     }
 
-    public function sessionAnswers()
-    {
-        return $this->hasMany('App\QuizSessionAnswer', 'quiz_session_id', 'id');
+    public function multipleChoiceResponses(){
+        return $this->hasMany('App\QuizMultipleChoiceResponse','quiz_session_id','id');
     }
 
     public function scopeByOwner($query, $user)
