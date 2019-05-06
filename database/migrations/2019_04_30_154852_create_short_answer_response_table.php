@@ -13,20 +13,20 @@ class CreateShortAnswerResponseTable extends Migration
      */
     public function up()
     {
-        Schema::create('quiz_short_answer_responses', function (Blueprint $table) {
+        Schema::create('short_answer_response', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('content');
 
-            $table->bigInteger('quiz_short_answer_question_id')->unsigned();
-            $table->foreign('quiz_short_answer_question_id')
+            $table->bigInteger('short_answer_question_id')->unsigned();
+            $table->foreign('short_answer_question_id')
                 ->references('id')
-                ->on('quiz_short_answer_questions')
+                ->on('short_answer_question')
                 ->onDelete('cascade');
 
-            $table->bigInteger('quiz_session_id')->unsigned();
-            $table->foreign('quiz_session_id')
+            $table->bigInteger('session_id')->unsigned();
+            $table->foreign('session_id')
                 ->references('id')
-                ->on('quiz_sessions')
+                ->on('quiz_session')
                 ->onDelete('cascade');
         });
     }
@@ -38,6 +38,6 @@ class CreateShortAnswerResponseTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quiz_short_answer_responses');
+        Schema::dropIfExists('short_answer_response');
     }
 }

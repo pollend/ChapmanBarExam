@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 
 
 use App\Quiz;
-use App\QuizMultipleChoiceQuestion;
-use App\QuizMultipleChoiceResponse;
+use App\MultipleChoiceQuestion;
+use App\MultipleChoiceResponse;
 use App\QuizSession;
 use App\Repositories\QuizRepositoryInterface;
 use App\Repositories\SessionRepositoryInterface;
@@ -40,7 +40,7 @@ class ReportController extends Controller
 
 //        $quiz = $session->quiz();
 
-        \Debugbar::info(QuizMultipleChoiceResponse::query()->select('*')->bySession($session)->correctEntry()->get());
+        \Debugbar::info(MultipleChoiceResponse::query()->select('*')->bySession($session)->correctEntry()->get());
 
         $questions = $this->quizRepository->getUnionedQuestions(function ($query) use ($session){
            return $query->where('quiz_id',$session->quiz_id);

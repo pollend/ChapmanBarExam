@@ -13,7 +13,7 @@ class CreateShortAnswerQuestionTable extends Migration
      */
     public function up()
     {
-        Schema::create('quiz_short_answer_questions', function (Blueprint $table) {
+        Schema::create('short_answer_question', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
             $table->unsignedInteger('order');
@@ -24,7 +24,7 @@ class CreateShortAnswerQuestionTable extends Migration
             $table->bigInteger('quiz_id')->unsigned();
             $table->foreign('quiz_id')
                 ->references('id')
-                ->on('quizzes')
+                ->on('quiz')
                 ->onDelete('cascade');
         });
     }
@@ -36,6 +36,6 @@ class CreateShortAnswerQuestionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quiz_short_answer_questions');
+        Schema::dropIfExists('short_answer_question');
     }
 }

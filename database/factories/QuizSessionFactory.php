@@ -1,12 +1,11 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
-
+/* @var $factory \LaravelDoctrine\ORM\Testing\Factory */
 use App\Quiz;
 use Faker\Generator as Faker;
 
-$factory->define(\App\QuizSession::class, function (Faker $faker) {
+$factory->define(\App\Entities\QuizSession::class, function (Faker $faker) {
     return [
-        'submitted_at' => $faker->dateTimeBetween('-1 week','+1 month'),
+        'submittedAt' => $faker->dateTimeBetween('-1 week','+1 month'),
     ];
 });

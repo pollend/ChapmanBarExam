@@ -13,15 +13,15 @@ class CreateMultipleChoiceQuestionEntryTable extends Migration
      */
     public function up()
     {
-        Schema::create('quiz_multiple_choice_entries', function (Blueprint $table) {
+        Schema::create('multiple_choice', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->smallInteger('order');
             $table->text('content');
 
-            $table->bigInteger('quiz_multiple_choice_question_id')->unsigned();
-            $table->foreign('quiz_multiple_choice_question_id')
+            $table->bigInteger('multiple_choice_question_id')->unsigned();
+            $table->foreign('multiple_choice_question_id')
                 ->references('id')
-                ->on('quiz_multiple_choice_questions')
+                ->on('multiple_choice_question')
                 ->onDelete('cascade');
         });
     }
@@ -33,6 +33,6 @@ class CreateMultipleChoiceQuestionEntryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quiz_multiple_choice_entries');
+        Schema::dropIfExists('multiple_choice');
     }
 }

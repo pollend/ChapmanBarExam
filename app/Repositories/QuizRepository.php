@@ -6,31 +6,19 @@ namespace App\Repositories;
 
 use App\Quiz;
 use Carbon\Carbon;
+use Doctrine\ORM\EntityRepository;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Collection;
 
-class QuizRepository implements QuizRepositoryInterface
+class QuizRepository extends EntityRepository
 {
-    /**
-     * @param Quiz $quiz
-     * @param $user
-     * @return bool
-     */
-    public function  isOpen($quiz, $user)
-    {
-        if ($this->attempt_count($quiz,$user) >= $quiz->num_attempts)
-            return false;
 
-        if ($quiz->close_date < Carbon::today())
-            return false;
-
-        if ($quiz->submitted_at != null)
-            return false;
-
-        return true;
+    public function byId($id): \App\Entities\Quiz{
+        return $this->findOneBy(['id' => $id]);
     }
+
 
     /**
      * @param Quiz $quiz

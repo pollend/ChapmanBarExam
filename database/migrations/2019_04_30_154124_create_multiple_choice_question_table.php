@@ -13,7 +13,7 @@ class CreateMultipleChoiceQuestionTable extends Migration
      */
     public function up()
     {
-        Schema::create('quiz_multiple_choice_questions', function (Blueprint $table) {
+        Schema::create('multiple_choice_question', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
             $table->unsignedInteger('order');
@@ -23,7 +23,7 @@ class CreateMultipleChoiceQuestionTable extends Migration
             $table->bigInteger('quiz_id')->unsigned();
             $table->foreign('quiz_id')
                 ->references('id')
-                ->on('quizzes')
+                ->on('quiz')
                 ->onDelete('cascade');
         });
     }
@@ -35,6 +35,6 @@ class CreateMultipleChoiceQuestionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quiz_multiple_choice_questions');
+        Schema::dropIfExists('multiple_choice_question');
     }
 }

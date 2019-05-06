@@ -13,7 +13,7 @@ class CreateQuizSessionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('quiz_sessions', function (Blueprint $table) {
+        Schema::create('quiz_session', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
             $table->dateTime('submitted_at')->nullable();
@@ -21,13 +21,13 @@ class CreateQuizSessionsTable extends Migration
             $table->bigInteger('owner_id')->unsigned();
             $table->foreign('owner_id')
                 ->references('id')
-                ->on('users')
+                ->on('user')
                 ->onDelete('cascade');
 
             $table->bigInteger('quiz_id')->unsigned();
             $table->foreign('quiz_id')
                 ->references('id')
-                ->on('quizzes')
+                ->on('quiz')
                 ->onDelete('cascade');
         });
     }
@@ -39,6 +39,6 @@ class CreateQuizSessionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quiz_sessions');
+        Schema::dropIfExists('quiz_session');
     }
 }

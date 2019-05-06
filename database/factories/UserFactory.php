@@ -1,7 +1,6 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
-
+/* @var $factory \LaravelDoctrine\ORM\Testing\Factory */
 use App\User;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
@@ -17,13 +16,13 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(\App\Entities\User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
+        'emailVerifiedAt' => now(),
         'password' => bcrypt('password'), // password
-        'azure_id' => '--',
-        'remember_token' => Str::random(10),
+        'azureId' => '--',
+        'rememberToken' => Str::random(10),
     ];
 });

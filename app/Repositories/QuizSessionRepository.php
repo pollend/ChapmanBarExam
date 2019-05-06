@@ -4,26 +4,18 @@
 namespace App\Repositories;
 
 
+use App\Entities\User;
 use App\Exceptions\QuizClosedException;
 use App\Exceptions\SessionInProgressException;
-use App\QuizSession;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 
-class SessionRepository implements SessionRepositoryInterface
+class QuizSessionRepository extends EntityRepository
 {
-    private $quizRepository;
-
-    public function __construct(QuizRepositoryInterface $quizRepository)
-    {
-        $this->quizRepository = $quizRepository;
-
-    }
-
-    public function calculateScore(){
-
-    }
-
     public function startSession($user, $quiz)
     {
+
         if ($this->getActiveSession($user) !== null)
             throw new SessionInProgressException();
 
@@ -37,10 +29,14 @@ class SessionRepository implements SessionRepositoryInterface
         return $session;
     }
 
-    public function getActiveSession($user){
-        return QuizSession::query()
-            ->where('owner_id',$user->id)
-            ->where('submitted_at',null)
-            ->first();
+    public function getActiveSession(User $user){
+        $qb = $this->createQueryBuilder('q');
+        return $qb
+            ->where($qb->expr()->eq('q.owner', ':owner'))
+            ->andWhere($qb->expr()->isNull('q.submittedAt'))
+            ->setParameter('owner', $user)
+            ->getQuery()
+            ->getFirstResult();
+
     }
 }

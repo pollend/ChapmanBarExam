@@ -13,11 +13,11 @@ class ModifyMultipleChoiceQuestionCorrectResponse extends Migration
      */
     public function up()
     {
-        Schema::table('quiz_multiple_choice_questions', function (Blueprint $table) {
-            $table->bigInteger('quiz_multiple_choice_entry_id')->unsigned()->nullable();
-            $table->foreign('quiz_multiple_choice_entry_id')
+        Schema::table('multiple_choice_question', function (Blueprint $table) {
+            $table->bigInteger('multiple_choice_entry_id')->unsigned()->nullable();
+            $table->foreign('multiple_choice_entry_id')
                 ->references('id')
-                ->on('quiz_multiple_choice_entries')
+                ->on('multiple_choice')
                 ->onDelete('Set NULL');
         });
     }
@@ -29,8 +29,8 @@ class ModifyMultipleChoiceQuestionCorrectResponse extends Migration
      */
     public function down()
     {
-        Schema::table('quiz_multiple_choice_questions', function (Blueprint $table) {
-            $table->dropColumn('quiz_multiple_choice_entries');
+        Schema::table('multiple_choice_question', function (Blueprint $table) {
+            $table->dropColumn('multiple_choice_entry_id');
         });
     }
 }
