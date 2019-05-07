@@ -1,9 +1,8 @@
 <div>
 
-
-    @php ($answer = $question->answers()->bySession($session)->first())
+    @php ($answer = $question->answersBySession($session)->first())
     <div class="bx--form-item">
-        <div class="bx--form__helper-text">{{$index}} . {{$question->content}}</div>
+        <div class="bx--form__helper-text">{{$index}} . {{$question->getContent()}}</div>
 
         <div class="bx--radio-button-group bx--radio-button-group--vertical bx--radio-button-group--vertical-left ">
             @foreach($question->entries()->orderBy('order','asc')->get() as $e)

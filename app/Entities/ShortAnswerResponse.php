@@ -2,10 +2,7 @@
 
 namespace App\Entities;
 
-
-use App\QuizResponse;
 use Doctrine\Common\Collections\ArrayCollection;
-use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 /**
  * Class Quiz
@@ -17,14 +14,6 @@ use Doctrine\ORM\Mapping AS ORM;
  */
 class ShortAnswerResponse extends QuizResponse
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     */
-    protected $id;
 
     /**
      * @var string
@@ -33,7 +22,7 @@ class ShortAnswerResponse extends QuizResponse
     protected $content;
 
     /**
-     * @var ArrayCollection
+     * @var ShortAnswerQuestion
      * @ORM\ManyToOne(targetEntity="ShortAnswerQuestion",inversedBy="responses")
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="short_answer_question_id",referencedColumnName="id")
@@ -42,21 +31,32 @@ class ShortAnswerResponse extends QuizResponse
     protected $question;
 
     /**
-     * @var ArrayCollection
-     * @ORM\ManyToOne(targetEntity="QuizSession")
-     * @ORM\JoinColumns({
-     *      @ORM\JoinColumn(name="session_id",referencedColumnName="id")
-     * })
-     */
-    protected $session;
-
-    /**
      * @return string
      */
     public function getContent(): string
     {
         return $this->content;
     }
+
+    /**
+     * @param ShortAnswerQuestion $question
+     */
+    public function setQuestion(ShortAnswerQuestion $question): ShortAnswerResponse
+    {
+        $this->question = $question;
+        return $this;
+    }
+
+
+    /**
+     * @param string $content
+     */
+    public function setContent(string $content): ShortAnswerResponse
+    {
+        $this->content = $content;
+        return $this;
+    }
+
 
 
 }

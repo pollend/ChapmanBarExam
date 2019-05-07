@@ -21,6 +21,7 @@ class QuestionRepository extends EntityRepository
             ->getResult();
     }
 
+
     public function filterByGroup($group,$quiz){
         $qb = $this->createQueryBuilder('q');
         return $qb->where($qb->expr()->eq('q.group',':group'))

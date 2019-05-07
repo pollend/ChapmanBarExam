@@ -7,10 +7,13 @@ namespace App\Http\Controllers;
 use App\Entities\Quiz;
 use App\Entities\QuizQuestion;
 use App\Entities\QuizSession;
+use App\Entities\ShortAnswerQuestion;
+use App\Entities\ShortAnswerResponse;
 use App\Entities\User;
 use App\Repositories\QuestionRepository;
 use App\Repositories\QuizRepository;
 use App\Repositories\QuizSessionRepository;
+use App\Repositories\ShortAnswerQuestionRepository;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Http\Request;
@@ -104,77 +107,116 @@ class SessionQuizController extends Controller
     public function question(Request $request, $session_id, $page)
     {
         \Debugbar::info($request->all());
-
         /** @var User $user */
         $user = Auth::user();
 
-        /** @var QuizSessionRepository $sessionRepository  */
+        /** @var QuizSessionRepository $sessionRepository */
         $sessionRepository = \EntityManager::getRepository(QuizSession::class);
-        $quizRepository = \EntityManager::getRepository(Quiz::class);
+        /** @var QuestionRepository $questionRepository */
+        $questionRepository = \EntityManager::getRepository(QuizQuestion::class);
 
-        $session = $sessionRepository->getActiveSession($user);
 
-        /** @var Quiz $quiz */
-        $quiz = $session->quiz;
+        if($session = $sessionRepository->getActiveSession($user)){
+            if ($session->getId() == $session_id) {
+                /** @var Quiz $quiz */
+                $quiz = $session->quiz;
+                $groups = $questionRepository->getUniqueGroups($quiz);
+                $group = $groups[$page];
 
-        $groups = $quizRepository->getGroups($quiz);
-        $group_id = $groups[$page];
+                /** @var ShortAnswerQuestionRepository $shortAnswerRepository */
+                $shortAnswerRepository = \EntityManager::getRepository(ShortAnswerQuestion::class);
 
-        if ($request->has('short_answer')) {
-            foreach ($request->get('short_answer') as $key => $value) {
+                if ($request->has('short_answer')) {
+                    foreach ($request->get('short_answer') as $key => $value) {
+                        if(!empty($value)) {
+                            /** @var ShortAnswerQuestion $question */
+                            if($question = $shortAnswerRepository->findOneBy(['quiz' => $quiz, 'group' => $group, 'id' => $key])){
+                               $response = $question->answersBySession($session)->first();
+                               if($response === null){
+                                   $response = new ShortAnswerResponse();
+                                   $response->setQuestion($question);
+                                   $response->setSession($session);
+                               }
+                                $response->setContent($value);
 
-                if (!empty($value)) {
-
-                    /** @var ShortAnswerQuestion $question */
-                    $question = $quiz->shortAnswerQuestions()
-                        ->where('quiz_id', $quiz->id)
-                        ->where('group', $group_id)
-                        ->where('id', $key)
-                        ->first();
-                    if (isset($question)) {
-                        $this->submitShortAnswer($question, $session, $value);
+                                \EntityManager::persist($response);
+                            }
+                        }
                     }
                 }
+                if ($request->has('multiple_choice')) {
 
-            }
-        }
-
-        if ($request->has('multiple_choice')) {
-            foreach ($request->get('multiple_choice') as $key => $value) {
-                /** @var MultipleChoiceQuestion $question */
-                $question = $quiz->multipleChoiceQuestions()
-                    ->where('quiz_id', $quiz->id)
-                    ->where('group', $group_id)
-                    ->where('id', $key)
-                    ->first();
-
-                $entry = $question->entries()
-                    ->where('quiz_multiple_choice_question_id', $question->id)
-                    ->where('id', $value)
-                    ->first();
-
-                if (isset($question) && isset($entry)) {
-                    $this->submitMultipleChoiceAnswer($question, $session, $entry);
                 }
             }
         }
+        \EntityManager::flush();
 
-        if ($request->has('action')) {
-            if ($request->get('action') === 'back') {
-                return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page - 1]);
-            }
 
-            if ($request->get('action') === 'next') {
-                // submit and close session
-                if ($group_id >= $groups->max()) {
-                    \Debugbar::info('closing Session');
-                    $session->submitted_at = Carbon::now();
-                    $session->save();
-                    return redirect()->route('home');
-                }
-                return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page + 1]);
-            }
-        }
+
+//        if ($request->has('short_answer')) {
+//            foreach ($request->get('short_answer') as $key => $value) {
+//
+//
+//                /** @var ShortAnswerQuestionRepository $shortAnswerQuestionRepository */
+//                $shortAnswerQuestionRepository = \EntityManager::getRepository(ShortAnswerQuestion::class);
+//                /** @var ShortAnswerQuestion $question */
+//                if($question = $shortAnswerQuestionRepository->find($key)){
+//
+//                }
+//
+//
+//                if (!empty($value)) {
+//
+//                    /** @var ShortAnswerQuestion $question */
+//                    $question = $quiz->shortAnswerQuestions()
+//                        ->where('quiz_id', $quiz->id)
+//                        ->where('group', $group_id)
+//                        ->where('id', $key)
+//                        ->first();
+//                    if (isset($question)) {
+//                        $this->submitShortAnswer($question, $session, $value);
+//                    }
+//                }
+//
+//            }
+//        }
+//
+//        if ($request->has('multiple_choice')) {
+//            foreach ($request->get('multiple_choice') as $key => $value) {
+//                /** @var MultipleChoiceQuestion $question */
+//                $question = $quiz->multipleChoiceQuestions()
+//                    ->where('quiz_id', $quiz->id)
+//                    ->where('group', $group_id)
+//                    ->where('id', $key)
+//                    ->first();
+//
+//                $entry = $question->entries()
+//                    ->where('quiz_multiple_choice_question_id', $question->id)
+//                    ->where('id', $value)
+//                    ->first();
+//
+//                if (isset($question) && isset($entry)) {
+//                    $this->submitMultipleChoiceAnswer($question, $session, $entry);
+//                }
+//            }
+//        }
+//
+//        if ($request->has('action')) {
+//            if ($request->get('action') === 'back') {
+//                return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page - 1]);
+//            }
+//
+//            if ($request->get('action') === 'next') {
+//                // submit and close session
+//                if ($group_id >= $groups->max()) {
+//                    \Debugbar::info('closing Session');
+//                    $session->submitted_at = Carbon::now();
+//                    $session->save();
+//                    return redirect()->route('home');
+//                }
+//                return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page + 1]);
+//            }
+//        }
 
         return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page]);
     }

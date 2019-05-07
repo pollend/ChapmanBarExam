@@ -3,10 +3,8 @@
 namespace App\Entities;
 
 use App\Entities\Traits\TimestampTrait;
-use App\Entities\QuizQuestion;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
@@ -50,6 +48,15 @@ class ShortAnswerQuestion extends QuizQuestion
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
     }
 
+
+    /**
+     * @param string $content
+     */
+    public function setContent(string $content): ShortAnswerQuestion
+    {
+        $this->content = $content;
+        return $this;
+    }
 
     /**
      * @return int

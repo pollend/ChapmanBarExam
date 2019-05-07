@@ -2,12 +2,15 @@
 
 namespace App\Entities;
 use App\Entities\Quiz;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repositories\QuestionRepository")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\Table(name="quiz_question")
  */
 class QuizQuestion
 {
@@ -44,8 +47,23 @@ class QuizQuestion
      */
     protected $quiz;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="question")
+     */
+    protected $responses;
+
+
     function getOrder(){
         return $this->order;
+    }
+
+    public function answers(){
+        return $this->responses;
+    }
+
+    public function answersBySession($session){
+        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
     }
 
     /**

@@ -5,6 +5,8 @@ namespace App\Entities;
 
 use App\Entities\Traits\TimestampTrait;
 use App\Entities\QuizQuestion;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 
@@ -46,7 +48,20 @@ class MultipleChoiceQuestion extends QuizQuestion
      */
     protected $correctEntry;
 
-    protected $multipleChoiceEntries;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="MultipleChoiceResponse",mappedBy="question")
+     */
+    protected $responses;
+
+    public function answers(){
+        return $this->responses;
+    }
+
+    public function answersBySession($session){
+        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
+    }
 
 
     /**

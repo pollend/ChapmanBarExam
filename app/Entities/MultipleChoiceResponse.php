@@ -2,9 +2,8 @@
 
 namespace App\Entities;
 
-use App\QuizResponse;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
@@ -18,19 +17,9 @@ use Doctrine\ORM\Mapping AS ORM;
  */
 class MultipleChoiceResponse extends  QuizResponse
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     */
-    protected $id;
-
-    public $timestamps = false;
 
     /**
-     * @var Quiz
+     * @var MultipleChoiceEntry
      * @ORM\ManyToOne(targetEntity="MultipleChoiceEntry")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="multiple_choice_entry_id", referencedColumnName="id")
@@ -39,16 +28,20 @@ class MultipleChoiceResponse extends  QuizResponse
     protected $multipleChoiceEntry;
 
     /**
-     * @var QuizSession
-     * @ORM\ManyToOne(targetEntity="QuizSession")
+     * @var MultipleChoiceQuestion
+     * @ORM\ManyToOne(targetEntity="MultipleChoiceQuestion",inversedBy="responses")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="quiz_session_id", referencedColumnName="id")
+     *      @ORM\JoinColumn(name="multiple_choice_question_id",referencedColumnName="id")
      * })
      */
-    protected $session;
+    protected $question;
 
-    function scopeBySession($query, $session)
+    /**
+     * @return Quiz
+     */
+    public function getMultipleChoiceEntry(): MultipleChoiceEntry
     {
-        // TODO: Implement scopeBySession() method.
+        return $this->multipleChoiceEntry;
     }
+
 }

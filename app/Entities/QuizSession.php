@@ -2,6 +2,7 @@
 namespace App\Entities;
 
 use App\Entities\Traits\TimestampTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 
@@ -49,6 +50,12 @@ class QuizSession
      * })
      */
     protected $owner;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="session")
+     */
+    protected $responses;
 
 
     /**
