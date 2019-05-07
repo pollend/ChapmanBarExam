@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
                     'order' => function (array $i) use (&$q_index) {
                         return ++$q_index;
                     },
-                    'quizMultipleChoice' => $q
+                    'question' => $q
                 ]);
                 $q->setCorrectAnswer($entries->random(1)[0]);
 //                foreach ($sessions as $session){

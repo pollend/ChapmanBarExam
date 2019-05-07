@@ -7,6 +7,7 @@ use App\Entities\Traits\TimestampTrait;
 use App\Entities\QuizQuestion;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\PersistentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 
@@ -43,17 +44,32 @@ class MultipleChoiceQuestion extends QuizQuestion
      * @var MultipleChoiceEntry
      * @ORM\ManyToOne(targetEntity="MultipleChoiceEntry")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="multiple_choice_entry_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="correct_entry_id", referencedColumnName="id")
      * })
      */
     protected $correctEntry;
 
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceResponse",mappedBy="question")
      */
     protected $responses;
+
+
+    /**
+     * @var PersistentCollection
+     * @ORM\OneToMany(targetEntity="MultipleChoiceEntry",mappedBy="question")
+     */
+    protected $entries;
+
+    /**
+     * @return MultipleChoiceEntry
+     */
+    public function getCorrectEntry(): MultipleChoiceEntry
+    {
+        return $this->correctEntry;
+    }
 
     public function answers(){
         return $this->responses;
@@ -63,6 +79,13 @@ class MultipleChoiceQuestion extends QuizQuestion
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
     }
 
+    /**
+     * @return PersistentCollection
+     */
+    public function getEntries(): PersistentCollection
+    {
+        return $this->entries;
+    }
 
     /**
      * @return int

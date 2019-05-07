@@ -165,6 +165,9 @@ return [
         /*
          * Package Service Providers...
          */
+        LaravelDoctrine\Extensions\GedmoExtensionsServiceProvider::class,
+        LaravelDoctrine\Extensions\BeberleiExtensionsServiceProvider::class,
+
         \SocialiteProviders\Manager\ServiceProvider::class,
         \Barryvdh\Debugbar\ServiceProvider::class,
         \LaravelDoctrine\ORM\DoctrineServiceProvider::class,

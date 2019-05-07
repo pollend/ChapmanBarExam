@@ -67,10 +67,6 @@ class QuizSession
     }
 
 
-    public function quiz()
-    {
-        return $this->quiz;
-    }
 
     public function getOwner()
     {
@@ -94,4 +90,13 @@ class QuizSession
         return $this;
     }
 
+
+    /**
+     * @param \DateTime $submittedAt
+     */
+    public function setSubmittedAt(\DateTime $submittedAt): QuizSession
+    {
+        $this->submittedAt = $submittedAt;
+        return $this;
+    }
 }

@@ -33,13 +33,6 @@ class ShortAnswerQuestion extends QuizQuestion
      */
     protected $content;
 
-
-    /**
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="ShortAnswerResponse",mappedBy="question")
-     */
-    protected $responses;
-
     public function answers(){
        return $this->responses;
     }
@@ -47,7 +40,6 @@ class ShortAnswerQuestion extends QuizQuestion
     public function answersBySession($session){
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
     }
-
 
     /**
      * @param string $content

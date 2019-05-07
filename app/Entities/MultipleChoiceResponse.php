@@ -22,26 +22,25 @@ class MultipleChoiceResponse extends  QuizResponse
      * @var MultipleChoiceEntry
      * @ORM\ManyToOne(targetEntity="MultipleChoiceEntry")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="multiple_choice_entry_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="choice_entry_id", referencedColumnName="id")
      * })
      */
-    protected $multipleChoiceEntry;
-
-    /**
-     * @var MultipleChoiceQuestion
-     * @ORM\ManyToOne(targetEntity="MultipleChoiceQuestion",inversedBy="responses")
-     * @ORM\JoinColumns({
-     *      @ORM\JoinColumn(name="multiple_choice_question_id",referencedColumnName="id")
-     * })
-     */
-    protected $question;
+    protected $choice;
 
     /**
      * @return Quiz
      */
-    public function getMultipleChoiceEntry(): MultipleChoiceEntry
+    public function getChoice(): MultipleChoiceEntry
     {
-        return $this->multipleChoiceEntry;
+        return $this->choice;
+    }
+
+    /**
+     * @param MultipleChoiceEntry $choice
+     */
+    public function setChoice(MultipleChoiceEntry $choice): void
+    {
+        $this->choice = $choice;
     }
 
 }

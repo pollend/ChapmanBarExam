@@ -54,6 +54,14 @@ class QuizQuestion
     protected $responses;
 
 
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
     function getOrder(){
         return $this->order;
     }

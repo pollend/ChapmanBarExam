@@ -22,29 +22,11 @@ class ShortAnswerResponse extends QuizResponse
     protected $content;
 
     /**
-     * @var ShortAnswerQuestion
-     * @ORM\ManyToOne(targetEntity="ShortAnswerQuestion",inversedBy="responses")
-     * @ORM\JoinColumns({
-     *      @ORM\JoinColumn(name="short_answer_question_id",referencedColumnName="id")
-     * })
-     */
-    protected $question;
-
-    /**
      * @return string
      */
     public function getContent(): string
     {
         return $this->content;
-    }
-
-    /**
-     * @param ShortAnswerQuestion $question
-     */
-    public function setQuestion(ShortAnswerQuestion $question): ShortAnswerResponse
-    {
-        $this->question = $question;
-        return $this;
     }
 
 

@@ -5,12 +5,12 @@
         <div class="bx--form__helper-text">{{$index}} . {{$question->getContent()}}</div>
 
         <div class="bx--radio-button-group bx--radio-button-group--vertical bx--radio-button-group--vertical-left ">
-            @foreach($question->entries()->orderBy('order','asc')->get() as $e)
+            @foreach($question->getEntries() as $e)
                 <div class="bx--radio-button-wrapper is-al">
-                    <input class="bx--radio-button" type="radio" id="question.{{$e->id}}.id" name="multiple_choice[{{$question->id}}]" value="{{$e->id}}" @if($answer && $answer->quiz_multiple_choice_entry_id == $e->id) checked @endif>
-                    <label for="question.{{$e->id}}.id" class="bx--radio-button__label">
+                    <input class="bx--radio-button" type="radio" id="question.{{$e->getId()}}.id" name="multiple_choice[{{$question->getId()}}]" value="{{$e->getId()}}" @if($answer && $answer->getChoice() == $e) checked @endif>
+                    <label for="question.{{$e->getId()}}.id" class="bx--radio-button__label">
                         <span class="bx--radio-button__appearance"></span>
-                        <span class="bx--radio-button__label-text">{{$e->content}}</span>
+                        <span class="bx--radio-button__label-text">{{$e->getContent()}}</span>
                     </label>
                 </div>
             @endforeach

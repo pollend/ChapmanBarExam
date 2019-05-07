@@ -27,7 +27,7 @@ class QuizResponse
 
 
     /**
-     * @var ArrayCollection
+     * @var QuizSession
      * @ORM\ManyToOne(targetEntity="QuizSession",inversedBy="responses")
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="session_id",referencedColumnName="id")
@@ -36,7 +36,7 @@ class QuizResponse
     protected $session;
 
     /**
-     * @var ArrayCollection
+     * @var QuizQuestion
      * @ORM\ManyToOne(targetEntity="QuizQuestion",inversedBy="responses")
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="question_id",referencedColumnName="id")
@@ -53,18 +53,35 @@ class QuizResponse
     }
 
     /**
-     * @param ArrayCollection $session
+     * @param QuizQuestion $question
      */
-    public function setSession(ArrayCollection $session): QuizResponse
+    public function setQuestion(QuizQuestion $question): QuizResponse
     {
-        $this->session = $session;
+        $this->question = $question;
         return $this;
     }
 
     /**
      * @return ArrayCollection
      */
-    public function getSession(): ArrayCollection
+    public function getQuestion(): QuizQuestion
+    {
+        return $this->question;
+    }
+
+    /**
+     * @param ArrayCollection $session
+     */
+    public function setSession(QuizSession $session): QuizResponse
+    {
+        $this->session = $session;
+        return $this;
+    }
+
+    /**
+     * @return QuizSession
+     */
+    public function getSession(): QuizSession
     {
         return $this->session;
     }
