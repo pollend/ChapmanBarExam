@@ -10,16 +10,9 @@ use Doctrine\ORM\EntityRepository;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use mysql_xdevapi\Collection;
 
 class QuizRepository extends EntityRepository
 {
-
-    public function byId($id): \App\Entities\Quiz{
-        return $this->findOneBy(['id' => $id]);
-    }
-
-
     /**
      * @param Quiz $quiz
      * @param $user

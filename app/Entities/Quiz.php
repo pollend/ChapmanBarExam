@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Carbon\Traits\Date;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\PersistentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 
@@ -87,15 +88,10 @@ class Quiz
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="MultipleChoiceQuestion",mappedBy="quiz")
+     * @ORM\OneToMany(targetEntity="QuizQuestion",mappedBy="quiz")
      */
-    protected $multipleChoiceQuestions;
+    protected $questions;
 
-    /**
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="ShortAnswerQuestion",mappedBy="quiz")
-     */
-    protected $shortAnswerQuestions;
 
 
     /**
@@ -125,14 +121,10 @@ class Quiz
     /**
      * @return ArrayCollection
      */
-    public function getMultipleChoiceQuestions(): ArrayCollection{
-        return $this->multipleChoiceQuestions;
+    public function getQuestions() : PersistentCollection
+    {
+        return $this->questions;
     }
-
-    public function getShortAnswerQuestions():ArrayCollection{
-        return $this->shortAnswerQuestions;
-    }
-
 
     /**
      * @return int
@@ -159,12 +151,12 @@ class Quiz
         if (Carbon::today() > $this->closeDate)
             return false;
 
-        if ($this->getQuizSessionsByUser($user)->count() < $this->numAttempts)
+        // number of user attempts exceeds the max attempts on a quiz
+        if ($this->getQuizSessionsByUser($user)->count() > $this->numAttempts)
             return false;
 
         if($this->isOpen === false)
             return false;
-
 
         return true;
     }

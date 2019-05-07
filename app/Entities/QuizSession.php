@@ -60,24 +60,29 @@ class QuizSession
     }
 
 
-    public function quiz(){
+    public function quiz()
+    {
         return $this->quiz;
     }
 
-    public function getOwner(){
+    public function getOwner()
+    {
         return $this->owner;
     }
 
-    public function setOwner(User $user){
+    public function setOwner(User $user)
+    {
         $this->owner = $user;
         return $this;
     }
 
-    public function getQuiz(){
+    public function getQuiz()
+    {
         return $this->quiz;
     }
 
-    public function setQuiz($quiz){
+    public function setQuiz($quiz)
+    {
         $this->quiz = $quiz;
         return $this;
     }

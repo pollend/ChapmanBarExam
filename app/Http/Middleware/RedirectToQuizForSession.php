@@ -4,9 +4,7 @@
 namespace App\Http\Middleware;
 
 
-use App\Entities\QuizSession;
 use App\Repositories\QuizSessionRepository;
-use App\Repositories\SessionRepositoryInterface;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,11 +26,12 @@ class RedirectToQuizForSession
     public function handle($request, Closure $next)
     {
 
-        $repository = \EntityManager::getRepository(QuizSession::class);
-        $user = Auth::user();
-        $quizSession = $repository->getActiveSession($user);
-        if ($quizSession != null) {
-            return redirect()->route('quiz.question', ['session_id' => $quizSession->id, 'page' => 0]);
+        $user = \Auth::user();
+        /** @var QuizSessionRepository $repository */
+        $repository = \EntityManager::getRepository(\App\Entities\QuizSession::class);
+
+        if ($session =  $repository->getActiveSession($user)) {
+            return redirect()->route('quiz.question', ['session_id' => $session->getId(), 'page' => 0]);
         }
         return $next($request);
     }

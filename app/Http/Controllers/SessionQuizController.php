@@ -4,23 +4,16 @@
 namespace App\Http\Controllers;
 
 
-use App\Exceptions\QuizClosedException;
-use App\Exceptions\SessionInProgressException;
-use App\Quiz;
-use App\MultipleChoiceQuestion;
-use App\QuizQuestion;
-use App\QuizSession;
+use App\Entities\Quiz;
+use App\Entities\QuizQuestion;
+use App\Entities\QuizSession;
+use App\Entities\User;
+use App\Repositories\QuestionRepository;
 use App\Repositories\QuizRepository;
 use App\Repositories\QuizSessionRepository;
-use App\ShortAnswerQuestion;
-use App\Repositories\QuizRepositoryInterface;
-use App\Repositories\SessionRepositoryInterface;
 use Carbon\Carbon;
-use DebugBar\DebugBar;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\Model;
+use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,7 +31,7 @@ class SessionQuizController extends Controller
         /** @var QuizRepository $repository */
         $repository = \EntityManager::getRepository(\App\Entities\Quiz::class);
 
-        $quiz = $repository->byId($id);
+        $quiz = $repository->find($id);
         if($quiz  == null)
             abort(404);
         if(!$quiz->isOpen($user))
@@ -52,16 +45,16 @@ class SessionQuizController extends Controller
         /** @var QuizRepository $quizRepository */
         $quizRepository = \EntityManager::getRepository(\App\Entities\Quiz::class);
         /** @var QuizSessionRepository $sessionRepository */
-        $sessionRepository = \EntityManager::getRepository(\App\Entities\QuizSession::class);
+        $sessionRepository = \EntityManager::getRepository(QuizSession::class);
 
-        if($quiz = $quizRepository->byId($id)){
+        if($quiz = $quizRepository->find($id)){
             $user = Auth::user();
             if($sessionRepository->getActiveSession($user) != null)
                 abort(404);
             if($quiz->isOpen($user) === false)
                 abort(404);
 
-            $session = new \App\Entities\QuizSession();
+            $session = new QuizSession();
 
             $session->setOwner($user);
             $session->setQuiz($quiz);
@@ -77,49 +70,29 @@ class SessionQuizController extends Controller
     {
 
         /** @var QuizSessionRepository $sessionRepository */
-        $sessionRepository = \EntityManager::getRepository(\App\Entities\QuizSession::class);
+        $sessionRepository = \EntityManager::getRepository(QuizSession::class);
+        /** @var QuestionRepository $questionRepository */
+        $questionRepository = \EntityManager::getRepository(QuizQuestion::class);
 
         $user = Auth::user();
-        /** @var \App\Entities\QuizSession $session */
-        if($session = $sessionRepository->getActiveSession($user)){
-            \Debugbar::info('Found Active Session');
-            if( $session->getId() === $session_id){
-                \Debugbar::info('Session Matches');
-
+        /** @var QuizSession $session */
+        if ($session = $sessionRepository->getActiveSession($user)) {
+            if ($session->getId() == $session_id) {
                 $quiz = $session->quiz();
 
-                $colection = \Illuminate\Support\Collection::make()
-                    ->merge($quiz->getMultipleChoiceQuestions()->toArray())
-                    ->merge($quiz->getShortAnswerQuestions()->toArray());
-
-                $questions = $colection->sortBy('group')
-                    ->groupBy('group')
-                    ->transform(function ($entry) {
-                        return $entry->sortby('order')->values();
-                    })->values();
+                $groups = $questionRepository->getUniqueGroups($quiz);
+                $questions = $questionRepository->filterByGroup($groups[$page], $quiz);
 
                 return view('quiz.question', [
-                    'questions' => $questions[$page],
+                    'questions' => $questions,
                     'page' => $page,
                     'session' => $session,
-                    'maxPage' => $questions->keys()->max(),
+                    'maxPage' => Collection::make($groups)->keys()->max(),
                     'session_id' => $session_id
                 ]);
             }
         }
         abort(404);
-
-//
-//        $session = $this->sessionRepository->getActiveSession($user);
-//        if (!isset($session) || $session->id != $session_id) {
-//            abort(404);
-//        }
-//        /** @var Quiz $quiz */
-//        $quiz = $session->quiz;
-//        $questions = $this->quizRepository->getGroupedQuestions($quiz);
-//        $maxPage = $questions->keys()->max();
-//
-//
     }
 
     /**
@@ -132,11 +105,19 @@ class SessionQuizController extends Controller
     {
         \Debugbar::info($request->all());
 
+        /** @var User $user */
         $user = Auth::user();
-        $session = $this->sessionRepository->getActiveSession($user);
+
+        /** @var QuizSessionRepository $sessionRepository  */
+        $sessionRepository = \EntityManager::getRepository(QuizSession::class);
+        $quizRepository = \EntityManager::getRepository(Quiz::class);
+
+        $session = $sessionRepository->getActiveSession($user);
+
         /** @var Quiz $quiz */
         $quiz = $session->quiz;
-        $groups = $this->quizRepository->getGroups($quiz);
+
+        $groups = $quizRepository->getGroups($quiz);
         $group_id = $groups[$page];
 
         if ($request->has('short_answer')) {

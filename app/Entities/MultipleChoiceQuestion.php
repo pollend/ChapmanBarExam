@@ -3,9 +3,8 @@
 
 namespace App\Entities;
 
-
 use App\Entities\Traits\TimestampTrait;
-use App\QuizQuestion;
+use App\Entities\QuizQuestion;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 
@@ -21,15 +20,6 @@ use Doctrine\ORM\Mapping AS ORM;
 class MultipleChoiceQuestion extends QuizQuestion
 {
     use TimestampTrait;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(name="id", type="bigint", nullable=false)
-     */
-    protected $id;
 
     /**
      * @var string
@@ -48,13 +38,15 @@ class MultipleChoiceQuestion extends QuizQuestion
 
 
     /**
-     * @var Quiz
+     * @var MultipleChoiceEntry
      * @ORM\ManyToOne(targetEntity="MultipleChoiceEntry")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="multiple_choice_entry_id", referencedColumnName="id")
      * })
      */
     protected $correctEntry;
+
+    protected $multipleChoiceEntries;
 
 
     /**
@@ -65,17 +57,16 @@ class MultipleChoiceQuestion extends QuizQuestion
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
     public function setCorrectAnswer($entry){
         $this->correctEntry = $entry;
     }
 
-    function getTypeAttribute()
-    {
-        // TODO: Implement getTypeAttribute() method.
-    }
-
-    function answers()
-    {
-        // TODO: Implement answers() method.
-    }
 }

@@ -50,8 +50,13 @@ class ShortAnswerResponse extends QuizResponse
      */
     protected $session;
 
-    function scopeBySession($query, $session)
+    /**
+     * @return string
+     */
+    public function getContent(): string
     {
-        // TODO: Implement scopeBySession() method.
+        return $this->content;
     }
+
+
 }

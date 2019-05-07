@@ -1,10 +1,25 @@
 <?php
-namespace App;
 
+namespace App\Entities;
+use App\Entities\Quiz;
 use Doctrine\ORM\Mapping AS ORM;
 
-abstract class QuizQuestion
+/**
+ * @ORM\Entity(repositoryClass="App\Repositories\QuestionRepository")
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ */
+class QuizQuestion
 {
+
+    /**
+     * @var integer
+     *
+     * @ORM\Id()
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(name="id", type="bigint", nullable=false)
+     */
+    protected $id;
 
     /**
      * @var integer
@@ -19,6 +34,15 @@ abstract class QuizQuestion
      * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $group;
+
+    /**
+     * @var Quiz
+     * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="questions")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
+     * })
+     */
+    protected $quiz;
 
     function getOrder(){
         return $this->order;
@@ -45,8 +69,4 @@ abstract class QuizQuestion
     public function getGroup(){
         return $this->group;
     }
-
-    abstract function getTypeAttribute();
-
-    abstract function answers();
 }

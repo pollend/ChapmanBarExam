@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Quiz;
-use App\QuizSession;
 use App\Repositories\QuizRepository;
-use App\Repositories\QuizRepositoryInterface;
-use App\Repositories\SessionRepositoryInterface;
 use Doctrine\Common\Collections\Criteria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -32,14 +28,9 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-
         /** @var QuizRepository $repository */
         $repository = \EntityManager::getRepository(\App\Entities\Quiz::class);
-
         $quizzes  = $repository->findBy(['isHidden' => false]);
-
-//        $quizzes = Quiz::query()->where('is_hidden', false)->get();
         return view('quiz.index', ['quizzes' => Collection::make($quizzes),'user' => $user]);
     }
 }

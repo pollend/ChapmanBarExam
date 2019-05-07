@@ -47,12 +47,12 @@ class DatabaseSeeder extends Seeder
                     'quizMultipleChoice' => $q
                 ]);
                 $q->setCorrectAnswer($entries->random(1)[0]);
-                foreach ($sessions as $session){
-                    entity(App\Entities\MultipleChoiceResponse::class)->create([
-                        'multipleChoiceEntry' => $entries->random(1)[0],
-                        'session' => $session
-                    ]);
-                }
+//                foreach ($sessions as $session){
+//                    entity(App\Entities\MultipleChoiceResponse::class)->create([
+//                        'multipleChoiceEntry' => $entries->random(1)[0],
+//                        'session' => $session
+//                    ]);
+//                }
 
                 \EntityManager::persist($q);
 

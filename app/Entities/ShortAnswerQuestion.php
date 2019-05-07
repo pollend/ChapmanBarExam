@@ -3,18 +3,18 @@
 namespace App\Entities;
 
 use App\Entities\Traits\TimestampTrait;
-use App\QuizQuestion;
+use App\Entities\QuizQuestion;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
  * Class Quiz
  * @package App
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repositories\ShortAnswerQuestionRepository")
  * @ORM\Table(name="short_answer_question")
  * @ORM\HasLifecycleCallbacks
- *
  */
 class ShortAnswerQuestion extends QuizQuestion
 {
@@ -35,14 +35,6 @@ class ShortAnswerQuestion extends QuizQuestion
      */
     protected $content;
 
-    /**
-     * @var Quiz
-     * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="shortAnswerQuestions")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
-     * })
-     */
-    protected $quiz;
 
     /**
      * @var ArrayCollection
@@ -54,8 +46,25 @@ class ShortAnswerQuestion extends QuizQuestion
        return $this->responses;
     }
 
-    function getTypeAttribute()
-    {
-        return 'shortAnswer';
+    public function answersBySession($session){
+        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
     }
+
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
 }
