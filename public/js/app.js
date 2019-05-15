@@ -10129,13 +10129,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!*****************************************************!*\
   !*** ./node_modules/carbon-components/es/bundle.js ***!
   \*****************************************************/
-/*! exports provided: watch, Checkbox, FileUploader, ContentSwitcher, Tab, OverflowMenu, Modal, Loading, InlineLoading, Dropdown, NumberInput, DataTableV2, DataTable, DatePicker, Pagination, Search, Accordion, CopyButton, Notification, Toolbar, Tooltip, ProgressIndicator, FloatingMenu, StructuredList, Slider, Tile, CodeSnippet, TextInput, SideNav, HeaderSubmenu, HeaderNav, NavigationMenu, ProductSwitcher, PaginationNav, settings */
+/*! exports provided: watch, settings, Checkbox, FileUploader, ContentSwitcher, Tab, OverflowMenu, Modal, Loading, InlineLoading, Dropdown, NumberInput, DataTableV2, DataTable, DatePicker, Pagination, Search, Accordion, CopyButton, Notification, Toolbar, Tooltip, ProgressIndicator, FloatingMenu, StructuredList, Slider, Tile, CodeSnippet, TextInput, SideNav, HeaderSubmenu, HeaderNav, NavigationMenu, ProductSwitcher, PaginationNav */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _globals_js_boot__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./globals/js/boot */ "./node_modules/carbon-components/es/globals/js/boot.js");
 /* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index */ "./node_modules/carbon-components/es/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "settings", function() { return _index__WEBPACK_IMPORTED_MODULE_1__["settings"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Checkbox", function() { return _index__WEBPACK_IMPORTED_MODULE_1__["Checkbox"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FileUploader", function() { return _index__WEBPACK_IMPORTED_MODULE_1__["FileUploader"]; });
@@ -10201,8 +10203,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ProductSwitcher", function() { return _index__WEBPACK_IMPORTED_MODULE_1__["ProductSwitcher"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PaginationNav", function() { return _index__WEBPACK_IMPORTED_MODULE_1__["PaginationNav"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "settings", function() { return _index__WEBPACK_IMPORTED_MODULE_1__["settings"]; });
 
 /* harmony import */ var _globals_js_watch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./globals/js/watch */ "./node_modules/carbon-components/es/globals/js/watch.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "watch", function() { return _globals_js_watch__WEBPACK_IMPORTED_MODULE_2__["default"]; });
@@ -22986,7 +22986,7 @@ var createAndReleaseComponentsUponDOMMutation = function createAndReleaseCompone
 /*!****************************************************!*\
   !*** ./node_modules/carbon-components/es/index.js ***!
   \****************************************************/
-/*! exports provided: Checkbox, FileUploader, ContentSwitcher, Tab, OverflowMenu, Modal, Loading, InlineLoading, Dropdown, NumberInput, DataTableV2, DataTable, DatePicker, Pagination, Search, Accordion, CopyButton, Notification, Toolbar, Tooltip, ProgressIndicator, FloatingMenu, StructuredList, Slider, Tile, CodeSnippet, TextInput, SideNav, HeaderSubmenu, HeaderNav, NavigationMenu, ProductSwitcher, PaginationNav, settings */
+/*! exports provided: settings, Checkbox, FileUploader, ContentSwitcher, Tab, OverflowMenu, Modal, Loading, InlineLoading, Dropdown, NumberInput, DataTableV2, DataTable, DatePicker, Pagination, Search, Accordion, CopyButton, Notification, Toolbar, Tooltip, ProgressIndicator, FloatingMenu, StructuredList, Slider, Tile, CodeSnippet, TextInput, SideNav, HeaderSubmenu, HeaderNav, NavigationMenu, ProductSwitcher, PaginationNav */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

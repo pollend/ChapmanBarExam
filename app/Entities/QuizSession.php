@@ -3,8 +3,8 @@ namespace App\Entities;
 
 use App\Entities\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
+use JMS\Serializer\Annotation As JMS;
 
 /**
  * Class Quiz
@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Entity(repositoryClass="App\Repositories\QuizSessionRepository")
  * @ORM\Table(name="quiz_session")
  * @ORM\HasLifecycleCallbacks
+ *
  *
  */
 class QuizSession
@@ -23,12 +24,17 @@ class QuizSession
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
+     *
+     * @JMS\Groups({"list","detail"})
+     * @JMS\Type("int")
      */
     protected $id;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="submitted_at",type="datetime",nullable=true)
+     * @JMS\Groups({"list"})
+     * @JMS\Type("DateTime")
      */
     protected $submittedAt;
 
@@ -39,6 +45,9 @@ class QuizSession
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
+     *
+     * @JMS\Groups({"list","detail"})
+     * @JMS\Type("DateTime")
      */
     protected $quiz;
 
@@ -48,12 +57,15 @@ class QuizSession
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
      * })
+     * @JMS\Groups({"detail"})
      */
     protected $owner;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="session")
+     *
+     * @JMS\Groups({"detail"})
      */
     protected $responses;
 
@@ -65,8 +77,6 @@ class QuizSession
     {
         return $this->id;
     }
-
-
 
     public function getOwner()
     {

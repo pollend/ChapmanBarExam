@@ -26,4 +26,15 @@ class QuizSessionRepository extends EntityRepository
         }
         return null;
     }
+
+    public function getSessionsByUser(User $user){
+        $qb = $this->createQueryBuilder('q');
+        if($session =  $qb->where($qb->expr()->eq('q.owner', ':owner'))
+            ->setParameter('owner', $user)
+            ->getQuery()
+            ->getResult()){
+            return $session;
+        }
+        return null;
+    }
 }

@@ -3,8 +3,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Collection;
+use App\Repositories\QuizSessionRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class ReportController extends Controller
 {
@@ -15,31 +20,17 @@ class ReportController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
+
         return view('report.index');
     }
 
-    public function show($report)
+    public function show(Request $request,$report)
     {
+
         $user = Auth::user();
-//
-//        $session = QuizSession::query()
-//            ->where('owner_id',$user->id)
-//            ->where('id',$report)
-//            ->first();
-//
-////        $quiz = $session->quiz();
-//
-//        \Debugbar::info(MultipleChoiceResponse::query()->select('*')->bySession($session)->correctEntry()->get());
-//
-//        $questions = $this->quizRepository->getUnionedQuestions(function ($query) use ($session){
-//           return $query->where('quiz_id',$session->quiz_id);
-//        });
-//
-//        \Debugbar::info($questions->get());
-//
-//        return view('report.show');
-        return null;
+
+        return ['test' => 'test'];
     }
 }

@@ -4,10 +4,15 @@
 namespace App\Http\Controllers\Api;
 
 
+use App\Entities\User;
 use App\Http\Controllers\Controller;
+use App\Repositories\QuizSessionRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use JMS\Serializer\EventDispatcher\EventDispatcher;
+use JMS\Serializer\EventDispatcher\ObjectEvent;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerBuilder;
 class ApiReportController  extends Controller
 {
     private $sessionRepository;
@@ -24,26 +29,27 @@ class ApiReportController  extends Controller
      */
     public function index(Request $request)
     {
-//        $user = Auth::user();
-//
-//        $sessions = QuizSession::query()
-//            ->select('quiz_sessions.*','quizzes.name as quiz.name','quizzes.time_open as quiz.time_open')
-//            ->byOwner($user)
-//            ->join('quizzes','quizzes.id', '=','quiz_sessions.quiz_id')
-//            ->orderBy("quizzes.name","DESC")
-//            ->get();
-//        $quizzes = Quiz::query()
-//            ->whereIn('id',$sessions->groupBy('quiz_id')->keys())
-//            ->get()
-//            ->keyBy('id');
-//        return $sessions->map(function ($item, $key) use ($quizzes){
-//            $item->quiz = $quizzes[$item['quiz_id']];
-//            $item->max_score = 10;
-//            $item->score = 0;
-//            $item->uri = route('report.show',['report' => $item->id]);
-//            return $item;
-//        });
-        return null;
+
+        /** @var User $user */
+        $user = Auth::user();
+        /** @var QuizSessionRepository $repository */
+        $repository = \EntityManager::getRepository(\App\Entities\QuizSession::class);
+
+        $sessions = $repository->getSessionsByUser($user);
+
+        $serializer = SerializerBuilder::create()->configureListeners(function (EventDispatcher $dispatcher){
+            $dispatcher->addListener('serializer.post_serialize',function (ObjectEvent $event){
+                $event->getVisitor()->setData('uri', route('report.show',['report' => $event->getObject()->getId()]));
+
+            },'App\Entities\QuizSession');
+        })->addDefaultListeners()
+            ->build();
+
+        $context = SerializationContext::create()->setGroups([
+            'list'
+        ]);
+        return $serializer->serialize($sessions, 'json',$context);
+
     }
 
 }

@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Doctrine\ORM\Mapping AS ORM;
+use JMS\Serializer\Annotation As JMS;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
 /**
  * Class User
  *
@@ -28,18 +28,21 @@ class User extends Authenticatable
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
+     * @JMS\Groups({"list","detail"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=100,nullable=false)
+     * @JMS\Groups({"user_name"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=100,nullable=false)
+     * @JMS\Groups({"user_email"})
      */
     protected $email;
 
@@ -52,18 +55,21 @@ class User extends Authenticatable
     /**
      * @var string
      * @ORM\Column(name="password",type="string",length=255,nullable=false)
+     * @JMS\Exclude()
      */
     protected $password;
 
     /**
      * @var string
      * @ORM\Column(name="azure_id",type="string",length=50,nullable=false)
+     * @JMS\Exclude()
      */
     protected $azureId;
 
     /**
      * @var string
      * @ORM\Column(name="remember_token",type="string",length=100,nullable=false)
+     * @JMS\Exclude()
      */
     protected $rememberToken;
 
@@ -71,6 +77,7 @@ class User extends Authenticatable
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="owner")
+     * @JMS\Groups({"detail"})
      */
     protected $quizSessions;
 
@@ -88,6 +95,11 @@ class User extends Authenticatable
         return $this->id;
     }
 
+    public function getKey()
+    {
+        return $this->id;
+    }
+
     /**
      * @return string
      */
@@ -95,6 +107,7 @@ class User extends Authenticatable
     {
         return $this->name;
     }
+
 
     /**
      * @return string

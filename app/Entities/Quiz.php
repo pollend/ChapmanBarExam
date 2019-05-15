@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
+use JMS\Serializer\Annotation As JMS;
 
 /**
  * Class Quiz
@@ -30,69 +31,91 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
+     * @JMS\Groups({"list"})
+     * @JMS\Type("int")
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
+     * @JMS\Groups({"list"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
+     * @JMS\Groups({"list"})
      */
     protected $description;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="close_date",type="datetime",nullable=true)
+     * @JMS\Groups({"list"})
      */
     protected $closeDate;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="time_open",type="datetime",nullable=true)
+     * @JMS\Groups({"list"})
+     * @JMS\Type("DateTime")
      */
     protected $timeOpen;
 
     /**
      * @var string
      * @ORM\Column(name="is_open",type="boolean",nullable=true)
+     * @JMS\Groups({"list"})
      */
     protected $isOpen;
 
     /**
      * @var string
      * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
+     * @JMS\Groups({"list"})
      */
     protected $isHidden;
     /**
      * @var integer
      * @ORM\Column(name="num_attempts",type="integer",nullable=true)
+     * @JMS\Groups({"list"})
      */
     protected $numAttempts;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="deleted_at",type="datetime",nullable=true)
+     * @JMS\Groups({"list"})
      */
     protected $deletedAt;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quiz")
+     * @JMS\Groups({"quiz_sessions"})
      */
     protected $quizSessions;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizQuestion",mappedBy="quiz")
+     * @JMS\Groups({"detail"})
+     * @JMS\Groups({"quiz_questions"})
      */
     protected $questions;
 
 
+    /**
+     * @JMS\VirtualProperty
+     * @JMS\SerializedName("num_questions")
+     * @JMS\Groups({"list","detail"})
+     **/
+    public function numQuestions(){
+        return $this->getQuestions()->count();
+    }
 
     /**
      * @return int

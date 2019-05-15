@@ -62,23 +62,27 @@ class QuizQuestion
         return $this->id;
     }
 
-    function getOrder(){
+    function getOrder()
+    {
         return $this->order;
     }
 
-    public function answers(){
+    public function answers()
+    {
         return $this->responses;
     }
 
-    public function answersBySession($session){
-        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
+    public function answersBySession($session)
+    {
+        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
     }
 
     /**
      * @param $order
      * @return $this
      */
-    public function setOrder($order){
+    public function setOrder($order)
+    {
         $this->order = $order;
         return $this;
     }
@@ -87,12 +91,14 @@ class QuizQuestion
      * @param $group
      * @return $this
      */
-    public function setGroup($group){
+    public function setGroup($group)
+    {
         $this->group = $group;
         return $this;
     }
 
-    public function getGroup(){
+    public function getGroup()
+    {
         return $this->group;
     }
 }
