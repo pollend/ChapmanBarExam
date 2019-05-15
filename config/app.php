@@ -165,8 +165,13 @@ return [
         /*
          * Package Service Providers...
          */
+        LaravelDoctrine\Extensions\GedmoExtensionsServiceProvider::class,
+        LaravelDoctrine\Extensions\BeberleiExtensionsServiceProvider::class,
+
         \SocialiteProviders\Manager\ServiceProvider::class,
         \Barryvdh\Debugbar\ServiceProvider::class,
+        \LaravelDoctrine\ORM\DoctrineServiceProvider::class,
+        \LaravelDoctrine\Migrations\MigrationsServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -190,6 +195,9 @@ return [
     */
 
     'aliases' => [
+        'EntityManager' => LaravelDoctrine\ORM\Facades\EntityManager::class,
+        'Registry'      => LaravelDoctrine\ORM\Facades\Registry::class,
+        'Doctrine'      => LaravelDoctrine\ORM\Facades\Doctrine::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
         'Serializer' => \App\Facades\SerializerFacade::class,
         'App' => Illuminate\Support\Facades\App::class,

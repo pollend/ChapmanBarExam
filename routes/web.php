@@ -12,6 +12,8 @@
 */
 
 // Authentication Routes...
+use Illuminate\Http\Request;
+
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
@@ -36,11 +38,17 @@ Route::get('login/azure', 'Auth\SocialAuthController@redirectAzureToProvider')->
 Route::get('login/azure/callback', 'Auth\SocialAuthController@handleAzureProviderCallback');
 
 Route::group(['middleware' => ['auth']], function (){
+
     // redirect if there is an active session
     Route::group(['middleware' => ['quiz.redirect']],function (){
         Route::resource('report','ReportController');
 
         Route::get('/', 'HomeController@index')->name('home');
+
+        Route::get('/test', function (){
+            return 'test';
+        } );
+
 
         Route::get('quiz/end','SessionQuizController@endForm')->name('quiz.end');
         Route::post('quiz/end','SessionQuizController@end');

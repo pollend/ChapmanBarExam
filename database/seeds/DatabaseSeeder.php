@@ -1,6 +1,13 @@
 <?php
 
+use App\Quiz;
+use App\MultipleChoiceEntry;
+use App\MultipleChoiceQuestion;
+use App\ShortAnswerQuestion;
+use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,43 +18,63 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $quizzes = entity(\App\Entities\Quiz::class, 20)->create();
+        $users = entity(\App\Entities\User::class, 10)->create();
 
-        $quizzes = factory(\App\Quiz::class, 10)->create();
-        foreach ($quizzes as $quiz) {
+        foreach ($quizzes as $key => $quiz) {
+
+            print('quiz: '. $key . "\r\n");
             $index = 0;
-            factory(\App\QuizMultipleChoiceQuestion::class, 40)->create([
-                'quiz_id' => $quiz->id,
+
+            $sessions = entity(\App\Entities\QuizSession::class,10)->create([
+                'owner' => $users->random(1)[0],
+                'quiz' => $quiz
+            ]);
+
+            entity(App\Entities\MultipleChoiceQuestion::class, 40)->create([
+                'quiz' => $quiz,
                 'group' => 1,
                 'order' => function (array $i) use (&$index) {
                     return ++$index;
                 }
-            ])->each(function ($q) {
+            ])->each(function ($q) use ($sessions) {
                 $q_index = 0;
 
-                factory(\App\QuizMultipleChoiceEntry::class, rand(3, 4))->create([
+                $entries = entity(App\Entities\MultipleChoiceEntry::class, rand(3, 4))->create([
                     'order' => function (array $i) use (&$q_index) {
                         return ++$q_index;
                     },
-                    'quiz_multiple_choice_question_id' => $q->id
+                    'question' => $q
                 ]);
+                $q->setCorrectAnswer($entries->random(1)[0]);
+//                foreach ($sessions as $session){
+//                    entity(App\Entities\MultipleChoiceResponse::class)->create([
+//                        'multipleChoiceEntry' => $entries->random(1)[0],
+//                        'session' => $session
+//                    ]);
+//                }
+
+                \EntityManager::persist($q);
+
             });
 
-            factory(\App\QuizShortAnswerQuestion::class)->create([
-                'quiz_id' => $quiz->id,
+            entity(App\Entities\ShortAnswerQuestion::class)->create([
+                'quiz' => $quiz,
                 'group' => 1,
                 'order' => 0
             ]);
 
-            factory(\App\QuizShortAnswerQuestion::class, 3)->create([
-                'quiz_id' => $quiz->id,
+            entity(App\Entities\ShortAnswerQuestion::class, 3)->create([
+                'quiz' => $quiz,
                 'group' => 0,
                 'order' => function (array $i) use (&$index) {
                     return ++$index;
                 }
             ]);
 
-        }
-        $users = factory(\App\User::class, 10)->create();
 
+        }
+
+        \EntityManager::flush();
     }
 }

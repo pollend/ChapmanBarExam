@@ -12,14 +12,11 @@
                     <form method="POST" action="{{ route('quiz.question',['session_id' => $session_id,'page' => $page]) }}">
                         @csrf
                         @foreach ($questions as $question)
-                            @switch($question->type)
-                                @case('multipleChoice')
-                                    @include('partials.multiple_choice',['question' => $question,'index' => $loop->iteration])
-                                    @break
-                                @case('shortAnswer')
-                                    @include('partials.short_answer',['question' => $question,'index' => $loop->iteration])
-                                    @break
-                            @endswitch
+                            @if($question instanceof \App\Entities\MultipleChoiceQuestion)
+                                @include('partials.multiple_choice',['question' => $question,'index' => $loop->iteration])
+                            @elseif($question instanceof \App\Entities\ShortAnswerQuestion)
+                                @include('partials.short_answer',['question' => $question,'index' => $loop->iteration])
+                            @endif
                         @endforeach
 
                         <div>

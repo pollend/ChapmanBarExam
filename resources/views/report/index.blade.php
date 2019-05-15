@@ -2,10 +2,6 @@
 
 @section('content')
     <div class="container">
-        @for ($i = 0; $i < 10; $i++)
-            <div>
-                Test
-            </div>
-        @endfor
+        <report-component route="{{ route('api.report.index')  }}"></report-component>
     </div>
 @endsection

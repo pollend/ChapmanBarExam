@@ -13,12 +13,15 @@
         <div id="navbarMenu" class="navbar-menu">
             <div class="navbar-end">
 {{--                @section('left-bar-items')--}}
+
+                @guest @else
                     <a class="navbar-item" href="{{route('home')}}">
                         Home
                     </a>
                     <a class="navbar-item" href="{{route('report.index')}}">
                         Reports
                     </a>
+                @endguest
 {{--                @endsection--}}
                 @guest
                     <a class="navbar-item" href="{{ route('login') }}">
@@ -32,7 +35,7 @@
                 @else
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link">
-                            {{ Auth::user()->name }}
+                            {{ Auth::user()->getName() }}
                         </a>
                         <div class="navbar-dropdown">
                             <hr class="navbar-divider">
