@@ -40,9 +40,9 @@ class SessionQuizController extends Controller
         $repository = \EntityManager::getRepository(\App\Entities\Quiz::class);
 
         $quiz = $repository->find($id);
-        if($quiz  == null)
+        if ($quiz == null)
             abort(404);
-        if(!$quiz->isOpen($user))
+        if (!$quiz->isOpen($user))
             abort(404);
 
         return view('quiz.start', ['quiz_id' => $id]);
@@ -55,11 +55,11 @@ class SessionQuizController extends Controller
         /** @var QuizSessionRepository $sessionRepository */
         $sessionRepository = \EntityManager::getRepository(QuizSession::class);
 
-        if($quiz = $quizRepository->find($id)){
+        if ($quiz = $quizRepository->find($id)) {
             $user = Auth::user();
-            if($sessionRepository->getActiveSession($user) != null)
+            if ($sessionRepository->getActiveSession($user) != null)
                 abort(404);
-            if($quiz->isOpen($user) === false)
+            if ($quiz->isOpen($user) === false)
                 abort(404);
 
             $session = new QuizSession();
@@ -71,6 +71,7 @@ class SessionQuizController extends Controller
             return redirect()->route('quiz.question', ['session_id' => $session->getId(), 'page' => 0]);
         }
         abort(404);
+        return null;
     }
 
 
@@ -101,6 +102,7 @@ class SessionQuizController extends Controller
             }
         }
         abort(404);
+        return null;
     }
 
     /**
@@ -121,7 +123,7 @@ class SessionQuizController extends Controller
 
 
         /** @var QuizSession $session */
-        if($session = $sessionRepository->getActiveSession($user)){
+        if ($session = $sessionRepository->getActiveSession($user)) {
             if ($session->getId() == $session_id) {
                 /** @var Quiz $quiz */
                 $quiz = $session->getQuiz();
@@ -158,18 +160,18 @@ class SessionQuizController extends Controller
                     $multipleChoiceEntryRepository = \EntityManager::getRepository(MultipleChoiceEntry::class);
 
                     foreach ($request->get('multiple_choice') as $key => $value) {
-                        if($question = $multipleChoiceRepository->findOneBy(['quiz' => $quiz, 'group' => $group, 'id' => $key])){
+                        if ($question = $multipleChoiceRepository->findOneBy(['quiz' => $quiz, 'group' => $group, 'id' => $key])) {
                             $response = $question->answersBySession($session)->first();
-                            if($response === false){
+                            if ($response === false) {
                                 $response = new MultipleChoiceResponse();
                                 $response->setQuestion($question);
                                 $response->setSession($session);
                             }
-                            if($response instanceof MultipleChoiceResponse){
+                            if ($response instanceof MultipleChoiceResponse) {
                                 $entries = $multipleChoiceEntryRepository->getEntriesForQuestion($question);
                                 /** @var MultipleChoiceEntry $entry */
-                                foreach ($entries as $entry){
-                                    if($entry->getId() == $value){
+                                foreach ($entries as $entry) {
+                                    if ($entry->getId() == $value) {
                                         $response->setChoice($entry);
                                     }
                                 }
@@ -201,26 +203,6 @@ class SessionQuizController extends Controller
         }
 
         return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page]);
-    }
-
-    private function submitShortAnswer($question,$session,$content){
-        $answer = $question->answers()
-            ->bySession($session)
-            ->firstOrNew([]);
-        $answer->quiz_session_id = $session->id;
-        $answer->quiz_short_answer_question_id = $question->id;
-        $answer->content = $content;
-        $answer->save();
-    }
-
-    private function submitMultipleChoiceAnswer($question,$session,$entry){
-        $answer = $question->answers()
-            ->bySession($session)
-            ->firstOrNew([]);
-        $answer->quiz_session_id = $session->id;
-        $answer->quiz_multiple_choice_question_id = $question->id;
-        $answer->quiz_multiple_choice_entry_id = $entry->id;
-        $answer->save();
     }
 
 }

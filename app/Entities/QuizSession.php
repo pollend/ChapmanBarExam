@@ -100,7 +100,6 @@ class QuizSession
         return $this;
     }
 
-
     /**
      * @param \DateTime $submittedAt
      */
