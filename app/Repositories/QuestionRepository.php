@@ -33,17 +33,6 @@ class QuestionRepository extends EntityRepository
             ->getResult();
     }
 
-//    public function applyGrouping($questions,$reindex = false){
-//        $collection = Collection::make($questions)
-//            ->sortBy(function ($q){return $q->getGroup();})
-//            ->groupBy(function ($q){return $q->getGroup();})
-//            ->transform(function ($entry) {
-//                return $entry->sortby(function ($o){return $o->getOrder();})->values();
-//            });
-//        if($reindex == true)
-//            $collection->values();
-//        return $collection;
-//    }
 
     public function getUniqueGroups($quiz){
         $qb = $this->createQueryBuilder('q');

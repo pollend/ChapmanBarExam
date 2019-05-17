@@ -31,6 +31,27 @@ class QuizSession
     protected $id;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="score", type="integer", nullable=true)
+     *
+     * @JMS\Groups({"list","detail"})
+     * @JMS\Type("int")
+     */
+    protected $score;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="max_score", type="integer", nullable=true)
+     *
+     * @JMS\Groups({"list","detail"})
+     * @JMS\Type("int")
+     */
+    protected $maxScore;
+
+
+    /**
      * @var \DateTime
      * @ORM\Column(name="submitted_at",type="datetime",nullable=true)
      * @JMS\Groups({"list"})
@@ -98,6 +119,46 @@ class QuizSession
     {
         $this->quiz = $quiz;
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getResponses(): ArrayCollection
+    {
+        return $this->responses;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxScore(): int
+    {
+        return $this->maxScore;
+    }
+
+    /**
+     * @return int
+     */
+    public function getScore(): int
+    {
+        return $this->score;
+    }
+
+    /**
+     * @param int $score
+     */
+    public function setScore(int $score): void
+    {
+        $this->score = $score;
+    }
+
+    /**
+     * @param int $maxScore
+     */
+    public function setMaxScore(int $maxScore): void
+    {
+        $this->maxScore = $maxScore;
     }
 
     /**

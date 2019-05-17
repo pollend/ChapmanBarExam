@@ -37,4 +37,5 @@ class QuizSessionRepository extends EntityRepository
         }
         return null;
     }
+
 }

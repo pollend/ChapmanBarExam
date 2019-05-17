@@ -15,7 +15,9 @@ use Doctrine\ORM\Mapping AS ORM;
 class QuizQuestion
 {
 
-    /**
+
+
+        /**
      * @var integer
      *
      * @ORM\Id()
@@ -101,4 +103,5 @@ class QuizQuestion
     {
         return $this->group;
     }
+
 }

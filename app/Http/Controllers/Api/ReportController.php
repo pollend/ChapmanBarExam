@@ -13,9 +13,8 @@ use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\EventDispatcher\ObjectEvent;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
-class ApiReportController  extends Controller
+class ReportController extends Controller
 {
-    private $sessionRepository;
 
     public function __construct()
     {
@@ -29,7 +28,6 @@ class ApiReportController  extends Controller
      */
     public function index(Request $request)
     {
-
         /** @var User $user */
         $user = Auth::user();
         /** @var QuizSessionRepository $repository */
@@ -37,18 +35,29 @@ class ApiReportController  extends Controller
 
         $sessions = $repository->getSessionsByUser($user);
 
-        $serializer = SerializerBuilder::create()->configureListeners(function (EventDispatcher $dispatcher){
-            $dispatcher->addListener('serializer.post_serialize',function (ObjectEvent $event){
-                $event->getVisitor()->setData('uri', route('report.show',['report' => $event->getObject()->getId()]));
+        $serializer = SerializerBuilder::create()->configureListeners(function (EventDispatcher $dispatcher) {
+            $dispatcher->addListener('serializer.post_serialize', function (ObjectEvent $event) {
+                $event->getVisitor()->setData('uri', route('report.show', ['report' => $event->getObject()->getId()]));
 
-            },'App\Entities\QuizSession');
+            }, 'App\Entities\QuizSession');
         })->addDefaultListeners()
             ->build();
 
         $context = SerializationContext::create()->setGroups([
             'list'
         ]);
-        return $serializer->serialize($sessions, 'json',$context);
+        return $serializer->serialize($sessions, 'json', $context);
+    }
+
+    /**
+     *
+     */
+    public function getQuizScores(Request $request){
+        /** @var User $user */
+        $user = Auth::user();
+        /** @var QuizSessionRepository $repository */
+        $repository = \EntityManager::getRepository(\App\Entities\QuizSession::class);
+
 
     }
 

@@ -95,6 +95,7 @@ class MultipleChoiceQuestion extends QuizQuestion
         return $this->id;
     }
 
+
     /**
      * @return string
      */

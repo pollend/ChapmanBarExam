@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping AS ORM;
 class MultipleChoiceResponse extends  QuizResponse
 {
 
+
     /**
      * @var MultipleChoiceEntry
      * @ORM\ManyToOne(targetEntity="MultipleChoiceEntry")
@@ -26,6 +27,7 @@ class MultipleChoiceResponse extends  QuizResponse
      * })
      */
     protected $choice;
+
 
     /**
      * @return Quiz

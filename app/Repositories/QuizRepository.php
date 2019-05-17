@@ -68,6 +68,10 @@ class QuizRepository extends EntityRepository
             ->values();
     }
 
+    function getResponseScores(){
+
+    }
+
 
     function getUnionedQuestions(\Closure $query = null)
     {

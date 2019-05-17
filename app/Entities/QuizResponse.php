@@ -85,4 +85,5 @@ class QuizResponse
     {
         return $this->session;
     }
+    
 }

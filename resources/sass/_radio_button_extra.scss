@@ -1,0 +1,31 @@
+
+.qz--radio-button-checked>.bx--radio-button__appearance{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: $ui-05;
+
+  &:before {
+    content: '';
+    display: inline-block;
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: $ui-05;
+  }
+}
+
+.qz--radio-incorrect>.bx--radio-button__appearance{
+  //border-color: red;
+  &:before {
+    background-color: red;
+  }
+}
+
+.qz--radio-correct>.bx--radio-button__appearance{
+  //border-color: green;
+  &:before {
+    background-color: green;
+  }
+}

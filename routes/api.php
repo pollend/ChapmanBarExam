@@ -18,7 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['auth:api']],function (){
-   Route::resource('report','Api\ApiReportController', [
+   Route::resource('report','Api\ReportController', [
        'as' => 'api'
    ]);
+
+
 });

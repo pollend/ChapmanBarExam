@@ -1,5 +1,4 @@
 <div>
-
     @php ($answer = $question->answersBySession($session)->first())
     <div class="bx--form-item">
         <div class="bx--form__helper-text">{{$index}} . {{$question->getContent()}}</div>
@@ -18,6 +17,4 @@
 
     </div>
     <div class="is-divider is-divider-margin-2"></div>
-
-
 </div>

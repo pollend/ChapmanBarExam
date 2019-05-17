@@ -1,0 +1,23 @@
+.qz-dot {
+  background: red;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  left: -17px;
+  top: 3px;
+  border-radius: 10px;
+
+  &.qz-dot-incorrect{
+    background: red;
+  }
+
+  &.qz-dot-non-response{
+    background: yellow;
+  }
+
+  &.qz-dot-correct{
+    background: green;
+  }
+
+}
+

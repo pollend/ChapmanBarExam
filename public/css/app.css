@@ -17145,6 +17145,53 @@ label.panel-block:hover {
   border-left-color: #fafafa;
 }
 
+.qz--radio-button-checked > .bx--radio-button__appearance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: #171717;
+}
+
+.qz--radio-button-checked > .bx--radio-button__appearance:before {
+  content: "";
+  display: inline-block;
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: #171717;
+}
+
+.qz--radio-incorrect > .bx--radio-button__appearance:before {
+  background-color: red;
+}
+
+.qz--radio-correct > .bx--radio-button__appearance:before {
+  background-color: green;
+}
+
+.qz-dot {
+  background: red;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  left: -17px;
+  top: 3px;
+  border-radius: 10px;
+}
+
+.qz-dot.qz-dot-incorrect {
+  background: red;
+}
+
+.qz-dot.qz-dot-non-response {
+  background: yellow;
+}
+
+.qz-dot.qz-dot-correct {
+  background: green;
+}
+
 .qz-login-form .bx--form-item,
 .qz-login-form .bx--form-item {
   margin-bottom: 1rem;
