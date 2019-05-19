@@ -23,68 +23,64 @@ class QuizRepository extends EntityRepository
         return $quiz->sessions()->where('owner_id', $user->id)->count();
     }
 
-    /**
-     * @param \App\Quiz $quiz
-     * @return \Illuminate\Support\Collection
-     */
-    public function getGroupedQuestions($quiz)
-    {
-        $collection = $this->getQuestions($quiz)
-            ->sortBy('group')
-            ->groupBy('group')
-            ->transform(function ($entry) {
-                return $entry->sortby('order')->values();
-            })->values();
-        return $collection;
-    }
+//    /**
+//     * @param \App\Quiz $quiz
+//     * @return \Illuminate\Support\Collection
+//     */
+//    public function getGroupedQuestions($quiz)
+//    {
+//        $collection = $this->getQuestions($quiz)
+//            ->sortBy('group')
+//            ->groupBy('group')
+//            ->transform(function ($entry) {
+//                return $entry->sortby('order')->values();
+//            })->values();
+//        return $collection;
+//    }
+//
+//    /**
+//     * @param Quiz $quiz
+//     * @return \Illuminate\Support\Collection
+//     */
+//    public function getQuestions($quiz,\Closure $callback = null){
+//        if($callback){
+//            return \Illuminate\Support\Collection::make()
+//                ->merge($callback($quiz->multipleChoiceQuestions()))
+//                ->merge($callback($quiz->shortAnswerQuestions()));
+//        }
+//        return \Illuminate\Support\Collection::make()
+//            ->merge($quiz->multipleChoiceQuestions()->get())
+//            ->merge($quiz->shortAnswerQuestions()->get());
+//    }
 
-    /**
-     * @param Quiz $quiz
-     * @return \Illuminate\Support\Collection
-     */
-    public function getQuestions($quiz,\Closure $callback = null){
-        if($callback){
-            return \Illuminate\Support\Collection::make()
-                ->merge($callback($quiz->multipleChoiceQuestions()))
-                ->merge($callback($quiz->shortAnswerQuestions()));
-        }
-        return \Illuminate\Support\Collection::make()
-            ->merge($quiz->multipleChoiceQuestions()->get())
-            ->merge($quiz->shortAnswerQuestions()->get());
-    }
-
-    /**
-     * get the order values for looking up questions
-     *
-     * @param Quiz $quiz
-     * @return \Illuminate\Support\Collection
-     */
-    public function getGroups(Quiz $quiz)
-    {
-        return $this->getQuestions($quiz, function ($q) {
-            return $q->distinct('group')->value('group');
-        })->unique()
-            ->sort()
-            ->values();
-    }
-
-    function getResponseScores(){
-
-    }
-
-
-    function getUnionedQuestions(\Closure $query = null)
-    {
-        $q1 = DB::table('quiz_multiple_choice_questions')
-            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
-            ->selectRaw('\'multiple_choice\' as "type"');
-
-        $q2 = DB::table('quiz_short_answer_questions')
-            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
-            ->selectRaw('\'short_answer\' as "type"');
-
-        if($query != null)
-            return $query($q1)->union($query($q2));
-        return $q1->union($q2);
-    }
+//    /**
+//     * get the order values for looking up questions
+//     *
+//     * @param Quiz $quiz
+//     * @return \Illuminate\Support\Collection
+//     */
+//    public function getGroups(Quiz $quiz)
+//    {
+//        return $this->getQuestions($quiz, function ($q) {
+//            return $q->distinct('group')->value('group');
+//        })->unique()
+//            ->sort()
+//            ->values();
+//    }
+//
+//
+//    function getUnionedQuestions(\Closure $query = null)
+//    {
+//        $q1 = DB::table('quiz_multiple_choice_questions')
+//            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
+//            ->selectRaw('\'multiple_choice\' as "type"');
+//
+//        $q2 = DB::table('quiz_short_answer_questions')
+//            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
+//            ->selectRaw('\'short_answer\' as "type"');
+//
+//        if($query != null)
+//            return $query($q1)->union($query($q2));
+//        return $q1->union($q2);
+//    }
 }

@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Console\Commands\RecalculateScores;
 use App\Entities\MultipleChoiceEntry;
 use App\Entities\MultipleChoiceQuestion;
 use App\Entities\MultipleChoiceResponse;
@@ -13,6 +14,7 @@ use App\Entities\QuizSession;
 use App\Entities\ShortAnswerQuestion;
 use App\Entities\ShortAnswerResponse;
 use App\Entities\User;
+use App\Jobs\ProcessQuizSession;
 use App\Repositories\MultipleChoiceEntryRepository;
 use App\Repositories\MultipleChoiceQuestionRepository;
 use App\Repositories\QuestionRepository;
@@ -194,6 +196,8 @@ class SessionQuizController extends Controller
                         $session->setSubmittedAt(Carbon::now());
                         \EntityManager::persist($session);
                         \EntityManager::flush();
+                        // process quiz and calculate score
+                        ProcessQuizSession::dispatch($session);
                         return redirect()->route('home');
                     }
                     return redirect()->route('quiz.question', ['session_id' => $session_id, 'page' => $page + 1]);

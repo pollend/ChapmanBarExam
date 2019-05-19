@@ -4,6 +4,7 @@ namespace App\Entities;
 use App\Entities\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\PersistentCollection;
 use JMS\Serializer\Annotation As JMS;
 
 /**
@@ -83,7 +84,7 @@ class QuizSession
     protected $owner;
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="session")
      *
      * @JMS\Groups({"detail"})
@@ -122,9 +123,9 @@ class QuizSession
     }
 
     /**
-     * @return ArrayCollection
+     * @return PersistentCollection
      */
-    public function getResponses(): ArrayCollection
+    public function getResponses(): PersistentCollection
     {
         return $this->responses;
     }
@@ -136,6 +137,8 @@ class QuizSession
     {
         return $this->maxScore;
     }
+
+
 
     /**
      * @return int

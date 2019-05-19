@@ -26,7 +26,7 @@ cp env-example .env
 #### Starting Docker Instance
 
 ```
-docker-compose up -d nginx postgres adminer workspace 
+docker-compose up -d nginx postgres adminer workspace
 ```
 
 #### workspace

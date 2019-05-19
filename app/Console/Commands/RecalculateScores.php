@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Entities\QuizSession;
+use App\Jobs\ProcessQuizSession;
 use App\Repositories\QuizSessionRepository;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Queue\Jobs\Job;
 
 class RecalculateScores extends Command
 {
@@ -44,14 +46,10 @@ class RecalculateScores extends Command
         $i = 0;
         /** @var QuizSessionRepository $quizSessionRepository */
         $quizSessionRepository = \EntityManager::getRepository(QuizSession::class);
-        $iterator = $quizSessionRepository->createNamedQuery('q')->iterate();
+        $iterator = $quizSessionRepository->createQueryBuilder('q')->getQuery()->iterate();
         /** @var QuizSession $row */
         foreach ($iterator as $row){
-            \EntityManager::persist(null);
-            if($i % 100 == 0){
-                \EntityManager::flush();
-            }
-            ++$i;
+            ProcessQuizSession::dispatch($row[0]);
         }
 
     }
