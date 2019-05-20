@@ -2,9 +2,12 @@
 namespace App\Entities;
 
 use App\Entities\Traits\TimestampTrait;
+use App\Repositories\QuestionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping AS ORM;
 use Doctrine\ORM\PersistentCollection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use JMS\Serializer\Annotation As JMS;
 
 /**
@@ -50,6 +53,17 @@ class QuizSession
      * @JMS\Type("int")
      */
     protected $maxScore;
+
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="meta", type="json", nullable=true)
+     *
+     * @JMS\Groups({"list","detail"})
+     * @JMS\Type("json_array")
+     */
+    protected $meta;
 
 
     /**
@@ -138,6 +152,21 @@ class QuizSession
         return $this->maxScore;
     }
 
+    /**
+     * @param array  $meta
+     */
+    public function setMeta(array $meta): void
+    {
+        $this->meta = $meta;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMeta(): array
+    {
+        return $this->meta;
+    }
 
 
     /**
@@ -172,4 +201,45 @@ class QuizSession
         $this->submittedAt = $submittedAt;
         return $this;
     }
+
+
+    public function calculateMaxScore(){
+        $result = 0;
+        Collection::make($this->getQuiz()->getQuestions())->each(function ($q) use (&$result){
+            if($q instanceof MultipleChoiceQuestion){
+                $result++;
+            }
+        });
+        $this->setMaxScore($result);
+        return $result;
+    }
+
+    public function calculateScore(){
+        $responses = Collection::make($this->getResponses())->keyBy(function ($item) {
+            return $item->getQuestion()->getId();
+        });
+        $result = 0;
+        Collection::make($this->getQuiz()->getQuestions())->each(function ($q) use (&$result,$responses) {
+            if ($q instanceof MultipleChoiceQuestion) {
+                if (Arr::exists($responses, $q->getId())) {
+                    /** @var MultipleChoiceResponse $multipleChoiceResponse */
+                    $multipleChoiceResponse = $responses[$q->getId()];
+                    if ($q->getCorrectEntry() === $multipleChoiceResponse->getChoice()) {
+                        $result++;
+                    }
+                }
+            }
+        });
+        $this->setScore($result);
+        return $result;
+    }
+
+    public function getNonResponseQuestions()
+    {
+        /** @var QuestionRepository $questionRepository */
+        $questionRepository = \EntityManager::getRepository(QuizQuestion::class);
+        return $questionRepository->filterQuestionsByNotInResponses($this->getQuiz(),$this->getResponses());
+
+    }
+
 }

@@ -50,33 +50,8 @@ class ProcessQuizSession implements ShouldQueue
 
         /** @var QuizSession $ses */
         $ses = $quizSessionRepository->find($this->session->getId());
-
-        $maxScore = 0;
-        $score = 0;
-
-        $responses = Collection::make($ses->getResponses())->keyBy(function ($item) {
-            return $item->getQuestion()->getId();
-        });
-
-        /** @var Quiz $quiz */
-        $quiz = $ses->getQuiz();
-        $questions = $quizRepository->find($quiz->getId())->getQuestions();
-        foreach ($questions as $question) {
-            if ($question instanceof MultipleChoiceQuestion) {
-                $maxScore++;
-                if (Arr::exists($responses, $question->getId())) {
-                    /** @var MultipleChoiceResponse $multipleChoiceResponse */
-                    $multipleChoiceResponse = $responses[$question->getId()];
-                    if ($question->getCorrectEntry() === $multipleChoiceResponse->getChoice()) {
-                        $score++;
-                    }
-                }
-            }
-        }
-
-
-        $ses->setMaxScore($maxScore);
-        $ses->setScore($score);
+        $ses->calculateMaxScore();
+        $ses->calculateScore();
         \EntityManager::persist($ses);
         \EntityManager::flush();
     }
