@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Entity()
  * @ORM\Table(name="short_answer_response")
  * @ORM\HasLifecycleCallbacks
- *
  */
 class ShortAnswerResponse extends QuizResponse
 {

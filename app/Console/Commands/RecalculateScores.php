@@ -42,8 +42,6 @@ class RecalculateScores extends Command
      */
     public function handle()
     {
-
-        $i = 0;
         /** @var QuizSessionRepository $quizSessionRepository */
         $quizSessionRepository = \EntityManager::getRepository(QuizSession::class);
         $iterator = $quizSessionRepository->createQueryBuilder('q')->getQuery()->iterate();

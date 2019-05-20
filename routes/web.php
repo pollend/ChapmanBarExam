@@ -41,14 +41,15 @@ Route::group(['middleware' => ['auth']], function (){
 
     // redirect if there is an active session
     Route::group(['middleware' => ['quiz.redirect']],function (){
+        Route::group(['middleware' => ['admin']], function (){
+
+        });
+
         Route::resource('report','ReportController');
-
         Route::get('/', 'HomeController@index')->name('home');
-
         Route::get('/test', function (){
             return 'test';
         } );
-
 
         Route::get('quiz/end','SessionQuizController@endForm')->name('quiz.end');
         Route::post('quiz/end','SessionQuizController@end');

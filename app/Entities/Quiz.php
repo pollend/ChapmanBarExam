@@ -58,27 +58,6 @@ class Quiz
     protected $closeDate;
 
     /**
-     * @var \DateTime
-     * @ORM\Column(name="time_open",type="datetime",nullable=true)
-     * @JMS\Groups({"list"})
-     * @JMS\Type("DateTime")
-     */
-    protected $timeOpen;
-
-    /**
-     * @var string
-     * @ORM\Column(name="is_open",type="boolean",nullable=true)
-     * @JMS\Groups({"list"})
-     */
-    protected $isOpen;
-
-    /**
-     * @var string
-     * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
-     * @JMS\Groups({"list"})
-     */
-    protected $isHidden;
-    /**
      * @var integer
      * @ORM\Column(name="num_attempts",type="integer",nullable=true)
      * @JMS\Groups({"list"})
@@ -91,6 +70,13 @@ class Quiz
      * @JMS\Groups({"list"})
      */
     protected $deletedAt;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
+     * @JMS\Groups({"list"})
+     */
+    protected $isHidden;
 
     /**
      * @var ArrayCollection
@@ -169,16 +155,29 @@ class Quiz
         return Carbon::instance($this->closeDate);
     }
 
+    /**
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->isHidden;
+    }
+
+    /**
+     * @param bool $isHidden
+     */
+    public function setIsHidden(bool $isHidden): void
+    {
+        $this->isHidden = $isHidden;
+    }
+
     public function isOpen($user){
 
         if (Carbon::today() > $this->closeDate)
             return false;
 
         // number of user attempts exceeds the max attempts on a quiz
-        if ($this->getQuizSessionsByUser($user)->count() > $this->numAttempts)
-            return false;
-
-        if($this->isOpen === false)
+        if ($this->getQuizSessionsByUser($user)->count() >= $this->numAttempts)
             return false;
 
         return true;

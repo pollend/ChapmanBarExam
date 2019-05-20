@@ -29,8 +29,6 @@
 @import "~carbon-components/scss/components/search/search";
 
 
-
-
 // Bulma
 @import "~bulma/sass/utilities/_all";
 @import "~bulma/sass/base/helpers";
@@ -42,6 +40,10 @@
 @import "divider";
 @import "radio_button_extra";
 @import "ear_mark";
+
+.qz--form__helper-text-disable-max-width{
+  max-width: none;
+}
 
 .qz-login-form .bx--form-item, .qz-login-form .bx--form-item {
   margin-bottom: 1rem;

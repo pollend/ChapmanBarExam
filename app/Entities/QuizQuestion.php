@@ -52,6 +52,12 @@ class QuizQuestion
      */
     protected $responses;
 
+    /**
+     * Many Groups have Many Users.
+     * @ORM\ManyToMany(targetEntity="QuestionTag", mappedBy="questions")
+     */
+    private $tags;
+
 
     /**
      * @return int

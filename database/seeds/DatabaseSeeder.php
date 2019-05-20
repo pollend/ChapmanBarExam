@@ -20,16 +20,19 @@ class DatabaseSeeder extends Seeder
     {
         $quizzes = entity(\App\Entities\Quiz::class, 20)->create();
         $users = entity(\App\Entities\User::class, 10)->create();
+        $admin = entity(\App\Entities\User::class)->create([
+                'isAdmin' => true
+            ]);
 
         foreach ($quizzes as $key => $quiz) {
 
             print('quiz: '. $key . "\r\n");
             $index = 0;
 
-            $sessions = entity(\App\Entities\QuizSession::class,10)->create([
-                'owner' => $users->random(1)[0],
-                'quiz' => $quiz
-            ]);
+//            $sessions = entity(\App\Entities\QuizSession::class,10)->create([
+//                'owner' => $users->random(1)[0],
+//                'quiz' => $quiz
+//            ]);
 
             entity(App\Entities\MultipleChoiceQuestion::class, 40)->create([
                 'quiz' => $quiz,
@@ -37,7 +40,7 @@ class DatabaseSeeder extends Seeder
                 'order' => function (array $i) use (&$index) {
                     return ++$index;
                 }
-            ])->each(function ($q) use ($sessions) {
+            ])->each(function ($q){
                 $q_index = 0;
 
                 $entries = entity(App\Entities\MultipleChoiceEntry::class, rand(3, 4))->create([

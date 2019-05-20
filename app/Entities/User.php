@@ -47,6 +47,13 @@ class User extends Authenticatable
     protected $email;
 
     /**
+     * @var boolean
+     * @ORM\Column(name="admin",type="boolean",nullable=false)
+     * @JMS\Groups({"user_admin"})
+     */
+    protected $isAdmin = false;
+
+    /**
      * @var string
      * @ORM\Column(name="email_verified_at",type="datetime",nullable=false)
      */
@@ -81,8 +88,21 @@ class User extends Authenticatable
      */
     protected $quizSessions;
 
+
     public function getId(){
         return $this->id;
+    }
+
+    public function isAdmin() : bool {
+        return $this->isAdmin;
+    }
+
+    /**
+     * @param bool $isAdmin
+     */
+    public function setIsAdmin(bool $isAdmin): void
+    {
+        $this->isAdmin = $isAdmin;
     }
 
     public function getAuthIdentifierName()
@@ -108,7 +128,6 @@ class User extends Authenticatable
         return $this->name;
     }
 
-
     /**
      * @return string
      */
@@ -116,6 +135,4 @@ class User extends Authenticatable
     {
         return $this->password;
     }
-
-
 }

@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 500px"></div>
+    <div style="height: 30rem"></div>
 </template>
 
 <script>
@@ -10,29 +10,10 @@
         data() {
           return {
               "chart": null
-              // "chart" : new DonutChart(this.$el,{data: {
-              //         labels: ["Quantity", "Leads", "Sold", "Restocking", "Misc"],
-              //         datasets: [
-              //             {
-              //                 label: "Scores",
-              //                 backgroundColors: [defaultColors[0]],
-              //                 data: [65000, 29123, 35213, 51213, 16932]
-              //             }
-              //         ]
-              //     },
-              //     options: {
-              //         centerLabel: 'Scores',
-              //         centerNumber:'100'
-              //     }})
           }
         },
         mounted() {
             this.query();
-
-            // barChart.setData({
-            //
-            // })
-
         },
         methods: {
             query: function () {
@@ -53,14 +34,18 @@
                         ]
                     };
                     let o = {
-                        centerLabel: 'Score',
-                        centerNumber: response.data.correct_count + '/' + response.data.max_count
+                        center: {
+                            label: 'Score',
+                            number: response.data.correct_count + '/' + response.data.max_count
+                        }
                     };
                     if(_this.chart == null){
                         _this.chart = new DonutChart(_this.$el,{
                             data: d,
                             options: o
-                        })
+                        });
+
+
                     }
                     // _this.chart.update();
 
