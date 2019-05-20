@@ -9,8 +9,10 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+
 import CarbonComponentsVue from '@carbon/vue/src/index';
 Vue.use(CarbonComponentsVue);
+
 
 /**
  * The following block of code may be used to automatically register your
@@ -25,8 +27,8 @@ Vue.use(CarbonComponentsVue);
 
 // Example Component
 Vue.component('example-component',require('./components/ExampleComponent.vue').default);
-
-Vue.component('report-component',require('./components/ReportComponent.vue').default)
+Vue.component('report-component',require('./components/ReportComponent.vue').default);
+Vue.component('report-score',require('./components/ReportScore').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

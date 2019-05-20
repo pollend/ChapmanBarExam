@@ -4,6 +4,7 @@
     <div class="section">
         <div class="container">
             <div class="row justify-content-center">
+                <report-score route="{{ route('api.report.meta',['report' => $session->getId()]) }}"></report-score>
             </div>
         </div>
     </div>

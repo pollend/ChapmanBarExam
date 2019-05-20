@@ -29,6 +29,8 @@
         "bourbon": "^5.1.0",
         "bourbon-neat": "^3.0.1",
         "bulma": "^0.7.4",
-        "carbon-components": "^10.2.0"
+        "carbon-components": "^10.2.0",
+        "chart.js": "^2.8.0",
+        "vue-chartjs": "^3.4.2"
     }
 }

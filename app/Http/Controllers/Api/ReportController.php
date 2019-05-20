@@ -51,7 +51,8 @@ class ReportController extends Controller
             ->build();
 
         $context = SerializationContext::create()->setGroups([
-            'list'
+            'list',
+            'timestamp'
         ]);
         return $serializer->serialize($sessions, 'json', $context);
     }
@@ -71,7 +72,6 @@ class ReportController extends Controller
         /** @var QuizSession $report */
         if($report = $repository->findOneBy(['id' => $report, 'owner' => $user])){
             $quiz = $report->getQuiz();
-            $resp = $questionRepository->filterQuestionsByNotInResponses($quiz,$report->getResponses(),MultipleChoiceResponse::class);
             return [
                 'correct_count' => $report->calculateScore(),
                 'non_response_count' => Collection::make($report->getNonResponseQuestions())->filter(function ($c){return $c instanceof MultipleChoiceQuestion;})->count(),

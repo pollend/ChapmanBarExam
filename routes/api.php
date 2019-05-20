@@ -21,6 +21,6 @@ Route::group(['middleware' => ['auth:api']],function (){
    Route::resource('report','Api\ReportController', [
        'as' => 'api'
    ]);
-   Route::get('report/{report}/meta','Api\ReportController@meta');
+   Route::get('report/{report}/meta','Api\ReportController@meta')->name('api.report.meta');
 
 });

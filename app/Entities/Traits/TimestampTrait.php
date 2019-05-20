@@ -3,17 +3,20 @@
 namespace App\Entities\Traits;
 
 use Doctrine\ORM\Mapping AS ORM;
+use JMS\Serializer\Annotation As JMS;
 
 trait TimestampTrait
 {
 
     /**
      * @ORM\Column(name="created_at",type="datetime",nullable=false)
+     * @JMS\Groups({"timestamp"})
      */
     protected $createdAt;
 
     /**
      * @ORM\Column(name="updated_at",type="datetime",nullable=false)
+     * @JMS\Groups({"timestamp"})
      */
     protected $updatedAt;
 
