@@ -39,11 +39,12 @@ Route::get('login/azure/callback', 'Auth\SocialAuthController@handleAzureProvide
 
 Route::group(['middleware' => ['auth']], function (){
 
+    Route::group(['middleware' => ['auth.admin'], 'prefix' => 'dashboard'], function (){
+        Route::get('/', 'Dashboard\DashboardController@index')->name('dashboard.index');
+    });
+
     // redirect if there is an active session
     Route::group(['middleware' => ['quiz.redirect']],function (){
-        Route::group(['middleware' => ['admin']], function (){
-
-        });
 
         Route::resource('report','ReportController');
         Route::get('/', 'HomeController@index')->name('home');

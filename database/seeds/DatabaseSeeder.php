@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
 //                'owner' => $users->random(1)[0],
 //                'quiz' => $quiz
 //            ]);
-
             entity(App\Entities\MultipleChoiceQuestion::class, 40)->create([
                 'quiz' => $quiz,
                 'group' => 1,
