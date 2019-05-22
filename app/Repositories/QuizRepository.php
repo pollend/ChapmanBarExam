@@ -4,11 +4,14 @@
 namespace App\Repositories;
 
 
+use App\Entities\Classroom;
 use App\Quiz;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class QuizRepository extends EntityRepository
@@ -21,6 +24,14 @@ class QuizRepository extends EntityRepository
     public function attempt_count($quiz, $user)
     {
         return $quiz->sessions()->where('owner_id', $user->id)->count();
+    }
+
+    public function findByClass(Classroom $classroom) {
+        $qb = $this->createQueryBuilder('q');
+        return $qb->innerJoin('q.access','a',Join::WITH,$qb->expr()->eq('a.classroom',':class'))
+            ->setParameter('class',$classroom)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

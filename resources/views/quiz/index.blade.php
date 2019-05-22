@@ -3,14 +3,17 @@
 @section('content')
 <div class="section">
     <div class="container">
-        @foreach ($quizzes->chunk(4) as  $block)
+        @foreach($classrooms as $classroom)
+            <div class="bx--tile content">
+            <h2>{{ $classroom->getName() }}</h2>
+            @foreach (Illuminate\Support\Collection::make($classroom->getQuizAccess())->chunk(4) as  $block)
                 <div class="columns">
-                    @foreach($block as $quiz)
+                    @foreach($block as $access)
                         <div class="column is-3">
                             <div class="card">
                                 <header class="card-header">
                                     <p class="card-header-title">
-                                        {{ $quiz->getName() }}
+                                        {{ $access->getQuiz()->getName() }}
                                     </p>
                                     <a href="#" class="card-header-icon" aria-label="more options">
                                   <span class="icon">
@@ -21,22 +24,22 @@
                                 <div class="card-content">
                                     <div class="content">
                                         <div>
-                                        {{ $quiz->getDescription() }}
+                                            {{ $access->getQuiz()->getDescription() }}
                                         </div>
                                         <div class="is-divider is-divider-margin-4"></div>
                                         <div class="columns">
                                             <div class="column is-2">
-                                                <span class="tag is-pulled-left">{{ $quiz->getQuizSessionsByUser($user)->count()}}/{{$quiz->getNumAttempts()}} attempts</span>
+                                                <span class="tag is-pulled-left">{{ $access->getQuiz()->getQuizSessionsByUser($user)->count()}}/{{$access->getNumAttempts()}} attempts</span>
                                             </div>
                                             <div class="column is-pulled-right">
-                                                <span class="tag is-pulled-right">{{ $quiz->getCloseDate()->diffForHumans() }}</span>
+                                                <span class="tag is-pulled-right">{{ $access->getCloseDate()->diffForHumans() }}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <footer class="card-footer">
-                                    @if($quiz->isOpen($user))
-                                        <a href="{{route('quiz.start',['id' => $quiz->getId()])}}" class="bx--link card-footer-item">Start</a>
+                                    @if($access->isOpen($user))
+                                        <a href="{{route('quiz.start',['id' =>  $access->getQuiz()->getId()])}}" class="bx--link card-footer-item">Start</a>
                                     @else
                                         <div class="card-footer-item">Locked</div>
                                     @endif
@@ -46,6 +49,9 @@
                         </div>
                     @endforeach
                 </div>
+
+            @endforeach
+            </div>
         @endforeach
     </div>
 </div>

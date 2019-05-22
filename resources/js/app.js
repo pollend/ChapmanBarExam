@@ -25,6 +25,8 @@ Vue.use(CarbonComponentsVue);
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
+require('./icons')
+
 // Example Component
 Vue.component('example-component',require('./components/ExampleComponent.vue').default);
 Vue.component('report-component',require('./components/ReportComponent.vue').default);

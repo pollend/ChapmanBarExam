@@ -45,7 +45,7 @@
                             </a>
                             @if(Auth::user())
                                 @if(Auth::user()->isAdmin())
-                                    <a class="navbar-item" href="{{ route('logout') }}">
+                                    <a class="navbar-item" href="{{ route('dashboard.index') }}">
                                         {{ __('Admin') }}
                                     </a>
                                 @endif

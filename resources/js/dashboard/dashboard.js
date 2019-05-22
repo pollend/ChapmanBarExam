@@ -13,6 +13,7 @@ window.Vue = require('vue');
 import CarbonComponentsVue from '@carbon/vue/src/index';
 Vue.use(CarbonComponentsVue);
 
+require('./../icons')
 
 /**
  * The following block of code may be used to automatically register your
@@ -26,7 +27,7 @@ Vue.use(CarbonComponentsVue);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 // Example Component
-
+Vue.component('class-datatable',require('./components/ClassDatatable.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

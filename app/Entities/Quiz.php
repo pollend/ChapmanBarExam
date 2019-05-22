@@ -1,6 +1,7 @@
 <?php
 namespace App\Entities;
 
+use App\Entities\Traits\SoftDeleteTrait;
 use App\Entities\Traits\TimestampTrait;
 use Carbon\Carbon;
 use Carbon\Traits\Date;
@@ -22,8 +23,8 @@ use JMS\Serializer\Annotation As JMS;
  */
 class Quiz
 {
-
     use TimestampTrait;
+    use SoftDeleteTrait;
 
     /**
      * @var integer
@@ -51,34 +52,6 @@ class Quiz
     protected $description;
 
     /**
-     * @var \DateTime
-     * @ORM\Column(name="close_date",type="datetime",nullable=true)
-     * @JMS\Groups({"list"})
-     */
-    protected $closeDate;
-
-    /**
-     * @var integer
-     * @ORM\Column(name="num_attempts",type="integer",nullable=true)
-     * @JMS\Groups({"list"})
-     */
-    protected $numAttempts;
-
-    /**
-     * @var \DateTime
-     * @ORM\Column(name="deleted_at",type="datetime",nullable=true)
-     * @JMS\Groups({"list"})
-     */
-    protected $deletedAt;
-
-    /**
-     * @var bool
-     * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
-     * @JMS\Groups({"list"})
-     */
-    protected $isHidden;
-
-    /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quiz")
      * @JMS\Groups({"quiz_sessions"})
@@ -93,6 +66,11 @@ class Quiz
      */
     protected $questions;
 
+    /**
+     * One product has many features. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="QuizAccess", mappedBy="quiz")
+     */
+    protected $access;
 
     /**
      * @JMS\VirtualProperty
@@ -153,34 +131,6 @@ class Quiz
     public function getCloseDate(): \Carbon\Carbon
     {
         return Carbon::instance($this->closeDate);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHidden(): bool
-    {
-        return $this->isHidden;
-    }
-
-    /**
-     * @param bool $isHidden
-     */
-    public function setIsHidden(bool $isHidden): void
-    {
-        $this->isHidden = $isHidden;
-    }
-
-    public function isOpen($user){
-
-        if (Carbon::today() > $this->closeDate)
-            return false;
-
-        // number of user attempts exceeds the max attempts on a quiz
-        if ($this->getQuizSessionsByUser($user)->count() >= $this->numAttempts)
-            return false;
-
-        return true;
     }
 
 

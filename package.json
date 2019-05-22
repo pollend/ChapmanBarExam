@@ -14,7 +14,7 @@
         "cross-env": "^5.1",
         "jquery": "^3.2",
         "laravel-mix": "^4.0.7",
-        "lodash": "^4.17.5",
+        "lodash": "^4.17.11",
         "popper.js": "^1.12",
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.15.2",
@@ -25,12 +25,14 @@
     "dependencies": {
         "@carbon/charts": "^0.11.15",
         "@carbon/grid": "^10.1.1",
+        "@carbon/icons-vue": "^10.2.0",
         "@carbon/vue": "^2.0.6",
         "bourbon": "^5.1.0",
         "bourbon-neat": "^3.0.1",
         "bulma": "^0.7.4",
         "carbon-components": "^10.2.0",
         "chart.js": "^2.8.0",
+        "query-string": "^6.5.0",
         "vue-chartjs": "^3.4.2"
     }
 }

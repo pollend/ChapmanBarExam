@@ -39,8 +39,9 @@ Route::get('login/azure/callback', 'Auth\SocialAuthController@handleAzureProvide
 
 Route::group(['middleware' => ['auth']], function (){
 
-    Route::group(['middleware' => ['auth.admin'], 'prefix' => 'dashboard'], function (){
-        Route::get('/', 'Dashboard\DashboardController@index')->name('dashboard.index');
+    Route::group(['middleware' => ['auth.admin'], 'prefix' => 'dashboard','as' => 'dashboard.'], function (){
+        Route::get('/', 'Dashboard\DashboardController@index')->name('index');
+        Route::resource('classes','Dashboard\DashboardClassroomController');
     });
 
     // redirect if there is an active session

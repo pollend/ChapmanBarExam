@@ -11,6 +11,7 @@ trait TimestampTrait
     /**
      * @ORM\Column(name="created_at",type="datetime",nullable=false)
      * @JMS\Groups({"timestamp"})
+     *
      */
     protected $createdAt;
 

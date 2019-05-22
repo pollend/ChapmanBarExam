@@ -80,6 +80,12 @@ class User extends Authenticatable
      */
     protected $rememberToken;
 
+    /**
+     * Many Groups have Many Users.
+     * @ORM\ManyToMany(targetEntity="Classroom", mappedBy="users")
+     */
+    protected $classes;
+
 
     /**
      * @var ArrayCollection
@@ -95,6 +101,23 @@ class User extends Authenticatable
 
     public function isAdmin() : bool {
         return $this->isAdmin;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
     }
 
     /**

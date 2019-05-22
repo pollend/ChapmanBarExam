@@ -1,13 +1,8 @@
 <?php
 
-use App\Quiz;
-use App\MultipleChoiceEntry;
-use App\MultipleChoiceQuestion;
-use App\ShortAnswerQuestion;
-use App\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Arr;
 
+use Faker\Factory as Faker;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,8 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $faker = Faker::create();
+
         $quizzes = entity(\App\Entities\Quiz::class, 20)->create();
-        $users = entity(\App\Entities\User::class, 10)->create();
+        $users = entity(\App\Entities\User::class, 200)->create();
         $admin = entity(\App\Entities\User::class)->create([
                 'isAdmin' => true
             ]);
@@ -29,10 +26,6 @@ class DatabaseSeeder extends Seeder
             print('quiz: '. $key . "\r\n");
             $index = 0;
 
-//            $sessions = entity(\App\Entities\QuizSession::class,10)->create([
-//                'owner' => $users->random(1)[0],
-//                'quiz' => $quiz
-//            ]);
             entity(App\Entities\MultipleChoiceQuestion::class, 40)->create([
                 'quiz' => $quiz,
                 'group' => 1,
@@ -49,13 +42,6 @@ class DatabaseSeeder extends Seeder
                     'question' => $q
                 ]);
                 $q->setCorrectAnswer($entries->random(1)[0]);
-//                foreach ($sessions as $session){
-//                    entity(App\Entities\MultipleChoiceResponse::class)->create([
-//                        'multipleChoiceEntry' => $entries->random(1)[0],
-//                        'session' => $session
-//                    ]);
-//                }
-
                 \EntityManager::persist($q);
 
             });
@@ -74,8 +60,29 @@ class DatabaseSeeder extends Seeder
                 }
             ]);
 
+        }
+
+        $classrooms = entity(\App\Entities\Classroom::class,10)->create();
+        /** @var \App\Entities\Classroom $classroom */
+        foreach ($classrooms as $key => $classroom) {
+            \Illuminate\Support\Collection::make($users)->random(20)->each(function ($u) use ($classroom) {
+                /** @var \App\Entities\UserWhitelist $whitelist */
+                $whitelist = entity(\App\Entities\UserWhitelist::class)->create();
+                $whitelist->setEmail($u->getEmail());
+                $whitelist->setClassroom($classroom);
+                \EntityManager::persist($whitelist);
+            });
+
+            foreach(\Illuminate\Support\Collection::make($quizzes)->random(rand(4,10)) as $quiz){
+                /** @var \App\Entities\QuizAccess $access */
+                $access = entity(\App\Entities\QuizAccess::class)->create();
+                $access->setQuiz($quiz);
+                $access->setClassroom($classroom);
+                \EntityManager::persist($access);
+            }
 
         }
+
 
         \EntityManager::flush();
     }
