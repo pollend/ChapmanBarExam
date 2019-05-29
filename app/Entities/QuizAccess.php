@@ -14,6 +14,7 @@ use JMS\Serializer\Annotation As JMS;
  * @ORM\Entity()
  * @ORM\Table(name="quiz_access")
  * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass="App\Repositories\QuizAccessRepository")
  *
  */
 class QuizAccess

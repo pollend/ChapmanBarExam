@@ -4,9 +4,43 @@
     <div class="section">
         <div class="columns is-mobile is-centered">
             <div class="column is-5">
-                <report-score route="{{ route('api.report.meta',['report' => $session->getId()]) }}"></report-score>
+                <p>
+                    Course #:
+                </p>
+                <p>
+                    Course Title:
+                </p>
+                <p>
+                    Day\Time:
+                </p>
+            </div>
+            <div class="column is-5">
+                <p>
+                    Instructor:
+                </p>
+                <p>
+                    Description:
+                </p>
+                <p>
+                    Term/Year:
+                </p>
             </div>
         </div>
+    </div>
+
+    <div class="section">
+        <table class="table is-bordered">
+            <thead>
+                <tr>
+                    <th>
+                       Test Items:
+                    </th>
+                    <th>
+                        1-5
+                    </th>
+                </tr>
+            </thead>
+        </table>
     </div>
 
     <div class="section">

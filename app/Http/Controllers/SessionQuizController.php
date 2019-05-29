@@ -5,24 +5,30 @@ namespace App\Http\Controllers;
 
 
 use App\Console\Commands\RecalculateScores;
+use App\Entities\Classroom;
 use App\Entities\MultipleChoiceEntry;
 use App\Entities\MultipleChoiceQuestion;
 use App\Entities\MultipleChoiceResponse;
 use App\Entities\Quiz;
+use App\Entities\QuizAccess;
 use App\Entities\QuizQuestion;
 use App\Entities\QuizSession;
 use App\Entities\ShortAnswerQuestion;
 use App\Entities\ShortAnswerResponse;
 use App\Entities\User;
 use App\Jobs\ProcessQuizSession;
+use App\Repositories\ClassroomRepository;
 use App\Repositories\MultipleChoiceEntryRepository;
 use App\Repositories\MultipleChoiceQuestionRepository;
 use App\Repositories\QuestionRepository;
+use App\Repositories\QuizAccessRepository;
 use App\Repositories\QuizRepository;
 use App\Repositories\QuizSessionRepository;
 use App\Repositories\ShortAnswerQuestionRepository;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -30,50 +36,83 @@ use Illuminate\Support\Facades\Auth;
 class SessionQuizController extends Controller
 {
 
+    /** @var $classRepository ClassroomRepository  */
+    private $classRepository ;
+    /** @var $classRepository QuizAccessRepository */
+    private $quizAccessRepository;
+    /** @var $quizRepository QuizRepository */
+    private $quizRepository;
 
+    /**
+     * SessionQuizController constructor.
+     */
     public function __construct()
     {
+        $this->classRepository =  \EntityManager::getRepository(Classroom::class);
+        $this->quizAccessRepository = \EntityManager::getRepository(QuizAccess::class);
+        $this->quizRepository = \EntityManager::getRepository(Quiz::class);
     }
 
-    public function startForm($id)
+
+    public function startForm($class_id,$quiz_id)
     {
         $user = Auth::user();
-        /** @var QuizRepository $repository */
-        $repository = \EntityManager::getRepository(\App\Entities\Quiz::class);
 
-        $quiz = $repository->find($id);
-        if ($quiz == null)
-            abort(404);
-        if (!$quiz->isOpen($user))
-            abort(404);
+        /** @var Classroom $classroom */
+        if($classroom = $this->classRepository->find($class_id)) {
+            /** @var Quiz $quiz */
+            if($quiz = $this->quizRepository->find($quiz_id)){
+                try {
+                    /** @var QuizAccess $access */
+                    if ($access = $this->quizAccessRepository->getAccessByClass($classroom, $quiz)) {
+                        if($access->isOpen($user)){
+                            return view('quiz.start', ['quiz' => $quiz, 'class' => $classroom]);
+                        }
+                    }
+                } catch (NoResultException $e) {
+                    \Debugbar::error("unknown access for class and quiz");
+                } catch (NonUniqueResultException $e) {
+                    \Debugbar::error("unknown access for class and quiz");
+                }
 
-        return view('quiz.start', ['quiz_id' => $id]);
-    }
-
-    public function start($id)
-    {
-        /** @var QuizRepository $quizRepository */
-        $quizRepository = \EntityManager::getRepository(\App\Entities\Quiz::class);
-        /** @var QuizSessionRepository $sessionRepository */
-        $sessionRepository = \EntityManager::getRepository(QuizSession::class);
-
-        if ($quiz = $quizRepository->find($id)) {
-            $user = Auth::user();
-            if ($sessionRepository->getActiveSession($user) != null)
-                abort(404);
-            if ($quiz->isOpen($user) === false)
-                abort(404);
-
-            $session = new QuizSession();
-
-            $session->setOwner($user);
-            $session->setQuiz($quiz);
-            \EntityManager::persist($session);
-            \EntityManager::flush();
-            return redirect()->route('quiz.question', ['session_id' => $session->getId(), 'page' => 0]);
+            }
         }
         abort(404);
         return null;
+    }
+
+    public function start($class_id,$quiz_id)
+    {
+        $user = Auth::user();
+
+        /** @var Classroom $classroom */
+        if($classroom = $this->classRepository->find($class_id)) {
+            /** @var Quiz $quiz */
+            if($quiz = $this->quizRepository->find($quiz_id)){
+                try {
+                    /** @var QuizAccess $access */
+                    if ($access = $this->quizAccessRepository->getAccessByClass($classroom, $quiz)) {
+                        if($access->isOpen($user)){
+                          $session = new QuizSession();
+                          $session->setOwner($user);
+                          $session->setQuiz($quiz);
+                          $session->setClassroom($classroom);
+                          \EntityManager::persist($session);
+                          \EntityManager::flush();
+                           return redirect()->route('quiz.question', ['session_id' => $session->getId(), 'page' => 0]);
+                        }
+                    }
+                } catch (NoResultException $e) {
+                    \Debugbar::error("unknown access for class and quiz");
+                } catch (NonUniqueResultException $e) {
+                    \Debugbar::error("unknown access for class and quiz");
+                }
+
+            }
+        }
+        abort(404);
+        return null;
+
     }
 
 

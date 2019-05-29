@@ -87,6 +87,30 @@ class QuizSession
      */
     protected $quiz;
 
+
+    /**
+     * @var Classroom
+     *
+     * @ORM\ManyToOne(targetEntity="Classroom",inversedBy="quizSessions")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
+     * })
+     *
+     * @JMS\Groups({"detail"})
+     */
+    protected $classroom;
+
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="current_page", type="integer", nullable=true)
+     *
+     * @JMS\Groups({"list","detail"})
+     * @JMS\Type("int")
+     */
+    protected $current_page;
+
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="User",inversedBy="quizSessions")
@@ -134,6 +158,14 @@ class QuizSession
     {
         $this->quiz = $quiz;
         return $this;
+    }
+
+    /**
+     * @param Classroom $classroom
+     */
+    public function setClassroom(Classroom $classroom): void
+    {
+        $this->classroom = $classroom;
     }
 
     /**

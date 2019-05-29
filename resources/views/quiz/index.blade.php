@@ -39,7 +39,7 @@
                                 </div>
                                 <footer class="card-footer">
                                     @if($access->isOpen($user))
-                                        <a href="{{route('quiz.start',['id' =>  $access->getQuiz()->getId()])}}" class="bx--link card-footer-item">Start</a>
+                                        <a href="{{route('quiz.start',['quiz_id' =>  $access->getQuiz()->getId(), 'class_id' => $classroom->getId()])}}" class="bx--link card-footer-item">Start</a>
                                     @else
                                         <div class="card-footer-item">Locked</div>
                                     @endif

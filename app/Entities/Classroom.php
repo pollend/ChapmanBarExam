@@ -65,6 +65,12 @@ class Classroom
      */
     protected $quizAccess;
 
+    /**
+     * @var ArrayCollection
+     * One Product has One Shipment.
+     * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="classroom")
+     */
+    protected $quizSessions;
 
     /**
      * @return int
