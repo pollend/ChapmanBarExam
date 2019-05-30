@@ -12,8 +12,8 @@ use App\Repositories\QuestionRepository;
 use App\Repositories\QuestionTagRepository;
 use App\Repositories\QuizResponseRepository;
 use App\Repositories\QuizSessionRepository;
+use App\Utility\QuestionResult;
 use Doctrine\Common\Collections\Criteria;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Request;
 
@@ -80,27 +80,13 @@ class ReportController extends Controller
             });
 
             $breakdown = Collection::make();
+            /** @var QuestionTag $tag */
             foreach ($tags as $tag){
-                $total = 0;
-                $correct = 0;
                 $questionsByTag = $questionRepository->filterByTag($session->getQuiz(),$tag);
-                /** @var QuizQuestion $question */
-                foreach ($questionsByTag as $question){
-                    if($question instanceof MultipleChoiceQuestion){
-//                        $question->getCorrectEntry()
-//                            Arr::has($responses
-                        if(Arr::has($responses,$question->getId())){
-                            if($responses[$question->getId()]->getChoice() == $question->getCorrectEntry()){
-                                $correct++;
-                            }
-                        }
-                        $total++;
-
-                    }
-                }
-                $breakdown->put($tag->getId(),['total' => $total, 'correct' => $correct, 'questions' => $questionsByTag]);
+                $breakdown->put($tag->getId(),new QuestionResult($questionsByTag,$session));
             }
 
+            \Debugbar::debug($breakdown);
             return view('report.breakdown',['session' => $session, 'tags' => $tags,'breakdown' => $breakdown]);
         }
         abort(404);

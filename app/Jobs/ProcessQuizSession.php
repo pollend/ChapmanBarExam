@@ -2,19 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Entities\MultipleChoiceQuestion;
-use App\Entities\MultipleChoiceResponse;
 use App\Entities\Quiz;
 use App\Entities\QuizSession;
 use App\Repositories\QuizRepository;
 use App\Repositories\QuizSessionRepository;
+use App\Utility\QuestionResult;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 
 /**
  * Calculate the score for the quiz. Implementation can be more complex in the future for groups or what not.
@@ -29,7 +26,7 @@ class ProcessQuizSession implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param QuizSession $session
      */
     public function __construct(QuizSession $session)
     {
@@ -50,8 +47,13 @@ class ProcessQuizSession implements ShouldQueue
 
         /** @var QuizSession $ses */
         $ses = $quizSessionRepository->find($this->session->getId());
-        $ses->calculateMaxScore();
-        $ses->calculateScore();
+        $questions = $ses->getQuiz()->getQuestions();
+
+        $result = new QuestionResult($questions,$ses);
+        $ses->setMaxScore($result->getMaxScore());
+        $ses->setScore($result->getScore());
+
+
         \EntityManager::persist($ses);
         \EntityManager::flush();
     }

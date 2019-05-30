@@ -234,37 +234,37 @@ class QuizSession
         return $this;
     }
 
-
-    public function calculateMaxScore(){
-        $result = 0;
-        Collection::make($this->getQuiz()->getQuestions())->each(function ($q) use (&$result){
-            if($q instanceof MultipleChoiceQuestion){
-                $result++;
-            }
-        });
-        $this->setMaxScore($result);
-        return $result;
-    }
-
-    public function calculateScore(){
-        $responses = Collection::make($this->getResponses())->keyBy(function ($item) {
-            return $item->getQuestion()->getId();
-        });
-        $result = 0;
-        Collection::make($this->getQuiz()->getQuestions())->each(function ($q) use (&$result,$responses) {
-            if ($q instanceof MultipleChoiceQuestion) {
-                if (Arr::exists($responses, $q->getId())) {
-                    /** @var MultipleChoiceResponse $multipleChoiceResponse */
-                    $multipleChoiceResponse = $responses[$q->getId()];
-                    if ($q->getCorrectEntry() === $multipleChoiceResponse->getChoice()) {
-                        $result++;
-                    }
-                }
-            }
-        });
-        $this->setScore($result);
-        return $result;
-    }
+//
+//    public function calculateMaxScore(){
+//        $result = 0;
+//        Collection::make($this->getQuiz()->getQuestions())->each(function ($q) use (&$result){
+//            if($q instanceof MultipleChoiceQuestion){
+//                $result++;
+//            }
+//        });
+//        $this->setMaxScore($result);
+//        return $result;
+//    }
+//
+//    public function calculateScore(){
+//        $responses = Collection::make($this->getResponses())->keyBy(function ($item) {
+//            return $item->getQuestion()->getId();
+//        });
+//        $result = 0;
+//        Collection::make($this->getQuiz()->getQuestions())->each(function ($q) use (&$result,$responses) {
+//            if ($q instanceof MultipleChoiceQuestion) {
+//                if (Arr::exists($responses, $q->getId())) {
+//                    /** @var MultipleChoiceResponse $multipleChoiceResponse */
+//                    $multipleChoiceResponse = $responses[$q->getId()];
+//                    if ($q->getCorrectEntry() === $multipleChoiceResponse->getChoice()) {
+//                        $result++;
+//                    }
+//                }
+//            }
+//        });
+//        $this->setScore($result);
+//        return $result;
+//    }
 
     public function getNonResponseQuestions()
     {
