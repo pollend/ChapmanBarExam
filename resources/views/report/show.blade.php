@@ -1,57 +1,101 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="section">
-        <div class="columns is-mobile is-centered">
-            <div class="column is-5">
-                <p>
-                    Course #:
-                </p>
-                <p>
-                    Course Title:
-                </p>
-                <p>
-                    Day\Time:
-                </p>
+    @include('report.report_header')
+
+    <div class="container has-margin-bottom-20">
+        <div class="columns">
+            <div class="column is-one-fifth">
+                Response Description:
             </div>
-            <div class="column is-5">
-                <p>
-                    Instructor:
-                </p>
-                <p>
-                    Description:
-                </p>
-                <p>
-                    Term/Year:
-                </p>
+            <div class="column  is-size-7">
+                <div class="columns">
+                    <div class="column is-4">
+                        <p>&lt - &gt correct</p>
+                        <p>&lt A-Z &gt student's incorrect response</p>
+
+                    </div>
+                    <div class="column is-4">
+                        <p>&lt # &gt multiple marks</p>
+                        <p>&lt * &gt bonus test item</p>
+
+                    </div>
+                    <div class="column is-4">
+                        <p>&lt _ &gt no response</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="section">
-        <table class="table is-bordered">
-            <thead>
-                <tr>
-                    <th>
-                       Test Items:
-                    </th>
-                    <th>
-                        1-5
-                    </th>
-                </tr>
-            </thead>
-        </table>
+
+    <div class="container has-margin-bottom-60">
+        @php
+            $index = 0;
+        @endphp
+
+        @foreach(Illuminate\Support\Collection::make($questions)->filter(function ($q){ return $q instanceof App\Entities\MultipleChoiceQuestion; })->chunk(5)->chunk(10) as $table)
+            <table class="table is-bordered is-size-7" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>
+                            Test Items:
+                        </th>
+                        @foreach($table as $groups)
+                            <th>
+                                {{$index + 1}}- {{$index += 5}}
+                            </th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    <td>
+                        Answers:
+                    </td>
+                    @foreach($table as $groups)
+                        <td>
+
+                            @foreach($groups as $e)
+                                @if (!$loop->first)
+                                    ,
+                                @endif
+                                    @if(Arr::has($responses,$e->getId()))
+                                        @if($responses[$e->getId()]->getChoice() == $e->getCorrectEntry())
+                                            -
+                                        @else
+                                            {{ $e->toCharacter($responses[$e->getId()]->getChoice()) }}
+
+                                        @endif
+
+                                    @else
+                                        _
+                                    @endif
+                            @endforeach
+
+                        </td>
+                    @endforeach
+                </tbody>
+            </table>
+        @endforeach
     </div>
 
-    <div class="section">
-        <div class="container">
-            @foreach ($groups as $index => $qgroup)
-                <div class="article">
-                @foreach ($qgroup as $question)
+    <div class="container">
+        @foreach ($groups as $index => $group)
+            <div class="article">
+
+                @foreach ($questions as $question)
+
+                    <div class="tags are-small">
+                        @foreach($question->getTags() as $tag)
+                            <span class="tag">{{$tag->getName()}}</span>
+                        @endforeach
+                    </div>
+                    @php
+                        $answer = Arr::has($responses,$question->getId()) ? $responses[$question->getId()] : null
+                    @endphp
                     @if($question instanceof \App\Entities\MultipleChoiceQuestion)
                         <div>
                             @php
-                                $answer = $question->answersBySession($session)->first();
                                 $correctChoice =  $question->getCorrectEntry();
                             @endphp
 
@@ -75,7 +119,6 @@
                         </div>
                     @elseif($question instanceof \App\Entities\ShortAnswerQuestion)
                         <div>
-                            @php ($answer = $question->answersBySession($session)->first())
                             <div class="bx--form-item">
                                 <div class="bx--form__helper-text qz--form__helper-text-disable-max-width">{{$loop->iteration}} . {{$question->getContent()}}</div>
                                 {{$answer ? $answer->getContent() : ''}}
@@ -84,8 +127,8 @@
                         </div>
                     @endif
                 @endforeach
-                </div>
-            @endforeach
-        </div>
+            </div>
+        @endforeach
     </div>
+
 @endsection

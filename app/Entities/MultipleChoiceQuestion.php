@@ -10,12 +10,13 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Doctrine\ORM\Mapping AS ORM;
+use Illuminate\Support\Collection;
 
 /**
  * Class Quiz
  * @package App
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repositories\MultipleChoiceQuestionRepository")
  * @ORM\Table(name="multiple_choice_question")
  * @ORM\HasLifecycleCallbacks
  *
@@ -69,6 +70,16 @@ class MultipleChoiceQuestion extends QuizQuestion
     public function getCorrectEntry(): MultipleChoiceEntry
     {
         return $this->correctEntry;
+    }
+
+    public function toCharacter(MultipleChoiceEntry $entry){
+        $ar = ['A','B','C','D','E','F','G','H','I','K'];
+       foreach (Collection::make($this->entries->matching(Criteria::create()->orderBy(['order' => 'ASC'])))->values() as $key => $value){
+           if($entry == $value){
+               return $ar[$key];
+           }
+       }
+       return 'N';
     }
 
     public function answers(){

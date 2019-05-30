@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping AS ORM;
  * Class Quiz
  * @package App
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repositories\MultipleChoiceResponseRepository")
  * @ORM\Table(name="multiple_choice_response")
  * @ORM\HasLifecycleCallbacks
  *

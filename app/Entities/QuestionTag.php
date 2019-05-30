@@ -30,11 +30,18 @@ class QuestionTag
 
     /**
      * Many Users have Many Groups.
-     * @ORM\ManyToMany(targetEntity="QuizQuestion", inversedBy="tags")
+     * @ORM\ManyToMany(targetEntity="QuizQuestion", mappedBy="tags" )
      * @ORM\JoinTable(name="quiz_question_question_tag")
      */
     protected $questions;
 
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
     /**
      * @return string

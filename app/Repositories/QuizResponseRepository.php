@@ -33,4 +33,12 @@ class QuizResponseRepository extends EntityRepository
         return $builder->getQuery()->getResult();
     }
 
+    public function filterResponsesBySession(QuizSession $session){
+        $qb = $this->createQueryBuilder('r');
+        return $qb->where($qb->expr()->eq('r.session', ':session'))
+            ->setParameter('session',$session)
+            ->getQuery()
+            ->getResult();
+    }
+
 }

@@ -5,6 +5,7 @@ use App\Entities\Quiz;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repositories\QuestionRepository")
@@ -54,7 +55,8 @@ class QuizQuestion
 
     /**
      * Many Groups have Many Users.
-     * @ORM\ManyToMany(targetEntity="QuestionTag", mappedBy="questions")
+     * @ORM\ManyToMany(targetEntity="QuestionTag", inversedBy="questions")
+     * @var PersistentCollection
      */
     private $tags;
 
@@ -80,6 +82,14 @@ class QuizQuestion
     public function answersBySession($session)
     {
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
+    }
+
+    /**
+     * @return PersistentCollection
+     */
+    public function getTags()
+    {
+        return $this->tags;
     }
 
     /**

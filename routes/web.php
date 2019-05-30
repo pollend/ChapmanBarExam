@@ -48,6 +48,8 @@ Route::group(['middleware' => ['auth']], function (){
     Route::group(['middleware' => ['quiz.redirect']],function (){
 
         Route::resource('report','ReportController');
+        Route::get('report/{report}/breakdown', 'ReportController@breakdown')->name('report.breakdown');
+
         Route::get('/', 'HomeController@index')->name('home');
 
         Route::get('quiz/end','SessionQuizController@endForm')->name('quiz.end');

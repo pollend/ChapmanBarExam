@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /**
  * Class Quiz
  * @package App
+ * @ORM\Entity()
  * @ORM\Table(name="text_block_question")
  * @ORM\HasLifecycleCallbacks
  */
