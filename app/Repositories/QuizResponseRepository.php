@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Entities\MultipleChoiceResponse;
+use App\Entities\QuizQuestion;
 use App\Entities\QuizSession;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -41,4 +42,13 @@ class QuizResponseRepository extends EntityRepository
             ->getResult();
     }
 
+    public function filterResponsesBySessionAndQuestions(QuizSession $session, $questions){
+        $qb = $this->createQueryBuilder('r');
+        return $qb->where($qb->expr()->eq('r.session', ':session'))
+            ->andWhere($qb->expr()->in('r.question',':questions'))
+            ->setParameter('session',$session)
+            ->setParameter('questions',$questions)
+            ->getQuery()
+            ->getResult();
+    }
 }

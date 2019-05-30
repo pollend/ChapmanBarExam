@@ -39,7 +39,7 @@ class Classroom
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list"})
+     * @JMS\Groups({"list","detail"})
      */
     protected $name;
 
@@ -54,6 +54,7 @@ class Classroom
      * Many Users have Many Groups.
      * @ORM\ManyToMany(targetEntity="User", inversedBy="classes")
      * @ORM\JoinTable(name="classroom_user")
+     * @JMS\Groups({"detail"})
      */
     protected $users;
 
@@ -62,6 +63,7 @@ class Classroom
      * @var ArrayCollection
      * One Product has One Shipment.
      * @ORM\OneToMany(targetEntity="QuizAccess",mappedBy="classroom")
+     * @JMS\Groups({"detail"})
      */
     protected $quizAccess;
 
@@ -69,8 +71,20 @@ class Classroom
      * @var ArrayCollection
      * One Product has One Shipment.
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="classroom")
+     *
      */
     protected $quizSessions;
+
+
+
+    /**
+     * @JMS\VirtualProperty
+     * @JMS\Groups({"detail","list"})
+     * @return string
+     */
+    public function getNumberOfStudents(){
+        return $this->users->count();
+    }
 
     /**
      * @return int

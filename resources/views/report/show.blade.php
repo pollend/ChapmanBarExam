@@ -35,7 +35,7 @@
         @endphp
 
         @foreach(Illuminate\Support\Collection::make($questions)->filter(function ($q){ return $q instanceof App\Entities\MultipleChoiceQuestion; })->chunk(5)->chunk(10) as $table)
-            <table class="table is-bordered is-size-7" style="width: 100%;">
+            <table class="table is-bordered is-size-7 is-full-width" >
                 <thead>
                     <tr>
                         <th>
@@ -49,42 +49,43 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <td>
-                        Answers:
-                    </td>
-                    @foreach($table as $groups)
+                    <tr>
                         <td>
-
-                            @foreach($groups as $e)
-                                @if (!$loop->first)
-                                    ,
-                                @endif
-                                    @if(Arr::has($responses,$e->getId()))
-                                        @if($responses[$e->getId()]->getChoice() == $e->getCorrectEntry())
-                                            -
-                                        @else
-                                            {{ $e->toCharacter($responses[$e->getId()]->getChoice()) }}
-
-                                        @endif
-
-                                    @else
-                                        _
-                                    @endif
-                            @endforeach
-
+                            Answers:
                         </td>
-                    @endforeach
+                        @foreach($table as $groups)
+                            <td>
+
+                                @foreach($groups as $e)
+                                    @if (!$loop->first)
+                                        ,
+                                    @endif
+                                        @if(Arr::has($responses,$e->getId()))
+                                            @if($responses[$e->getId()]->getChoice() == $e->getCorrectEntry())
+                                                -
+                                            @else
+                                                {{ $e->toCharacter($responses[$e->getId()]->getChoice()) }}
+
+                                            @endif
+
+                                        @else
+                                            _
+                                        @endif
+                                @endforeach
+
+                            </td>
+                        @endforeach
+                    </tr>
                 </tbody>
             </table>
         @endforeach
     </div>
-
+    <div class="is-divider is-divider-margin-2"></div>
     <div class="container">
         @foreach ($groups as $index => $group)
             <div class="article">
 
                 @foreach ($questions as $question)
-
                     <div class="tags are-small">
                         @foreach($question->getTags() as $tag)
                             <span class="tag">{{$tag->getName()}}</span>

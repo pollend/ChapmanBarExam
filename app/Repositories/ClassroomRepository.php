@@ -7,9 +7,12 @@ namespace App\Repositories;
 use App\Entities\Classroom;
 use App\Entities\User;
 use App\Entities\UserWhitelist;
+use App\Utility\Datatable;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class ClassroomRepository extends EntityRepository
@@ -63,5 +66,9 @@ class ClassroomRepository extends EntityRepository
         return $this->byClassroom($user);
     }
 
+    public function datatable(Request $request){
+        $datatable = new Datatable();
+        $datatable->handleSort($request);
 
+    }
 }
