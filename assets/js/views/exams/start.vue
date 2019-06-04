@@ -1,0 +1,39 @@
+<template>
+    <div class="section">
+        <div class="container">
+            This is some information about startting quiz
+            <el-divider></el-divider>
+            <el-button  @click="handleQuizStart"  type="primary" style="width: 100%">Begin</el-button>
+        </div>
+    </div>
+</template>
+
+<script>
+import { postClassroomQuizStart } from '@/api/classes';
+export default {
+  name: 'ExamStart',
+  components: { },
+  data() {
+    return {};
+  },
+  created() {
+  },
+  methods: {
+      handleQuizStart() {
+        postClassroomQuizStart(this.$route.params.class_id,this.$route.params.quiz_id)
+        .then((response) => {
+
+        });
+    },
+  },
+};
+</script>
+
+<style>
+    .radio-label {
+        font-size: 14px;
+        color: #606266;
+        line-height: 40px;
+        padding: 0 12px 0 30px;
+    }
+</style>
