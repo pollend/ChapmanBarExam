@@ -5,6 +5,7 @@ use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping AS ORM;
 use JMS\Serializer\Annotation As JMS;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -117,12 +118,6 @@ class User implements UserInterface
      */
     private $plainTextPassword;
 
-    public function __construct($username, array $roles, $email)
-    {
-        $this->username = $username;
-        $this->roles = $roles;
-        $this->email = $email;
-    }
 
     /**
      * @param string $rememberToken
@@ -239,6 +234,14 @@ class User implements UserInterface
     }
 
     /**
+     * @param string $username
+     */
+    public function setUsername(string $username): void
+    {
+        $this->username = $username;
+    }
+
+    /**
      * @param string $password
      */
     public function setPassword(string $password): void
@@ -256,5 +259,6 @@ class User implements UserInterface
     {
         $this->plainTextPassword = '';
     }
+
 
 }

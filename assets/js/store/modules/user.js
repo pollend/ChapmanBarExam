@@ -1,13 +1,21 @@
-import { login, logout, getInfo } from '@/api/auth';
-import { getToken, setToken, removeToken } from '@/utils/auth';
-import store from '@/store';
+import { DateTime } from 'luxon';
+
+import Cookies from 'js-cookie';
+import {getInfo, login, refreshToken} from "@/api/auth";
+
+const TokenKey = 'Token';
+const TokenKeyTTL = 'Token-ttl';
+const RefreshToken = 'Refresh-token';
+
 
 const state = {
   id: null,
-  token: getToken(),
+  token: Cookies.get(TokenKey),
+  refresh_token: Cookies.get(RefreshToken),
   name: '',
   avatar: '',
   introduction: '',
+  ttl: Cookies.get(TokenKeyTTL),
   roles: [],
   permissions: [],
 };
@@ -20,7 +28,25 @@ const mutations = {
       state.permissions = user.permissions;
   },
   SET_TOKEN: (state,token) => {
-      state.token = token;
+      state.token = token
+      if(state.token  === null) {
+          Cookies.remove(TokenKeyTTL);
+          Cookies.remove(TokenKey);
+          state.ttl = null;
+      }else{
+          state.ttl = DateTime.local().toISO();
+          Cookies.set(TokenKey,state.token);
+          Cookies.set(TokenKeyTTL,state.ttl);
+      }
+
+  },
+  SET_REFRESH_TOKEN: (state,token) => {
+    state.refresh_token = token;
+    if(state.refresh_token === null){
+        Cookies.remove(RefreshToken);
+    } else {
+        Cookies.set(RefreshToken,state.refresh_token);
+    }
   }
 };
 
@@ -34,8 +60,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       login(email.trim(), password )
         .then(response => {
-          commit('SET_TOKEN', response.token);
-          setToken(response.token);
+          const {token, refresh_token} = response.data;
+          commit('SET_TOKEN', token);
+          commit('SET_REFRESH_TOKEN',refresh_token);
           resolve();
         })
         .catch(error => {
@@ -43,17 +70,37 @@ const actions = {
         });
     });
   },
-
+  isTokenValid({commit,state}){
+    if(state.ttl == null)
+      return null;
+    console.log(DateTime.local().diff(DateTime.fromISO(state.ttl),'seconds').toObject());
+    if(DateTime.local().diff(DateTime.fromISO(state.ttl),'seconds').toObject()['seconds'] > 1200)
+        return false;
+    return true;
+  },
+  refresh({commit, state}){
+      return new Promise((resolve, reject) => {
+          refreshToken(state.refresh_token).then(response => {
+              const {token, refresh_token} = response.data;
+              commit('SET_TOKEN', token);
+              commit('SET_REFRESH_TOKEN', refresh_token);
+              resolve();
+          }).catch(error => {
+              // clearRefreshToken();
+              commit('SET_REFRESH_TOKEN', null);
+              commit('SET_TOKEN', null);
+              reject(error);
+          });
+      });
+  },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo()
         .then(response => {
-          if (!response) {
-            reject('Verification failed, please Login again.');
-          }
-          commit('SET_USER', response);
-          resolve(response);
+          const {user} = response.data;
+          commit('SET_USER', user);
+          resolve(user);
         })
         .catch(error => {
           reject(error);
@@ -63,28 +110,8 @@ const actions = {
 
   // user logout
   logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token)
-        .then(() => {
-          commit('SET_TOKEN', '');
-          commit('SET_ROLES', []);
-          removeToken();
-          resolve();
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  },
-
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      commit('SET_TOKEN', '');
-      commit('SET_ROLES', []);
-      removeToken();
-      resolve();
-    });
+      commit('SET_TOKEN', null);
+      commit('SET_REFRESH_TOKEN', null);
   },
 };
 

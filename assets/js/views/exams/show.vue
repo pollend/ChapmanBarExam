@@ -1,27 +1,38 @@
 <template>
     <div class="section">
         <div class="container">
-            <div v-for="q in questions">
+            <div v-for="(q,index) in questions" v-bind:key="q.id">
                 <template v-if="q.type === 'multiple_choice'">
-                    {{q.content}}
+                    <p class="question_statement">
+                        {{index}}. {{q.content}}
+                    </p>
                     <template>
-                        <div v-for="r in q.entries"> <el-radio v-model="q.submit" value="r.id">{{ r.content }}</el-radio> </div>
+                        <el-radio-group v-model="q.value">
+                            <div v-for="e in q.entries"  :key="e.id" >
+                                <el-radio :label="e.id">{{ e.content }}</el-radio>
+                            </div>
+                        </el-radio-group>
                     </template>
 
+                </template>
+                <template v-else-if="q.type === 'text_block'">
+                    <p>
+                        {{q.content}}
+                    </p>
                 </template>
                 <template v-else-if="q.type === 'short_answer'">
 
                 </template>
                 <el-divider></el-divider>
             </div>
-            <el-button type="primary" @click="submitResults">Next Page<i class="el-icon-arrow-right el-icon-right"></i></el-button>
+            <el-button type="primary" @click.native.prevent="submitResults">Next Page<i class="el-icon-arrow-right el-icon-right"></i></el-button>
         </div>
     </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import { getQuestions } from '@/api/quiz-session'
+import {getQuestions, getResponses, postResponse} from '@/api/quiz-session'
 export default {
   name: 'Home',
   computed: {
@@ -33,8 +44,7 @@ export default {
   components: { },
   data() {
     return {
-        questions: null,
-        responses: []
+        questions: null
     };
   },
   created() {
@@ -50,25 +60,49 @@ export default {
       query(session_id,quiz_id,page) {
           let _this = this;
           getQuestions(quiz_id,page).then((response) => {
-              const {questions} = response;
-              questions.forEach(function (q) {
-
-              });
+              const {questions} = response.data;
+             // questions.forEach(function (q) {
+             //     q['value'] = 0;
+             // });
               _this.questions = questions;
+              getResponses(session_id,page).then((response)=>{
+                  const {responses} = response.data;
+                  console.log(responses);
+                  let value_map = {};
+                  responses.forEach(function (resp) {
+                      if(resp.type === 'multiple_choice') {
+                          value_map[resp.question.id] = resp.choice.id;
+                      }
+                  });
+                  _this.questions.forEach(function (q) {
+                      if(q.id in value_map)
+                        q.value = value_map[q.id];
+                  });
+                  _this.$forceUpdate();
+              });
           });
       },
+      getValues(){
+          let target = {};
+          this.questions.forEach(function (q) {
+              if(q.value) {
+                  target[q.id] = q.value;
+              }
+          });
+          return target;
+      },
       submitResults() {
-          
+          let result = this.getValues();
+          postResponse(this.session_id,this.$route.params.page,{'responses':result}).then((response) => {
+              this.$router.go();
+          });
       }
   },
 };
 </script>
 
 <style>
-    .radio-label {
-        font-size: 14px;
-        color: #606266;
-        line-height: 40px;
-        padding: 0 12px 0 30px;
+    .question_statement {
+        margin-bottom: 1rem;
     }
 </style>

@@ -4,11 +4,11 @@
       <template slot="title"><i class="el-icon-menu"></i></template>
       <el-menu-item index="4-1"><i class="el-icon-setting"></i> Settings</el-menu-item>
       <el-menu-item index="4-2"><i class="el-icon-information"></i> About</el-menu-item>
-      <el-menu-item index="4-3"><i class="el-icon-circle-close"></i> Logout</el-menu-item>
+      <el-menu-item index="logout"><i class="el-icon-circle-close"></i> Logout</el-menu-item>
     </el-submenu>
     <el-menu-item>Chapman Bar Exam</el-menu-item>
-    <el-menu-item index="/" >Exams</el-menu-item>
-    <el-menu-item index="/reports">Reports</el-menu-item>
+    <el-menu-item index="app.home" >Exams</el-menu-item>
+    <el-menu-item index="app.reports">Reports</el-menu-item>
   </el-menu>
 
 </template>
@@ -21,8 +21,13 @@ export default {
   },
   methods: {
     handleSelect(key, keyPath) {
-      this.$router.push({ path: key });
-    },
+      if(key === 'logout'){
+        this.$store.dispatch('user/logout');
+      }
+      else {
+        this.$router.push({name: key});
+      }
+    }
   },
 };
 </script>

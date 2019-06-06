@@ -2,6 +2,7 @@
 namespace App\Entity;
 
 use App\Entity\Traits\TimestampTrait;
+use App\Repository\QuestionRepository;
 use Doctrine\ORM\Mapping AS ORM;
 use Doctrine\ORM\PersistentCollection;
 use JMS\Serializer\Annotation As JMS;
@@ -105,7 +106,7 @@ class QuizSession
      * @JMS\Groups({"list","detail"})
      * @JMS\Type("int")
      */
-    protected $current_page;
+    protected $current_page = 0;
 
     /**
      * @var User
@@ -228,6 +229,22 @@ class QuizSession
     {
         $this->submittedAt = $submittedAt;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentPage(): int
+    {
+        return $this->current_page;
+    }
+
+    /**
+     * @param int $current_page
+     */
+    public function setCurrentPage(int $current_page): void
+    {
+        $this->current_page = $current_page;
     }
 
     public function getNonResponseQuestions()

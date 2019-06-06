@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
-import { getToken, setToken } from '@/utils/auth';
+import store from "@/store";
 
 // Create axios instance
 const service = axios.create({
@@ -10,46 +10,32 @@ const service = axios.create({
 
 // Request intercepter
 service.interceptors.request.use(
-  config => {
-    const token = getToken();
-    if (token) {
-      config.headers['Authorization'] = 'Bearer ' + getToken(); // Set JWT token
-    }
+  async config => {
+      const refreshToken = store.state.user.refresh_token;
+      if (store.state.user.refresh_token !== null && await store.dispatch('user/isTokenValid') === false) {
+       try {
+           console.log("refreshed token");
+           await store.dispatch('user/refresh');
+           await new Promise(resolve => setTimeout(resolve, 2000));
+       }
+       catch (e) {
+           console.log("failed to refresh token");
+       }
+      }
 
-    return config;
+
+      const token = store.state.user.token;
+      if (token) {
+          config.headers['Authorization'] = 'Bearer ' + token; // Set JWT token
+      }
+
+      return config;
   },
   error => {
     // Do something with request error
     console.log(error); // for debug
     Promise.reject(error);
   }
-);
-
-// response pre-processing
-service.interceptors.response.use(
-  response => {
-    if (response.headers.authorization) {
-      setToken(response.headers.authorization);
-      response.data.token = response.headers.authorization;
-    }
-
-    return response.data;
-  },
-  error => {
-    let message = error.message;
-    if (error.response.data && error.response.data.errors) {
-      message = error.response.data.errors;
-    } else if (error.response.data && error.response.data.error) {
-      message = error.response.data.error;
-    }
-
-    // Message({
-    //   message: message,
-    //   type: 'error',
-    //   duration: 5 * 1000,
-    // });
-    return Promise.reject(error);
-  },
 );
 
 export default service;

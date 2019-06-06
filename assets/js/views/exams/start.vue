@@ -22,7 +22,7 @@ export default {
       handleQuizStart() {
         postClassroomQuizStart(this.$route.params.class_id,this.$route.params.quiz_id)
         .then((response) => {
-
+            this.$router.go();
         });
     },
   },

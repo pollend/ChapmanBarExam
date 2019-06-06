@@ -1,7 +1,6 @@
 import store from '@/store';
 import { Message } from 'element-ui';
 import 'nprogress/nprogress.css'; // progress bar style
-import { getToken } from '@/utils/auth'; // get token from cookie
 import getPageTitle from '@/utils/get-page-title';
 
 export function canAccess(roles, permissions, routes) {
@@ -35,7 +34,7 @@ export async function routePermissions(to, from, next) {
     return true;
   } else {
     // check if user has token
-    const hasToken = getToken();
+    const hasToken = store.state.user.token;
     if (hasToken) {
       // try to check user with the server
       try {
@@ -47,7 +46,7 @@ export async function routePermissions(to, from, next) {
         }
       } catch (e) {
         // remove token and go to login page to re-login
-        await store.dispatch('user/resetToken');
+        await store.dispatch('user/logout');
         Message.error(e || 'Has Error');
         next(`/login?redirect=${to.path}`);
       }

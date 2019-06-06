@@ -18,6 +18,7 @@ class TextBlockQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
+     * @JMS\Groups({"detail","list"})
      */
     protected $content;
 

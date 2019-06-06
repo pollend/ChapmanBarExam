@@ -13,9 +13,10 @@ const state = {
 
 const mutations = {
     GET_SESSION: (state, payload) => {
-        const {id, classroom, quiz} = payload;
+        const {id, classroom, quiz,current_page } = payload;
         state.session_id = id;
         state.quiz_id = quiz.id;
+        state.current_page = current_page;
         state.classroom = classroom;
         state.quiz = quiz;
     }
@@ -30,7 +31,7 @@ const actions = {
     session({commit, state}) {
         return new Promise((resolve, reject) => {
             getActiveSession().then(response => {
-                const {session} = response;
+                const {session} = response.data;
                 commit("GET_SESSION", session);
                 resolve(session);
 

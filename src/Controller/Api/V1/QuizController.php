@@ -51,6 +51,9 @@ class QuizController extends AbstractFOSRestController
         if ($quiz = $quizRepo->find($quiz_id)) {
             /** @var QuizSession $activeSession */
             $activeSession = $quizSessionRepo->getActiveSession($user);
+            if($activeSession->getCurrentPage() === $page)
+                throw $this->createNotFoundException();
+
             $groups = $questionRepo->getUniqueGroups($quiz);
             $questions = $questionRepo->filterByGroup($groups[$page], $quiz);
             $groups = $questionRepo->getUniqueGroups($quiz);

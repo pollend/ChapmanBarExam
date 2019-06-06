@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping AS ORM;
 use JMS\Serializer\Annotation As JMS;
@@ -107,6 +108,14 @@ abstract class QuizQuestion
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
     }
 
+
+    /**
+     * @return Collection
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
 
     /**
      * @param $order

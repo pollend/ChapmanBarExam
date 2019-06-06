@@ -16,7 +16,7 @@ use JMS\Serializer\Annotation As JMS;
  * @JMS\Discriminator(field = "type", map = {
  *    "multiple_choice": "App\Entity\MultipleChoiceResponse",
  *    "short_answer": "App\Entity\ShortAnswerResponse"
- * })
+ * },groups={"detail","list"})
  */
 abstract class QuizResponse
 {
@@ -26,7 +26,7 @@ abstract class QuizResponse
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list"})
+     * @JMS\Groups({"list","detail"})
      */
     protected $id;
 
@@ -37,6 +37,7 @@ abstract class QuizResponse
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="session_id",referencedColumnName="id")
      * })
+     * @JMS\Groups({"session_info"})
      */
     protected $session;
 
@@ -46,6 +47,7 @@ abstract class QuizResponse
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="question_id",referencedColumnName="id")
      * })
+     * @JMS\Groups({"detail"})
      */
     protected $question;
 

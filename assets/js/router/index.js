@@ -26,9 +26,10 @@ export const routes = [
   { path: '/404', redirect: { name: 'Page404' }, component: () => import('@/views/errors/404')},
   { path: '/401', component: () => import('@/views/errors/401') },
   { path: '/', component: AppLayout, children: [
-      { path: '', meta: { roles: ['user'] }, component: () => import('@/views/home') },
+      { path: '', meta: { roles: ['user'] }, component: () => import('@/views/home'), name: 'app.home'},
       { path: '/class/:class_id/exam/:quiz_id/start', meta: { roles: ['user'] }, name: 'app.exam.start', component: () => import('@/views/exams/start')},
-      { path: '/quiz/page/:page', meta: { roles: ['user'] }, name: 'app.session.page', component: () => import('@/views/exams/show')}
+      { path: '/quiz/page/:page', meta: { roles: ['user'] }, name: 'app.session.page', component: () => import('@/views/exams/show')},
+      { path: '/reports', meta: {roles: ['user']}, name: 'app.reports', component: () => import('@/views/report/index')},
     ],
     beforeEnter: async (to, from, next) => {
       if(await routePermissions(to,from,next) === true){
@@ -37,27 +38,6 @@ export const routes = [
         }
       }
     }
-  },
-  {
-    path: '/reports',
-    component: Layout,
-    children: [
-      {
-        path: '/',
-        meta: { roles: ['user'] },
-        component: () => import('@/views/exams/start'),
-      },
-      {
-        path: '/:repor_id',
-        meta: { roles: ['user'] },
-        component: () => import('@/views/exams/start'),
-      },
-      {
-        path: '/:repor_id/breakdown',
-        meta: { roles: ['user'] },
-        component: () => import('@/views/exams/start'),
-      },
-    ],
   }
 ];
 

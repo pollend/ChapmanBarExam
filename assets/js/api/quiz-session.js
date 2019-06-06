@@ -20,3 +20,18 @@ export  function getQuestions(quiz_id, page) {
         method: 'get'
     });
 }
+
+export function getResponses(session_id,page) {
+    return request({
+        url: Routing.generate('get_quiz_session_questions', {session_id: session_id, page: page}),
+        method: 'get'
+    })
+}
+
+export function postResponse(session_id,page,payload) {
+    return request({
+        url: Routing.generate('post_quiz_session_questions', {session_id: session_id, page: page}),
+        method: 'post',
+        data: payload
+    })
+}

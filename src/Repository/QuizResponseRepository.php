@@ -61,4 +61,14 @@ class QuizResponseRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function filterResponseBySessionAndQuestion(QuizSession $session, $question){
+        $qb = $this->createQueryBuilder('r');
+        return $qb->where($qb->expr()->eq('r.session', ':session'))
+            ->andWhere($qb->expr()->eq('r.question',':questions'))
+            ->setParameter('session',$session)
+            ->setParameter('questions',$question)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

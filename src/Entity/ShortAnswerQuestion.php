@@ -27,11 +27,13 @@ class ShortAnswerQuestion extends QuizQuestion
        return $this->responses;
     }
 
+    /**
+     * @param $session
+     * @return \Doctrine\Common\Collections\ArrayCollection|\Doctrine\Common\Collections\Collection
+     */
     public function answersBySession($session){
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
     }
-
-
 
     /**
      * @param string $content
