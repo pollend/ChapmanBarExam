@@ -29,7 +29,11 @@ export const routes = [
       { path: '', meta: { roles: ['user'] }, component: () => import('@/views/home'), name: 'app.home'},
       { path: '/class/:class_id/exam/:quiz_id/start', meta: { roles: ['user'] }, name: 'app.exam.start', component: () => import('@/views/exams/start')},
       { path: '/quiz/page/:page', meta: { roles: ['user'] }, name: 'app.session.page', component: () => import('@/views/exams/show')},
-      { path: '/reports', meta: {roles: ['user']}, name: 'app.reports', component: () => import('@/views/report/index')},
+      { path: '/report', meta: {roles: ['user']}, name: 'app.report', component: () => import('@/views/report/index')},
+      {path: '/report/:report_id/', meta: {roles: ['user']}, component:() => import('@/views/report/container'), children:[
+          { path: '', meta: {roles: ['user']}, name: 'app.report.show', component: () => import('@/views/report/show')},
+          { path: 'breakdown', meta: {roles: ['user']}, name: 'app.report.breakdown', component: () => import('@/views/report/breakdown')},
+      ]}
     ],
     beforeEnter: async (to, from, next) => {
       if(await routePermissions(to,from,next) === true){
@@ -43,8 +47,15 @@ export const routes = [
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
   routes: routes,
+  scrollBehavior (to, from, savedPosition) {
+    if (to.hash) {
+        return {
+            selector: to.hash
+            // , offset: { x: 0, y: 10 }
+        }
+    }
+  }
 });
 
 const router = createRouter();

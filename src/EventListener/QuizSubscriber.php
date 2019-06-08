@@ -4,10 +4,14 @@
 namespace App\EventListener;
 
 
+use App\Entity\MultipleChoiceQuestion;
+use App\Entity\MultipleChoiceResponse;
 use App\Entity\QuizResponse;
-use App\Event\QuizSessionEvent;
+use App\Event\QuestionResultsEvent;
 use App\Repository\QuizResponseRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class QuizSubscriber implements EventSubscriberInterface
@@ -39,16 +43,36 @@ class QuizSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [QuizSessionEvent::FINISH => 'onFinish'];
+        return [QuestionResultsEvent::QUESTION_RESULTS => 'onCalculate'];
     }
 
-    public function onFinish(QuizSessionEvent $event){
+    public function onCalculate(QuestionResultsEvent $event){
 
-        $session = $event->getSession();
 
         /** @var QuizResponseRepository $responseRepo */
         $responseRepo = $this->em->getRepository(QuizResponse::class);
 
+        $responses = Collection::make($responseRepo->filterResponsesBySessionAndQuestions($event->getSession(), $event->getQuestions()))
+            ->keyBy(function ($item) {
+                return $item->getQuestion()->getId();
+            });
+        $maxScore = 0;
+        $score = 0;
+        foreach ($event->getQuestions() as $question) {
+            if ($question instanceof MultipleChoiceQuestion) {
+                $maxScore++;
+                if (Arr::exists($responses, $question->getId())) {
+                    /** @var MultipleChoiceResponse $response */
+                    $response = $responses[$question->getId()];
+                    if ($question->getCorrectEntry() === $response->getChoice()) {
+                       $score++;
+                    }
+                }
+            }
+        }
+
+        $event->setScore($score);
+        $event->setMaxScore($maxScore);
 
     }
 }

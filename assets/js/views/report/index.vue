@@ -4,23 +4,22 @@
             <el-table :data="reports">
                 <el-table-column
                         prop="created_at"
-                        label="Created At"
-                        width="180">
+                        label="Created At">
                 </el-table-column>
                 <el-table-column
                         prop="submitted_at"
-                        label="Submitted At"
-                        width="180">
+                        label="Submitted At">
                 </el-table-column>
                 <el-table-column
                         prop="quiz.name"
-                        label="Name"
-                        width="180">
+                        label="Name">
                 </el-table-column>
-                <el-table-column
-                        prop="created_at"
-                        label="Created At"
-                        width="180">
+                <el-table-column label="View">
+                    <template slot-scope="scope">
+                        <el-button
+                                size="mini"
+                                @click="handleView(scope.row)">view</el-button>
+                    </template>
                 </el-table-column>
             </el-table>
         </div>
@@ -53,6 +52,9 @@ export default {
               const {reports} = response.data;
               this.reports = reports;
           });
+      },
+      handleView(row){
+          this.$router.push({'name':'app.report.show','params':{'report_id': row.id}})
       }
   },
 };

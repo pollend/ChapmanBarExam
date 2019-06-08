@@ -38,7 +38,7 @@ class MultipleChoiceQuestion extends QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="correct_entry_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"correct"})
+     * @JMS\Groups({"question_correct_answer"})
      */
     protected $correctEntry;
 

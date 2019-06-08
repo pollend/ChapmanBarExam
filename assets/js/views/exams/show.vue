@@ -33,6 +33,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import {getQuestions, getResponses, postResponse} from '@/api/quiz-session'
+import NProgress from 'nprogress';
 export default {
   name: 'Home',
   computed: {
@@ -61,9 +62,6 @@ export default {
           let _this = this;
           getQuestions(quiz_id,page).then((response) => {
               const {questions} = response.data;
-             // questions.forEach(function (q) {
-             //     q['value'] = 0;
-             // });
               _this.questions = questions;
               getResponses(session_id,page).then((response)=>{
                   const {responses} = response.data;

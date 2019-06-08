@@ -4,13 +4,10 @@
 namespace App\Repository;
 
 
-use App\Entities\QuestionTag;
-use App\Entities\Quiz;
-use App\Entities\QuizQuestion;
+use App\Entity\QuestionTag;
+use App\Entity\Quiz;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\OrderBy;
-use Doctrine\ORM\Query\AST\Join;
 use Illuminate\Support\Collection;
 
 class QuestionRepository extends EntityRepository

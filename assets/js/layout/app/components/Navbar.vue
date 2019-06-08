@@ -8,7 +8,7 @@
     </el-submenu>
     <el-menu-item>Chapman Bar Exam</el-menu-item>
     <el-menu-item index="app.home" >Exams</el-menu-item>
-    <el-menu-item index="app.reports">Reports</el-menu-item>
+    <el-menu-item index="app.report">Reports</el-menu-item>
   </el-menu>
 
 </template>

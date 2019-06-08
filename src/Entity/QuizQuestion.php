@@ -74,7 +74,7 @@ abstract class QuizQuestion
      * Many Groups have Many Users.
      * @ORM\ManyToMany(targetEntity="QuestionTag", inversedBy="questions")
      * @var PersistentCollection
-     * @JMS\Groups({"tags"})
+     * @JMS\Groups({"question_tags"})
      */
     private $tags;
 

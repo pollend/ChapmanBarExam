@@ -17,15 +17,13 @@ use JMS\Serializer\Annotation As JMS;
  */
 class MultipleChoiceResponse extends  QuizResponse
 {
-
-
     /**
      * @var MultipleChoiceEntry
      * @ORM\ManyToOne(targetEntity="MultipleChoiceEntry")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="choice_entry_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"correct"})
+     * @JMS\Groups({"user_response"})
      */
     protected $choice;
 
