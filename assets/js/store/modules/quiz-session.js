@@ -1,5 +1,3 @@
-import defaultSettings from '@/settings';
-const { showSettings, tagsView, fixedHeader, sidebarLogo, theme } = defaultSettings;
 import { getActiveSession } from '@/api/quiz-session';
 import router from '@/router';
 
@@ -19,7 +17,8 @@ const mutations = {
         state.current_page = current_page;
         state.classroom = classroom;
         state.quiz = quiz;
-    }
+    },
+
 };
 
 const getters = {

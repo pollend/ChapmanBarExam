@@ -1,10 +1,18 @@
 import request from '@/utils/request';
-
 export function getClassesByUser(id) {
   return request({
     // eslint-disable-next-line no-undef
     url: Routing.generate('get_classroom_by_owner', { user_id: id }),
     method: 'get',
+  });
+}
+
+export function getClassesDatatable(query) {
+  return request({
+    // eslint-disable-next-line no-undef
+    url: Routing.generate('get_classrooms_datatable'),
+    method: 'post',
+    data: query
   });
 }
 

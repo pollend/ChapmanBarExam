@@ -12,7 +12,7 @@ const state = {
   id: null,
   token: Cookies.get(TokenKey),
   refresh_token: Cookies.get(RefreshToken),
-  name: '',
+  username: '',
   avatar: '',
   introduction: '',
   ttl: Cookies.get(TokenKeyTTL),
@@ -23,7 +23,7 @@ const state = {
 const mutations = {
   SET_USER: (state,user) => {
       state.id = user.id;
-      state.name = user.id;
+      state.username = user.username;
       state.roles = user.roles;
       state.permissions = user.permissions;
   },
@@ -47,11 +47,21 @@ const mutations = {
     } else {
         Cookies.set(RefreshToken,state.refresh_token);
     }
+  },
+  CLEAR_USER: (state) => {
+      state.id = null;
+      state.username = '';
+      state.roles = [];
+      state.permissions = [];
   }
 };
 
 // getters
-const getters = {};
+const getters = {
+    username: state => state.username,
+    roles: state => state.roles,
+    id: state => state.id
+};
 
 const actions = {
   // user login
@@ -103,6 +113,7 @@ const actions = {
           resolve(user);
         })
         .catch(error => {
+          commit('CLEAR_USER');
           reject(error);
         });
     });
@@ -112,6 +123,7 @@ const actions = {
   logout({ commit, state }) {
       commit('SET_TOKEN', null);
       commit('SET_REFRESH_TOKEN', null);
+      commit('CLEAR_USER');
   },
 };
 

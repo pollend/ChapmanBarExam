@@ -67,4 +67,5 @@ class QuizController extends AbstractFOSRestController
         }
         return $this->createNotFoundException();
     }
+
 }

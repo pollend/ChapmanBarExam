@@ -1,76 +1,199 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
-    <sidebar class="sidebar-container" />
-    <div :class="{hasTagsView:needTagsView}" class="main-container">
-      <div :class="{'fixed-header':fixedHeader}">
-        <navbar />
-        <tags-view v-if="needTagsView" />
-      </div>
-      <app-main />
-      <right-panel v-if="showSettings">
-        <settings />
-      </right-panel>
+  <div class="app-wrapper" :class="classObj">
+    <div class="sidebar-container">
+      <left-sidebar/>
+    </div>
+    <div class="main-container">
+      <navbar />
+      <router-view/>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import RightPanel from '@/components/RightPanel/index';
-import { Navbar, Sidebar, AppMain, TagsView, Settings } from './components';
-import ResizeMixin from './mixin/resize-handler.js';
+  import {mapGetters, mapState} from 'vuex';
+import { Navbar, LeftSidebar } from './components';
 
 export default {
   name: 'Layout',
   components: {
-    AppMain,
     Navbar,
-    RightPanel,
-    Settings,
-    Sidebar,
-    TagsView,
+    LeftSidebar
   },
-  mixins: [ResizeMixin],
   computed: {
-    ...mapState({
-      sidebar: state => state.app.sidebar,
-      device: state => state.app.device,
-      showSettings: state => state.settings.showSettings,
-      needTagsView: state => state.settings.tagsView,
-      fixedHeader: state => state.settings.fixedHeader,
+    ...mapGetters({
+      'sidebarState': 'dashboard-setting/toggle_sidebar',
     }),
     classObj() {
       return {
-        hideSidebar: !this.sidebar.opened,
-        openSidebar: this.sidebar.opened,
-        withoutAnimation: this.sidebar.withoutAnimation,
-        mobile: this.device === 'mobile',
+        hideSidebar: this.sidebarState
       };
-    },
-  },
-  methods: {
-    handleClickOutside() {
-      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false });
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-  @import "~@/styles/mixin.scss";
-  @import "~@/styles/variables.scss";
+<style rel="stylesheet/scss" lang="scss">
+
+  //sidebar
+  $menuText:#bfcbd9;
+  $menuActiveText:#409EFF;
+  $subMenuActiveText:#f4f4f5; //https://github.com/ElemeFE/element/issues/12951
+
+  $menuBg:#304156;
+  $menuHover:#263445;
+
+  $subMenuBg:#1f2d3d;
+  $subMenuHover:#001528;
+
+  $sideBarWidth: 210px;
+
+  // Main container
+  .main-container {
+    min-height: 100%;
+    transition: margin-left .28s;
+    margin-left: $sideBarWidth;
+    position: relative;
+  }
+
+  // Sidebar container
+  .sidebar-container {
+    transition: width 0.28s;
+    width: $sideBarWidth !important;
+    height: 100%;
+    position: fixed;
+    font-size: 0px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    overflow: hidden;
+
+    //reset element-ui css
+    .horizontal-collapse-transition {
+      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+    }
+
+    .scrollbar-wrapper {
+      overflow-x: hidden !important;
+
+      .el-scrollbar__view {
+        height: 100%;
+      }
+    }
+
+    .el-scrollbar__bar.is-vertical {
+      right: 0px;
+    }
+
+    .is-horizontal {
+      display: none;
+    }
+
+    a {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .svg-icon {
+      margin-right: 16px;
+    }
+
+    .el-menu {
+      border: none;
+      height: 100%;
+      width: 100% !important;
+    }
+
+    // menu hover
+    .submenu-title-noDropdown,
+    .el-submenu__title {
+      &:hover {
+        background-color: $menuHover !important;
+      }
+    }
+
+    .is-active > .el-submenu__title {
+      color: $subMenuActiveText !important;
+    }
+
+    & .nest-menu .el-submenu > .el-submenu__title,
+    & .el-submenu .el-menu-item {
+      min-width: $sideBarWidth !important;
+      background-color: $subMenuBg !important;
+
+      &:hover {
+        background-color: $subMenuHover !important;
+      }
+    }
+  }
+
+  .hideSidebar {
+    .sidebar-container {
+      width: 64px !important;
+    }
+
+    .main-container {
+      margin-left: 64px;
+    }
+
+    .svg-icon {
+      margin-right: 0px;
+    }
+
+    /*.submenu-title-noDropdown {*/
+    /*  padding: 0 !important;*/
+    /*  position: relative;*/
+
+    /*  .el-tooltip {*/
+    /*    padding: 0 !important;*/
+    /*    .svg-icon {*/
+    /*      margin-left: 20px;*/
+    /*    }*/
+    /*  }*/
+    /*}*/
+
+    /*.el-submenu {*/
+    /*  overflow: hidden;*/
+
+    /*  &>.el-submenu__title {*/
+    /*    padding: 0 !important;*/
+    /*    .svg-icon {*/
+    /*      margin-left: 20px;*/
+    /*    }*/
+
+    /*    .el-submenu__icon-arrow {*/
+    /*      display: none;*/
+    /*    }*/
+    /*  }*/
+    /*}*/
+
+    .el-menu--collapse {
+      .el-submenu {
+        &>.el-submenu__title {
+          &>span {
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            visibility: hidden;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
 
   .app-wrapper {
-    @include clearfix;
+    //@include clearfix;
     position: relative;
     height: 100%;
     width: 100%;
 
-    &.mobile.openSidebar {
-      position: fixed;
-      top: 0;
-    }
+    /*&.mobile.openSidebar {*/
+    /*  position: fixed;*/
+    /*  top: 0;*/
+    /*}*/
   }
 
   .drawer-bg {
@@ -92,9 +215,9 @@ export default {
     transition: width 0.28s;
   }
 
-  .hideSidebar .fixed-header {
-    width: calc(100% - 54px)
-  }
+  /*.hideSidebar .fixed-header {*/
+  /*  width: calc(100% - 54px)*/
+  /*}*/
 
   .mobile .fixed-header {
     width: 100%;

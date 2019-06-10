@@ -34,25 +34,21 @@ export default {
   name: 'ReportIndex',
   components: { },
   computed: {
-    ...mapGetters([
-        'userId',
-    ]),
+      ...mapGetters({
+          'userId': 'user/id',
+      }),
   },
   data() {
     return {
         reports: null
     };
   },
-  created() {
-      this.query();
+  async created() {
+      const response = await getReports(this.userId);
+      const {reports} = response.data;
+      this.reports = reports;
   },
   methods: {
-      query() {
-          getReports(this.userId).then((response) => {
-              const {reports} = response.data;
-              this.reports = reports;
-          });
-      },
       handleView(row){
           this.$router.push({'name':'app.report.show','params':{'report_id': row.id}})
       }

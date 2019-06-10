@@ -7,6 +7,8 @@ export function getReports(user_id) {
     });
 }
 
+
+
 export function getReport(report_id) {
     return request({
         url: Routing.generate('get_report',{report_id: report_id}),

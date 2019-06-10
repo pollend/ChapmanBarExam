@@ -52,26 +52,22 @@ export default {
   name: 'Home',
   components: { },
   computed: {
-    ...mapGetters([
-      'userId',
-    ]),
+    ...mapGetters({
+        'userId': 'user/id',
+    }),
   },
   data() {
     return {
       classes: null,
     };
   },
-  created() {
-    this.query();
+  async created() {
+      NProgress.start();
+      const response = await getClassesByUser(this.userId);
+      this.classes = response.data.classes;
+      NProgress.done();
   },
   methods: {
-    query() {
-      NProgress.start();
-      getClassesByUser(this.userId).then((response) => {
-        this.classes = response.data.classes;
-        NProgress.done();
-      });
-    },
     group(access) {
       return _.chunk(access, 4);
     },

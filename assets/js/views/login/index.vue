@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">{{ $t('login.title') }}</h3>
+      <h3 class="title">Chapman Bar Exam</h3>
       <lang-select class="set-language" />
       <el-form-item prop="email">
         <span class="svg-container">
@@ -29,10 +29,6 @@
           Sign in
         </el-button>
       </el-form-item>
-      <div class="tips">
-        <span style="margin-right:20px;">Email: admin@laravue.dev</span>
-        <span>Password: laravue</span>
-      </div>
     </el-form>
   </div>
 </template>
@@ -61,8 +57,8 @@ export default {
     };
     return {
       loginForm: {
-        email: 'kstamm@hotmail.com',
-        password: 'password',
+        email: '',
+        password: '',
       },
       loginRules: {
         email: [{ required: true, trigger: 'blur', validator: validateEmail }],
@@ -162,16 +158,6 @@ $light_gray:#eee;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
     margin: 120px auto;
-  }
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
   }
   .svg-container {
     padding: 6px 5px 6px 15px;

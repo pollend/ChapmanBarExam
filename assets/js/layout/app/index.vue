@@ -6,12 +6,11 @@
 </template>
 
 <script>
-import { Navbar, AppMain } from './components';
+import { Navbar } from './components';
 export default {
   name: 'Layout',
   components: {
-    Navbar,
-    AppMain,
+    Navbar
   },
   mixins: [],
   computed: {

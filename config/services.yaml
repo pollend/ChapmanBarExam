@@ -24,6 +24,15 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-
+    App\Normalizer\Subscriber\:
+        resource: '../src/Normalizer/Subscriber/*'
+        public: true
+        tags:
+        - { name: jms_serializer.subscribing_handler }
+    App\Normalizer\Event\:
+        resource: '../src/Normalizer/Event/*'
+        public: true
+        tags:
+            - { name: jms_serializer.event_subscriber }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

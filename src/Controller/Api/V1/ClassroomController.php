@@ -29,7 +29,9 @@ use JMS\Serializer\SerializerBuilder;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Debug\Debug;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/api/v1/")
@@ -87,7 +89,32 @@ class ClassroomController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Post("/classroom/{class_id}/quiz/{quiz_id}",
+     * @Rest\Post("/classroom/datatable",
+     *     options = { "expose" = true },
+     *     name="get_classrooms_datatable")
+     * @Rest\View(serializerGroups={"Default","list","timestamp"})
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function getClassroomDatatable(Request $request){
+        /** @var ClassroomRepository $classRepo */
+        $classRepo = $this->getDoctrine()->getRepository(Classroom::class);
+        return $this->view(['classes' => $classRepo->dataTable($request)]);
+    }
+
+    /**
+     * @Rest\Get("/classroom/{class_id}/quiz",
+     *     options = { "expose" = true },
+     *     name="get_classrooms_datatable")
+     *
+     * @param Request $request
+     */
+    public function getQuizzesByClass(Request $request){
+
+    }
+
+
+    /**
+     * @Rest\Post("/classroom/{class_id}/quiz/{quiz_id}/start",
      *     options = { "expose" = true },
      *     name="post_classroom_quiz_start")
      * @Rest\View(serializerGroups={"list"})

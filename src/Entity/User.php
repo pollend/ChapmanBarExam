@@ -32,6 +32,9 @@ class User implements UserInterface
 {
     use TimestampTrait;
 
+    const ROLE_USER = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+
     /**
      * @var integer
      *
@@ -46,7 +49,7 @@ class User implements UserInterface
      * @ORM\Column(type="json")
      * @JMS\Groups({"list","detail","owner"})
      */
-    private $roles = [];
+    private $roles = [User::ROLE_USER];
 
 
     /**
@@ -141,13 +144,6 @@ class User implements UserInterface
         $this->emailVerifiedAt = $emailVerifiedAt;
     }
 
-    /**
-     * @param mixed $roles
-     */
-    public function setRoles($roles): void
-    {
-        $this->roles = $roles;
-    }
 
     /**
      * @return int
@@ -189,13 +185,16 @@ class User implements UserInterface
      *
      * @return (Role|string)[] The user roles
      */
-    public function getRoles()
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+    public function getRoles(){
+        return array_unique($this->roles);
+    }
 
-        return array_unique($roles);
+    /**
+     * @param mixed $roles
+     */
+    public function setRoles($roles): void
+    {
+        $this->roles = $roles;
     }
 
     /**
