@@ -19,7 +19,7 @@ class QuizAccessRepository extends EntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function getAccessByClass(Classroom $classroom, Quiz $quiz)
+    public function getAccessByClassAndQuiz(Classroom $classroom, Quiz $quiz)
     {
         $qb = $this->createQueryBuilder('q');
         return $qb->where($qb->expr()->eq('q.quiz', ':quiz'))

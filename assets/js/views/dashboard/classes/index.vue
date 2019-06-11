@@ -1,7 +1,7 @@
 <template>
     <div class="section">
         <div class="container">
-            <data-tables-server :data="classes" :total="count" @query-change="loadData" :pagination-props="{ pageSizes: [10, 50, 100, 200] }">
+            <data-tables-server :loading="loading" :data="classes" :total="count" @query-change="loadData" :pagination-props="{ pageSizes: [10, 50, 100, 200] }">
                 <el-table-column sortable="true" prop="created_at" label="Created At"></el-table-column>
                 <el-table-column sortable="true" prop="updated_at" label="Updated At"></el-table-column>
                 <el-table-column sortable="true" prop="name" label="Name"></el-table-column>
@@ -22,6 +22,7 @@
 import {getReports} from "@/api/report";
 import {mapGetters} from "vuex";
 import {getClassesDatatable} from "@/api/classes";
+import MixinDatatable from "@/mixxins/data-table"
 export default {
   name: 'ClassesList',
   components: { },
@@ -41,29 +42,22 @@ export default {
         classes: null,
         count: 0,
         per_page: 0,
-        page: 0
+        page: 0,
+        loading:false
     };
   },
+  mixins:[MixinDatatable],
   methods: {
-      orderHelper(order){
-          switch (order) {
-              case 'ascending':
-                  return  'ASC';
-              case 'descending':
-                  return  'DESC';
-          }
-          return  '';
-      },
       handleView(row){
           this.$router.push({'name':'dashboard.class', 'params': {'class_id':row.id}})
       },
       handleArchive(row){
       },
       async loadData(queryInfo){
-          console.log(queryInfo)
-          let sort = {}
+          this.loading = true;
+          let sort = {};
           if(queryInfo.sort.prop && queryInfo.sort.order)
-              sort[queryInfo.sort.prop] = this.orderHelper(queryInfo.sort.order);
+              sort[queryInfo.sort.prop] = this.order(queryInfo.sort.order);
 
           const response = await getClassesDatatable({'pageSize':queryInfo.pageSize,'sort' : sort,'page': queryInfo.page - 1});
           const {classes} = response.data;
@@ -74,10 +68,11 @@ export default {
           this.count = count;
           this.per_page = per_page;
           this.column_sort = column_sort;
+          this.loading = false;
       },
   },
 };
 </script>
 
-<style>
+<style rel="stylesheet/scss" lang="scss">
 </style>

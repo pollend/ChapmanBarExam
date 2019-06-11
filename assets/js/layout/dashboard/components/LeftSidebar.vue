@@ -21,6 +21,14 @@
         <el-menu-item index="dashboard.classes">All Classes</el-menu-item>
         <el-menu-item index="dashboard.classes.add">Add Class</el-menu-item>
       </el-submenu>
+      <el-submenu index="2">
+        <template slot="title">
+            <i class="el-icon-tickets"></i>
+            <span slot="title">Exams</span>
+        </template>
+        <el-menu-item index="dashboard.exam">All Exams</el-menu-item>
+<!--        <el-menu-item index="dashboard.classes.add">Create Exam</el-menu-item>-->
+      </el-submenu>
     </el-menu>
 
 </template>

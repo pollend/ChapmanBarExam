@@ -4,6 +4,8 @@
 namespace App\Controller;
 
 
+use App\Entity\Classroom;
+use App\Form\ClassroomType;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations as Rest;

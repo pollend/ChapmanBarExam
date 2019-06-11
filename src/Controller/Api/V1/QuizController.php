@@ -16,6 +16,8 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Illuminate\Support\Collection;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/api/v1/")
@@ -66,6 +68,19 @@ class QuizController extends AbstractFOSRestController
             }
         }
         return $this->createNotFoundException();
+    }
+
+    /**
+     * @Rest\Post("/quiz/datatable",
+     *     options = { "expose" = true },
+     *     name="get_quiz_datatable")
+     * @Rest\View(serializerGroups={"Default","list","timestamp"})
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function getQuizzesDatatable(Request $request){
+        /** @var QuizRepository $quizRepo */
+        $quizRepo = $this->getDoctrine()->getRepository(Quiz::class);
+        return $this->view(['quizzes' => $quizRepo->dataTable($request)]);
     }
 
 }

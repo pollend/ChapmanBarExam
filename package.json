@@ -48,6 +48,7 @@
     "query-string": "^6.7.0",
     "resolve-url-loader": "^3.1.0",
     "screenfull": "^4.2.0",
+    "vee-validate": "^2.2.10",
     "vue": "^2.6.10",
     "vue-chartjs": "^3.4.2",
     "vue-count-to": "^1.0.13",

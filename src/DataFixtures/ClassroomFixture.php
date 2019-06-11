@@ -54,6 +54,8 @@ class ClassroomFixture extends Fixture implements DependentFixtureInterface
         Collection::times(100,function ($index) use ($faker,$quizzes,$users,$manager) {
             $classroom = new Classroom();
             $classroom->setName($faker->name);
+            $classroom->setDescription($faker->sentence($nbWords = 6, $variableNbWords = true));
+            $classroom->setCourseNumber($faker->lexify('\#?-??'));
             $manager->persist($classroom);
 
             /** @var User $user */

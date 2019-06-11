@@ -131,14 +131,6 @@ class Quiz
     }
 
     /**
-     * @return int
-     */
-    public function getNumAttempts(): int
-    {
-        return $this->numAttempts;
-    }
-
-    /**
      *
      * @param $user
      * @return ArrayCollection|\Doctrine\Common\Collections\Collection

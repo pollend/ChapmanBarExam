@@ -31,7 +31,7 @@ class UserWhitelist
     /**
      * @var Quiz
      *
-     * @ORM\ManyToOne(targetEntity="Classroom",inversedBy="whitelists")
+     * @ORM\ManyToOne(targetEntity="Classroom",inversedBy="emailWhitelist")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      * })

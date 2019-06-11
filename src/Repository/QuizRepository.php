@@ -4,94 +4,60 @@
 namespace App\Repository;
 
 
-use App\Entities\Classroom;
-use App\Quiz;
+use App\Datatable;
+use App\Entity\Quiz;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\HttpFoundation\Request;
 
 class QuizRepository extends EntityRepository
 {
-    /**
-     * @param Quiz $quiz
-     * @param $user
-     * @return mixed
-     */
-    public function attempt_count($quiz, $user)
+    private function _filter(Request $request)
     {
-        return $quiz->sessions()->where('owner_id', $user->id)->count();
-    }
-
-    public function findByClass(Classroom $classroom) {
         $qb = $this->createQueryBuilder('q');
-        return $qb->innerJoin('q.access','a',Join::WITH,$qb->expr()->eq('a.classroom',':class'))
-            ->setParameter('class',$classroom)
-            ->getQuery()
-            ->getResult();
+        if($name = $request->get('name',null))
+        {
+            $qb->where($qb->expr()->like('q.name',':name'))
+                ->setParameter('name','%' .$name.'%');
+        }
+
+        return $qb;
     }
 
-//    /**
-//     * @param \App\Quiz $quiz
-//     * @return \Illuminate\Support\Collection
-//     */
-//    public function getGroupedQuestions($quiz)
-//    {
-//        $collection = $this->getQuestions($quiz)
-//            ->sortBy('group')
-//            ->groupBy('group')
-//            ->transform(function ($entry) {
-//                return $entry->sortby('order')->values();
-//            })->values();
-//        return $collection;
-//    }
-//
-//    /**
-//     * @param Quiz $quiz
-//     * @return \Illuminate\Support\Collection
-//     */
-//    public function getQuestions($quiz,\Closure $callback = null){
-//        if($callback){
-//            return \Illuminate\Support\Collection::make()
-//                ->merge($callback($quiz->multipleChoiceQuestions()))
-//                ->merge($callback($quiz->shortAnswerQuestions()));
-//        }
-//        return \Illuminate\Support\Collection::make()
-//            ->merge($quiz->multipleChoiceQuestions()->get())
-//            ->merge($quiz->shortAnswerQuestions()->get());
-//    }
+    public function filter(Request $request){
+        return $this->_filter($request)->getQuery();
+    }
 
-//    /**
-//     * get the order values for looking up questions
-//     *
-//     * @param Quiz $quiz
-//     * @return \Illuminate\Support\Collection
-//     */
-//    public function getGroups(Quiz $quiz)
-//    {
-//        return $this->getQuestions($quiz, function ($q) {
-//            return $q->distinct('group')->value('group');
-//        })->unique()
-//            ->sort()
-//            ->values();
-//    }
-//
-//
-//    function getUnionedQuestions(\Closure $query = null)
-//    {
-//        $q1 = DB::table('quiz_multiple_choice_questions')
-//            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
-//            ->selectRaw('\'multiple_choice\' as "type"');
-//
-//        $q2 = DB::table('quiz_short_answer_questions')
-//            ->select('id', 'created_at', 'updated_at', 'order', 'group', 'quiz_id')
-//            ->selectRaw('\'short_answer\' as "type"');
-//
-//        if($query != null)
-//            return $query($q1)->union($query($q2));
-//        return $q1->union($q2);
-//    }
+    public function dataTable(Request $request){
+        $qb = $this->_filter($request);
+        $dataTable = new DataTable();
+        $dataTable->handleSort($request,['name' => 'name','created_at' => 'createdAt','updated_at' => 'updatedAt'],function ($column,$sort) use ($qb){
+            $qb->orderBy('q.' . $column,$sort);
+        });
+
+        $paginator = $this->paginator($qb->getQuery(),
+            (int)$request->get('page',0),
+            (int)$request->get('pageSize',10),200);
+        $dataTable->setPayload($paginator);
+        return $dataTable;
+    }
+
+    /**
+     * @param Query $query
+     * @param int $page
+     * @param int $perPage
+     * @param int $limit
+     * @return Paginator
+     */
+    public function  paginator(Query $query,$page,$perPage,$limit = 10)
+    {
+        $pagination = new Paginator($query);
+        $num = $perPage < $limit ? $perPage :  $limit;
+        $pagination->getQuery()->setMaxResults($num);
+        $pagination->getQuery()->setFirstResult($num * $page);
+        return $pagination;
+    }
 }

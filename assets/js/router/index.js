@@ -47,15 +47,19 @@ export const routes = [
   },
   { path: '/dashboard', component: DashboardLayout, children: [
       {path: '', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/home'), name: 'dashboard.home'},
-      {path: '/classes', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/dashboard/classes'), name: 'dashboard.classes'},
-      {path: '/classes/:class_id', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/dashboard/classes/container'), children:[
-          {path: '', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class', component: () => import('@/views/dashboard/classes/show')},
-          {path: '/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.report', component: () => import('@/views/report/show')},
-          {path: '/quiz/:quiz_id', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz', component: () => import('@/views/report/show')},
-          {path: '/quiz/:quiz_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz.report', component: () => import('@/views/report/show')}
-      ]},
-      {path: '/classes/add', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/home'), name: 'dashboard.home'}
-  ],
+      // classes ---------------------------------------------------------------------------------------------------------------------------------------
+      {path: '/class', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/dashboard/classes'), name: 'dashboard.classes'},
+      {path: '/class/:class_id', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class', component: () => import('@/views/dashboard/classes/show')},
+      {path: '/class/:class_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.report', component: () => import('@/views/report/show')},
+      {path: '/class/:class_id/quiz/:quiz_id', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz', component: () => import('@/views/report/show')},
+      {path: '/class/:class_id/quiz/:quiz_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz.report', component: () => import('@/views/report/show')},
+      {path: '/class/add', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/home'), name: 'dashboard.class.add'},
+      // exams  ---------------------------------------------------------------------------------------------------------------------------------------
+      {path: '/exam', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/dashboard/exams'), name: 'dashboard.exam'},
+      {path: '/exam', meta: {roles: [ROLE_ADMIN]}, component: () => import('@/views/dashboard/exams'), name: 'dashboard.exam.show'},
+
+
+      ],
   beforeEnter: async (to, from, next) => {
       if(await routePermissions(to,from,next) === true){
           next();

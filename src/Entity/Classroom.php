@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping AS ORM;
 use Doctrine\ORM\PersistentCollection;
 use JMS\Serializer\Annotation As JMS;
-
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @package App\Entities
  *
@@ -22,7 +22,6 @@ class Classroom
 {
     use TimestampTrait;
     use SoftDeleteTrait;
-
 
     /**
      * @var integer
@@ -40,22 +39,38 @@ class Classroom
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
      * @JMS\Groups({"list","detail"})
+     * @Assert\NotBlank(message="Classroom Name Required")
+     * @Assert\NotNull()
      */
     protected $name;
 
     /**
+     * @var string
+     * @ORM\Column(name="description",type="string",length=50,nullable=true)
+     * @JMS\Groups({"list","detail"})
+     */
+    protected $description;
+
+    /**
+     * @var string
+     * @ORM\Column(name="course_number",type="string",length=50,nullable=true)
+     * @JMS\Groups({"list","detail"})
+     */
+    protected $courseNumber;
+
+    /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="UserWhitelist",mappedBy="classroom")
-     * @JMS\Groups({"whitelists"})
+     * @JMS\Groups({"classroom_whitelists"})
      */
-    protected $whitelists;
+    protected $emailWhitelist;
 
     /**
      * @var ArrayCollection
      * Many Users have Many Groups.
      * @ORM\ManyToMany(targetEntity="User", inversedBy="classes")
      * @ORM\JoinTable(name="classroom_user")
-     * @JMS\Groups({"registered"})
+     * @JMS\Groups({"classroom_registered"})
      */
     protected $users;
 
@@ -63,7 +78,7 @@ class Classroom
      * @var ArrayCollection
      * One Product has One Shipment.
      * @ORM\OneToMany(targetEntity="QuizAccess",mappedBy="classroom")
-     * @JMS\Groups({"access"})
+     * @JMS\Groups({"classroom_access"})
      */
     protected $quizAccess;
 
@@ -71,7 +86,7 @@ class Classroom
      * @var ArrayCollection
      * One Product has One Shipment.
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="classroom")
-     * @JMS\Groups({"quiz_sessions"})
+     * @JMS\Groups({"classroom_quiz_sessions"})
      */
     protected $quizSessions;
 
@@ -101,16 +116,43 @@ class Classroom
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
-    public function getWhitelist() : PersistentCollection
+    public function getEmailWhitelist(): ArrayCollection
     {
-        return $this->whitelists;
+        return $this->emailWhitelist;
     }
 
+    /**
+     * @return string
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
-    public function addToWhitelist(UserWhitelist $whitelist){
-        $this->whitelists->add($whitelist);
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCourseNumber(): ?string
+    {
+        return $this->courseNumber;
+    }
+
+    /**
+     * @param string $courseNumber
+     */
+    public function setCourseNumber(string $courseNumber): void
+    {
+        $this->courseNumber = $courseNumber;
     }
 
 
@@ -142,5 +184,6 @@ class Classroom
     public function getName(): string
     {
         return $this->name;
+
     }
 }

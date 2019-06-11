@@ -64,7 +64,7 @@ class QuizAccess
      * One Product has One Shipment.
      * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="access")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
-     * @JMS\Groups({"quiz"})
+     * @JMS\Groups({"access_quiz"})
      */
     protected $quiz;
 
@@ -131,6 +131,13 @@ class QuizAccess
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->isHidden;
+    }
 
     /**
      * @param mixed $quiz
