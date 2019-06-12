@@ -1,17 +1,17 @@
 <?php
+
 namespace App\Entity;
 
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class User
+ * Class User.
  *
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="`user`")
@@ -26,7 +26,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     fields="username",
  *     errorPath="username",
  *     message="username already used")
- *
  */
 class User implements UserInterface
 {
@@ -36,7 +35,7 @@ class User implements UserInterface
     const ROLE_ADMIN = 'ROLE_ADMIN';
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -50,7 +49,6 @@ class User implements UserInterface
      * @JMS\Groups({"list","detail","owner"})
      */
     private $roles = [User::ROLE_USER];
-
 
     /**
      * @var string
@@ -103,6 +101,7 @@ class User implements UserInterface
 
     /**
      * Many Groups have Many Users.
+     *
      * @ORM\ManyToMany(targetEntity="Classroom", mappedBy="users")
      */
     protected $classes;
@@ -117,10 +116,10 @@ class User implements UserInterface
     /**
      * @Assert\NotBlank()
      * @Assert\Length(max=4096)
+     *
      * @var string
      */
     private $plainTextPassword;
-
 
     /**
      * @param string $rememberToken
@@ -129,7 +128,6 @@ class User implements UserInterface
     {
         $this->rememberToken = $rememberToken;
     }
-
 
     /**
      * @param string $azureId
@@ -144,7 +142,6 @@ class User implements UserInterface
         $this->emailVerifiedAt = $emailVerifiedAt;
     }
 
-
     /**
      * @return int
      */
@@ -152,7 +149,6 @@ class User implements UserInterface
     {
         return $this->id;
     }
-
 
     /**
      * @return string
@@ -170,7 +166,6 @@ class User implements UserInterface
         $this->email = $email;
     }
 
-
     /**
      * Returns the roles granted to the user.
      *
@@ -185,7 +180,8 @@ class User implements UserInterface
      *
      * @return (Role|string)[] The user roles
      */
-    public function getRoles(){
+    public function getRoles()
+    {
         return array_unique($this->roles);
     }
 
@@ -258,6 +254,4 @@ class User implements UserInterface
     {
         $this->plainTextPassword = '';
     }
-
-
 }

@@ -2,8 +2,6 @@
 
 namespace App\Controller\Api\V1;
 
-
-use App\Entity\User;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,9 +19,8 @@ class TestController extends AbstractFOSRestController
      *     name="get_test")
      * @Rest\View(serializerGroups={"detail"})
      */
-    public function getTest(Request $request,UserPasswordEncoderInterface $encoder)
+    public function getTest(Request $request, UserPasswordEncoderInterface $encoder)
     {
         return $this->view(['test' => 'hello']);
     }
-
 }

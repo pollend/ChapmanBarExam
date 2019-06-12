@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller\Api\V1;
 
 use App\Entity\QuestionTag;
@@ -28,6 +27,7 @@ class QuestionTagController extends AbstractFOSRestController
 
         /** @var QuestionTagRepository $repository */
         $repository = $this->getDoctrine()->getRepository(QuestionTag::class);
+
         return $this->view(['tags' => $repository->filter($tag)->toArray()]);
     }
 
@@ -48,8 +48,10 @@ class QuestionTagController extends AbstractFOSRestController
             $tag->setName($tag);
             $em->persist($tag);
             $em->flush();
+
             return $this->view($tag);
         }
+
         return $this->createNotFoundException();
     }
 
@@ -67,6 +69,7 @@ class QuestionTagController extends AbstractFOSRestController
         if ($tag = $repository->findOneBy(['name' => $tag])) {
             return $this->view($tag);
         }
+
         return $this->createNotFoundException();
     }
 }

@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuizResponseRepository")
@@ -21,7 +20,7 @@ use JMS\Serializer\Annotation As JMS;
 abstract class QuizResponse
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -29,7 +28,6 @@ abstract class QuizResponse
      * @JMS\Groups({"list","detail"})
      */
     protected $id;
-
 
     /**
      * @var QuizSession
@@ -65,6 +63,7 @@ abstract class QuizResponse
     public function setQuestion(QuizQuestion $question): QuizResponse
     {
         $this->question = $question;
+
         return $this;
     }
 
@@ -82,6 +81,7 @@ abstract class QuizResponse
     public function setSession(QuizSession $session): QuizResponse
     {
         $this->session = $session;
+
         return $this;
     }
 
@@ -92,5 +92,4 @@ abstract class QuizResponse
     {
         return $this->session;
     }
-    
 }

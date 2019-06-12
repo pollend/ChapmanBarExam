@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: michaelpollind
  * Date: 5/29/17
- * Time: 6:55 PM
+ * Time: 6:55 PM.
  */
 
 namespace CoreBundle\Entity;
@@ -11,19 +11,16 @@ namespace CoreBundle\Entity;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
-use JMS\Serializer\Annotation As JMS;
 /**
- *
  * @ORM\Table(name="user_role")
  * @ORM\Entity
  */
 class Role
 {
-
-    const ROLE_PROFESSOR = "ROLE_PROFESSOR";
+    const ROLE_PROFESSOR = 'ROLE_PROFESSOR';
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="bigint", nullable=false)
      * @ORM\Id
@@ -47,8 +44,7 @@ class Role
      */
     private $name;
 
-
-    function __construct($role)
+    public function __construct($role)
     {
         $this->name = $role;
     }
@@ -66,12 +62,10 @@ class Role
         $this->user = $user;
     }
 
-
     public function setRole($role)
     {
         $this->name = $role;
     }
-
 
     /**
      * Returns the role.
@@ -85,6 +79,6 @@ class Role
      */
     public function getRole()
     {
-       return $this->name;
+        return $this->name;
     }
 }

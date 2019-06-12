@@ -1,26 +1,21 @@
 <?php
 
-
 namespace App\Entity;
 
-use App\Entity\Traits\TimestampTrait;
-
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
  *
  * @ORM\Entity(repositoryClass="App\Repository\MultipleChoiceEntryRepository")
  * @ORM\Table(name="multiple_choice")
  * @ORM\HasLifecycleCallbacks
- *
  */
 class MultipleChoiceEntry
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -30,7 +25,7 @@ class MultipleChoiceEntry
     protected $id;
 
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(name="`order`",type="smallint",nullable=false)
      * @JMS\Groups({"detail"})
      */
@@ -66,6 +61,7 @@ class MultipleChoiceEntry
     public function setContent(string $content): MultipleChoiceEntry
     {
         $this->content = $content;
+
         return $this;
     }
 
@@ -75,6 +71,7 @@ class MultipleChoiceEntry
     public function setQuestion(MultipleChoiceQuestion $question): MultipleChoiceEntry
     {
         $this->question = $question;
+
         return $this;
     }
 
@@ -84,6 +81,7 @@ class MultipleChoiceEntry
     public function setOrder(int $order): MultipleChoiceEntry
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -95,8 +93,8 @@ class MultipleChoiceEntry
         return $this->order;
     }
 
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
-
 }

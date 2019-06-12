@@ -1,13 +1,10 @@
 <?php
 
-
 namespace App\Event;
 
-
 use App\Entity\QuizSession;
-use JMS\Serializer\Annotation As JMS;
+use JMS\Serializer\Annotation as JMS;
 use Symfony\Contracts\EventDispatcher\Event;
-
 
 class QuestionResultsEvent extends Event
 {
@@ -32,12 +29,11 @@ class QuestionResultsEvent extends Event
      */
     protected $session;
 
-    public function __construct(QuizSession $session,$questions = null)
+    public function __construct(QuizSession $session, $questions = null)
     {
         $this->questions = $questions;
         $this->session = $session;
     }
-
 
     /**
      * @return QuizSession
@@ -46,6 +42,7 @@ class QuestionResultsEvent extends Event
     {
         return $this->session;
     }
+
     /**
      * @return mixed
      */
@@ -77,7 +74,6 @@ class QuestionResultsEvent extends Event
     {
         return $this->maxScore;
     }
-
 
     /**
      * @param mixed $maxScore

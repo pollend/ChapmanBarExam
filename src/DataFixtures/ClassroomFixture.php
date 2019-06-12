@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\DataFixtures;
-
 
 use App\Entity\Classroom;
 use App\Entity\Quiz;
@@ -20,10 +18,9 @@ use Illuminate\Support\Collection;
 
 class ClassroomFixture extends Fixture implements DependentFixtureInterface
 {
-
     /**
      * This method must return an array of fixtures classes
-     * on which the implementing class depends on
+     * on which the implementing class depends on.
      *
      * @return array
      */
@@ -33,7 +30,7 @@ class ClassroomFixture extends Fixture implements DependentFixtureInterface
     }
 
     /**
-     * Load data fixtures with the passed EntityManager
+     * Load data fixtures with the passed EntityManager.
      *
      * @param ObjectManager $manager
      */
@@ -41,17 +38,15 @@ class ClassroomFixture extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
-
         /** @var UserRepository $userRepository */
         $userRepository = $manager->getRepository(User::class);
         /** @var QuizRepository $classroomRepository */
         $quizRepository = $manager->getRepository(Quiz::class);
 
-
         $users = $userRepository->findAll();
         $quizzes = $quizRepository->findAll();
 
-        Collection::times(100,function ($index) use ($faker,$quizzes,$users,$manager) {
+        Collection::times(100, function ($index) use ($faker,$quizzes,$users,$manager) {
             $classroom = new Classroom();
             $classroom->setName($faker->name);
             $classroom->setDescription($faker->sentence($nbWords = 6, $variableNbWords = true));
@@ -67,11 +62,11 @@ class ClassroomFixture extends Fixture implements DependentFixtureInterface
             }
 
             /** @var Quiz $quiz */
-            foreach (Collection::make($quizzes)->random(rand(4,10)) as $quiz){
+            foreach (Collection::make($quizzes)->random(rand(4, 10)) as $quiz) {
                 $access = new QuizAccess();
                 $startDate = $faker->dateTimeBetween('-1 week', '+1 month');
-                $endDate =  $faker->dateTimeBetween('-1 week', '+1 week');
-                if($startDate > $endDate){
+                $endDate = $faker->dateTimeBetween('-1 week', '+1 week');
+                if ($startDate > $endDate) {
                     $temp = $startDate;
                     $endDate = $startDate;
                     $startDate = $temp;
@@ -81,7 +76,7 @@ class ClassroomFixture extends Fixture implements DependentFixtureInterface
                     ->setClassroom($classroom)
                     ->setCloseDate($endDate)
                     ->setOpenDate($startDate)
-                    ->setNumAttempts($faker->numberBetween($min = 0,$max = 10))
+                    ->setNumAttempts($faker->numberBetween($min = 0, $max = 10))
                     ->setIsHidden($faker->boolean);
                 $manager->persist($access);
             }

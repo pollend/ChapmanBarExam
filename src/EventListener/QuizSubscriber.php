@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\EventListener;
-
 
 use App\Entity\MultipleChoiceQuestion;
 use App\Entity\MultipleChoiceResponse;
@@ -16,8 +14,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class QuizSubscriber implements EventSubscriberInterface
 {
-
     private $em;
+
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -46,9 +44,8 @@ class QuizSubscriber implements EventSubscriberInterface
         return [QuestionResultsEvent::QUESTION_RESULTS => 'onCalculate'];
     }
 
-    public function onCalculate(QuestionResultsEvent $event){
-
-
+    public function onCalculate(QuestionResultsEvent $event)
+    {
         /** @var QuizResponseRepository $responseRepo */
         $responseRepo = $this->em->getRepository(QuizResponse::class);
 
@@ -60,12 +57,12 @@ class QuizSubscriber implements EventSubscriberInterface
         $score = 0;
         foreach ($event->getQuestions() as $question) {
             if ($question instanceof MultipleChoiceQuestion) {
-                $maxScore++;
+                ++$maxScore;
                 if (Arr::exists($responses, $question->getId())) {
                     /** @var MultipleChoiceResponse $response */
                     $response = $responses[$question->getId()];
                     if ($question->getCorrectEntry() === $response->getChoice()) {
-                       $score++;
+                        ++$score;
                     }
                 }
             }
@@ -73,6 +70,5 @@ class QuizSubscriber implements EventSubscriberInterface
 
         $event->setScore($score);
         $event->setMaxScore($maxScore);
-
     }
 }

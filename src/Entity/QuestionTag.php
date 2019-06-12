@@ -1,10 +1,9 @@
 <?php
 
-
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuestionTagRepository")
@@ -13,7 +12,7 @@ use JMS\Serializer\Annotation As JMS;
 class QuestionTag
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -31,6 +30,7 @@ class QuestionTag
 
     /**
      * Many Users have Many Groups.
+     *
      * @ORM\ManyToMany(targetEntity="QuizQuestion", mappedBy="tags" )
      * @ORM\JoinTable(name="quiz_question_question_tag")
      * @JMS\Groups({"questions"})
@@ -59,6 +59,7 @@ class QuestionTag
     public function setName(string $name): QuestionTag
     {
         $this->name = $name;
+
         return $this;
     }
 }

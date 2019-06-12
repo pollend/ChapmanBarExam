@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller\Api\V1;
-
 
 use App\Entity\Quiz;
 use App\Entity\QuizQuestion;
@@ -24,7 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class QuizController extends AbstractFOSRestController
 {
-
     /**
      * @Rest\Get("/quiz/{quiz_id}/questions/{page}",
      *     options = { "expose" = true },
@@ -33,9 +30,10 @@ class QuizController extends AbstractFOSRestController
      *
      * @param int $quiz_id
      * @param int $page
+     *
      * @return \FOS\RestBundle\View\View|\Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function getQuestionsForPage($quiz_id,$page)
+    public function getQuestionsForPage($quiz_id, $page)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -53,8 +51,9 @@ class QuizController extends AbstractFOSRestController
         if ($quiz = $quizRepo->find($quiz_id)) {
             /** @var QuizSession $activeSession */
             $activeSession = $quizSessionRepo->getActiveSession($user);
-            if($activeSession->getCurrentPage() === $page)
+            if ($activeSession->getCurrentPage() === $page) {
                 throw $this->createNotFoundException();
+            }
 
             $groups = $questionRepo->getUniqueGroups($quiz);
             $questions = $questionRepo->filterByGroup($groups[$page], $quiz);
@@ -63,10 +62,11 @@ class QuizController extends AbstractFOSRestController
             if ($activeSession->getQuiz() === $quiz | $this->isGranted(Grant::ROLE_ADMIN)) {
                 return $this->view([
                     'questions' => $questions,
-                    'max_pages' => Collection::make($groups)->keys()->max()
+                    'max_pages' => Collection::make($groups)->keys()->max(),
                 ]);
             }
         }
+
         return $this->createNotFoundException();
     }
 
@@ -77,10 +77,11 @@ class QuizController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"Default","list","timestamp"})
      * @Security("has_role('ROLE_ADMIN')")
      */
-    public function getQuizzesDatatable(Request $request){
+    public function getQuizzesDatatable(Request $request)
+    {
         /** @var QuizRepository $quizRepo */
         $quizRepo = $this->getDoctrine()->getRepository(Quiz::class);
+
         return $this->view(['quizzes' => $quizRepo->dataTable($request)]);
     }
-
 }

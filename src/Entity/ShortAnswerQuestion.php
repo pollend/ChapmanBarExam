@@ -2,14 +2,13 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
+ *
  * @ORM\Entity(repositoryClass="App\Repository\ShortAnswerQuestionRepository")
  * @ORM\Table(name="short_answer_question")
  * @ORM\HasLifecycleCallbacks
@@ -23,16 +22,19 @@ class ShortAnswerQuestion extends QuizQuestion
      */
     protected $content;
 
-    public function answers(){
-       return $this->responses;
+    public function answers()
+    {
+        return $this->responses;
     }
 
     /**
      * @param $session
+     *
      * @return \Doctrine\Common\Collections\ArrayCollection|\Doctrine\Common\Collections\Collection
      */
-    public function answersBySession($session){
-        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
+    public function answersBySession($session)
+    {
+        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
     }
 
     /**
@@ -41,6 +43,7 @@ class ShortAnswerQuestion extends QuizQuestion
     public function setContent(string $content): ShortAnswerQuestion
     {
         $this->content = $content;
+
         return $this;
     }
 
@@ -59,5 +62,4 @@ class ShortAnswerQuestion extends QuizQuestion
     {
         return $this->content;
     }
-
 }

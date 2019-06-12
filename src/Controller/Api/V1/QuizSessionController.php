@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller\Api\V1;
-
 
 use App\Entity\MultipleChoiceEntry;
 use App\Entity\MultipleChoiceQuestion;
@@ -11,20 +9,15 @@ use App\Entity\Quiz;
 use App\Entity\QuizQuestion;
 use App\Entity\QuizResponse;
 use App\Entity\QuizSession;
-use App\Entity\ShortAnswerQuestion;
-use App\Entity\ShortAnswerResponse;
 use App\Entity\User;
 use App\Repository\MultipleChoiceEntryRepository;
-use App\Repository\MultipleChoiceQuestionRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\QuizResponseRepository;
 use App\Repository\QuizSessionRepository;
-use App\Repository\ShortAnswerQuestionRepository;
 use Carbon\Carbon;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Route;
 use Illuminate\Support\Collection;
-
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -33,14 +26,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class QuizSessionController extends AbstractFOSRestController
 {
-
     /**
      * @Rest\Get("/quiz/session/{session_id}/page/{page}",
      *     options = { "expose" = true },
      *     name="get_quiz_session_questions")
      * @Rest\View(serializerGroups={"detail","tags","correct","question":{"list"}})
      */
-    public function getSessionQuestionPage($session_id,$page)
+    public function getSessionQuestionPage($session_id, $page)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -54,7 +46,6 @@ class QuizSessionController extends AbstractFOSRestController
         /** @var QuizResponseRepository $quizResponseRepo */
         $quizResponseRepo = $this->getDoctrine()->getRepository(QuizResponse::class);
 
-
         /** @var QuizSession $session */
         if ($session = $sessionRepo->find($session_id)) {
             if ($session->getOwner() === $user | $this->isGranted('ROLE_ADMIN')) {
@@ -62,21 +53,18 @@ class QuizSessionController extends AbstractFOSRestController
 
                 $groups = $questionRepo->getUniqueGroups($quiz);
                 $questions = $questionRepo->filterByGroup($groups[$page], $quiz);
-                $responses = $quizResponseRepo->filterResponsesBySessionAndQuestions($session,$questions);
+                $responses = $quizResponseRepo->filterResponsesBySessionAndQuestions($session, $questions);
 
                 return $this->view([
                     'page' => $page,
                     'session' => $session,
                     'responses' => $responses,
-                    'maxPage' => Collection::make($groups)->keys()->max()
+                    'maxPage' => Collection::make($groups)->keys()->max(),
                 ]);
             }
         }
         throw $this->createNotFoundException();
     }
-
-
-
 
     /**
      * @Rest\Post("/quiz/session/{session_id}/page/{page}",
@@ -84,26 +72,26 @@ class QuizSessionController extends AbstractFOSRestController
      *     name="post_quiz_session_questions")
      * @Rest\View(serializerGroups={"detail","tags","correct"})
      */
-    public function postSessionQuestionPage(Request $request,$session_id,$page)
+    public function postSessionQuestionPage(Request $request, $session_id, $page)
     {
         $em = $this->getDoctrine()->getManager();
 
         /** @var QuestionRepository $questionRepository */
         $questionRepository = $this->getDoctrine()->getRepository(QuizQuestion::class);
 
-        if($session = $this->checkActiveSession($session_id)){
+        if ($session = $this->checkActiveSession($session_id)) {
             //make sure the pages match when submitting
-            if ($session->getCurrentPage() !== (int)$page)
+            if ($session->getCurrentPage() !== (int) $page) {
                 throw $this->createNotFoundException();
+            }
 
-            if($this->submitQuestions($request,$session,$page)){
-
+            if ($this->submitQuestions($request, $session, $page)) {
                 /** @var Quiz $quiz */
                 $quiz = $session->getQuiz();
                 $groups = Collection::make($questionRepository->getUniqueGroups($quiz));
 
                 $session->setCurrentPage($session->getCurrentPage() + 1);
-                if($session->getCurrentPage() > $groups->keys()->max()){
+                if ($session->getCurrentPage() > $groups->keys()->max()) {
                     $session->setSubmittedAt(Carbon::now());
                 }
                 $em->persist($session);
@@ -113,7 +101,6 @@ class QuizSessionController extends AbstractFOSRestController
             }
         }
         throw $this->createNotFoundException();
-
     }
 
     /**
@@ -122,15 +109,15 @@ class QuizSessionController extends AbstractFOSRestController
      *     name="patch_quiz_session_questions")
      * @Rest\View(serializerGroups={"detail","tags","correct"})
      */
-    public function patchSessionQuestionPage(Request $request, $session_id,$page)
+    public function patchSessionQuestionPage(Request $request, $session_id, $page)
     {
-        if($session = $this->checkActiveSession($session_id)){
-
+        if ($session = $this->checkActiveSession($session_id)) {
             //make sure the pages match when submitting
-            if ($session->getCurrentPage() !== (int)$page)
+            if ($session->getCurrentPage() !== (int) $page) {
                 throw $this->createNotFoundException();
+            }
 
-            if($this->submitQuestions($request,$session,$page)){
+            if ($this->submitQuestions($request, $session, $page)) {
                 return $this->getSessionQuestionPage($session_id, $page);
             }
         }
@@ -138,27 +125,30 @@ class QuizSessionController extends AbstractFOSRestController
         throw $this->createNotFoundException();
     }
 
-    private function checkActiveSession($session_id){
+    private function checkActiveSession($session_id)
+    {
         $user = $this->getUser();
         /** @var QuizSessionRepository $sessionRepository */
         $sessionRepository = $this->getDoctrine()->getRepository(QuizSession::class);
 
         /** @var QuizSession $session */
         if ($session = $sessionRepository->getActiveSession($user)) {
-            if($session->getId() === (int)$session_id)
+            if ($session->getId() === (int) $session_id) {
                 return $session;
+            }
         }
+
         return null;
     }
 
-
     /**
-     * @param Request $request
+     * @param Request     $request
      * @param QuizSession $session
      * @param $page
+     *
      * @return bool
      */
-    private function submitQuestions(Request $request, $session,$page)
+    private function submitQuestions(Request $request, $session, $page)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -172,7 +162,6 @@ class QuizSessionController extends AbstractFOSRestController
         $responseRepository = $this->getDoctrine()->getRepository(QuizResponse::class);
         /** @var MultipleChoiceEntryRepository $multipleChoiceEntryRepository */
         $multipleChoiceEntryRepository = $this->getDoctrine()->getRepository(MultipleChoiceEntry::class);
-
 
         /** @var Quiz $quiz */
         $quiz = $session->getQuiz();
@@ -188,26 +177,25 @@ class QuizSessionController extends AbstractFOSRestController
                 if ($question = $questions[$key]) {
                     $response = $responseRepository->filterResponseBySessionAndQuestion($session, $question);
                     if ($question instanceof MultipleChoiceQuestion) {
-                        if ($response == null)
+                        if (null == $response) {
                             $response = new MultipleChoiceResponse();
+                        }
                         /** @var MultipleChoiceEntry $entry */
                         foreach ($multipleChoiceEntryRepository->getEntriesForQuestion($question) as $entry) {
                             if ($entry->getId() == $target) {
                                 $response->setChoice($entry);
                             }
                         }
-
                     }
                     $response->setQuestion($question);
                     $response->setSession($session);
                     $em->persist($response);
                 }
-
             }
-
         }
 
         $em->flush();
+
         return true;
     }
 
@@ -229,7 +217,7 @@ class QuizSessionController extends AbstractFOSRestController
         if ($session = $sessionRepo->getActiveSession($user)) {
             return $this->view(['session' => $session]);
         }
-        throw $this->createNotFoundException("No Active Session");
+        throw $this->createNotFoundException('No Active Session');
     }
 
     /**
@@ -247,6 +235,4 @@ class QuizSessionController extends AbstractFOSRestController
         }
         throw  $this->createNotFoundException();
     }
-
-
 }

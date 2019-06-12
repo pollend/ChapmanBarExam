@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repository;
-
 
 use App\Entity\QuestionTag;
 use App\Entity\Quiz;
@@ -15,6 +13,7 @@ class QuestionRepository extends EntityRepository
     public function findByType($type, $quiz)
     {
         $qb = $this->createQueryBuilder('q');
+
         return $qb->where($qb->expr()->isInstanceOf('e.type', ':type'))
             ->andWhere($qb->expr()->eq('q.quiz', ':quiz'))
             ->setParameter('type', $type)
@@ -32,6 +31,7 @@ class QuestionRepository extends EntityRepository
     public function filterByGroup($group, $quiz)
     {
         $qb = $this->createQueryBuilder('q');
+
         return $qb->where($qb->expr()->eq('q.group', ':group'))
             ->andWhere($qb->expr()->eq('q.quiz', ':quiz'))
             ->orderBy($qb->expr()->asc('q.order'))
@@ -42,8 +42,10 @@ class QuestionRepository extends EntityRepository
     }
 
     /**
-     * returns an array of the group values that are unique
+     * returns an array of the group values that are unique.
+     *
      * @param $quiz
+     *
      * @return Collection
      */
     public function getUniqueGroups($quiz)
@@ -55,14 +57,17 @@ class QuestionRepository extends EntityRepository
             ->distinct()
             ->getQuery()
             ->getScalarResult();
+
         return Collection::make($groups)
             ->sortBy('group')
             ->pluck('group');
     }
 
     /**
-     * returns an array of the order values that are unique
+     * returns an array of the order values that are unique.
+     *
      * @param $quiz
+     *
      * @return Collection
      */
     public function getUniqueOrder($quiz)
@@ -74,10 +79,10 @@ class QuestionRepository extends EntityRepository
             ->distinct()
             ->getQuery()
             ->getScalarResult();
+
         return Collection::make($orders)
             ->sortBy('order')
             ->pluck('order');
-
     }
 
     public function filterQuestionsByResponses($responses, $type)
@@ -85,9 +90,11 @@ class QuestionRepository extends EntityRepository
         $qb = $this->createQueryBuilder('q');
         $query = $qb->where($qb->expr()->in('responses', ':resp'))
             ->setParameter('resp', $responses);
-        if ($type)
+        if ($type) {
             $query = $query->andWhere($qb->expr()->isInstanceOf('type', ':type'))
                 ->setParameter('type', $type);
+        }
+
         return $query->getQuery()->getResult();
     }
 
@@ -100,6 +107,7 @@ class QuestionRepository extends EntityRepository
             ->setParameter('session', $session)
             ->orderBy('q.order', 'ASC')
             ->orderBy('q.group', 'ASC');
+
         return $query->getQuery()->getResult();
     }
 
@@ -112,8 +120,10 @@ class QuestionRepository extends EntityRepository
             ->andWhere($qb->expr()->eq('q.quiz', ':quiz'))
             ->setParameter('resp', $responses)
             ->setParameter('quiz', $quiz);
-        if ($type)
+        if ($type) {
             $query->andWhere($qb->expr()->isInstanceOf('r', $type));
+        }
+
         return $query->getQuery()->getResult();
     }
 
@@ -126,14 +136,17 @@ class QuestionRepository extends EntityRepository
             ->andWhere($qb->expr()->eq('q.quiz', ':quiz'))
             ->setParameter('resp', $responses)
             ->setParameter('quiz', $quiz);
-        if ($type)
+        if ($type) {
             $query->andWhere($qb->expr()->isInstanceOf('r', $type));
+        }
+
         return $query->getQuery()->getResult();
     }
 
     public function filterByTag(Quiz $quiz, QuestionTag $tag)
     {
         $qb = $this->createQueryBuilder('q');
+
         return $qb->leftJoin('q.tags', 't')
             ->where($qb->expr()->eq('t', ':tag'))
             ->andWhere($qb->expr()->eq('q.quiz', ':quiz'))
@@ -141,6 +154,5 @@ class QuestionRepository extends EntityRepository
             ->setParameter('quiz', $quiz)
             ->getQuery()
             ->getResult();
-
     }
 }

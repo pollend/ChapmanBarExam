@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repository;
-
 
 use App\Entity\Quiz;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,6 +11,7 @@ class QuestionTagRepository extends EntityRepository
     public function getUniqueTagsForQuiz(Quiz $quiz)
     {
         $qb = $this->createQueryBuilder('t');
+
         return $qb->leftJoin('t.questions', 'q')
             ->where($qb->expr()->eq('q.quiz', ':quiz'))
             ->setParameter('quiz', $quiz)
@@ -23,16 +22,17 @@ class QuestionTagRepository extends EntityRepository
     /**
      * @param $text
      * @param int $limit
+     *
      * @return ArrayCollection
      */
-    public function filter($text,$limit = 10)
+    public function filter($text, $limit = 10)
     {
         $qb = $this->createQueryBuilder('t');
-        return $qb->where($qb->expr()->like('t.name', ":name"))
+
+        return $qb->where($qb->expr()->like('t.name', ':name'))
             ->setMaxResults($limit)
-            ->setParameter('name', '%' . $text . '%')
+            ->setParameter('name', '%'.$text.'%')
             ->getQuery()
             ->getResult();
     }
-
 }

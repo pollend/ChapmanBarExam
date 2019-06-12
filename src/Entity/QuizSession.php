@@ -1,26 +1,60 @@
 <?php
+
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use App\Repository\QuestionRepository;
-use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
-use JMS\Serializer\Annotation As JMS;
+use JMS\Serializer\Annotation as JMS;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
+ *
  * @ORM\Entity(repositoryClass="App\Repository\QuizSessionRepository")
  * @ORM\Table(name="quiz_session")
  * @ORM\HasLifecycleCallbacks
- *
- *
+ * @ApiResource(
+ *     collectionOperations={
+ *          "post",
+ *          "post_start" = {
+ *              "method"="POST",
+ *              "path"="/quiz_sessions/start",
+ *              "controller"=App\Controller\CreateQuizSessionByAccess::class,
+ *              "access_control"="has_role('ROLE_USER')",
+ *              "swagger_context" = {
+ *                  "description" = "Starts a new Quiz Session from access",
+ *                  "parameters" = {
+ *                      {
+ *                      "name" = "body",
+ *                      "in" = "body",
+ *                      "type" = "object",
+*                       "properties" = {"access_id" = { "type" =  "string"},"user_id" = { "type" =  "string"}},
+ *                      },
+ *                      {
+ *                      "name" = "id",
+ *                      "in" = "path",
+ *                      "required" = "true",
+ *                      "type" = "integer"
+ *                      },
+ *                      {
+ *                      "name" = "user_id",
+ *                      "in" = "path",
+ *                      "required" = "true",
+ *                      "type" = "integer"
+ *                      }
+ *                   },
+ *               },
+ *          }
+ *     }
+ * )
  */
 class QuizSession
 {
     use TimestampTrait;
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -32,7 +66,7 @@ class QuizSession
     protected $id;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="score", type="integer", nullable=true)
      *
@@ -42,7 +76,7 @@ class QuizSession
     protected $score;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="max_score", type="integer", nullable=true)
      *
@@ -51,6 +85,11 @@ class QuizSession
      */
     protected $maxScore;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="QuizAccess", inversedBy="quizSessions")
+     * @ORM\JoinColumn(name="quiz_access_id", referencedColumnName="id",nullable=true)
+     */
+    protected $quizAccess;
 
     /**
      * @var array
@@ -59,9 +98,9 @@ class QuizSession
      *
      * @JMS\Groups({"meta"})
      * @JMS\Type("json_array")
+     *
      */
     protected $meta;
-
 
     /**
      * @var \DateTime
@@ -84,7 +123,6 @@ class QuizSession
      */
     protected $quiz;
 
-
     /**
      * @var Classroom
      *
@@ -97,16 +135,15 @@ class QuizSession
      */
     protected $classroom;
 
-
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="current_page", type="integer", nullable=true)
      *
      * @JMS\Groups({"list","detail"})
      * @JMS\Type("int")
      */
-    protected $current_page = 0;
+    protected $currentPage = 0;
 
     /**
      * @var User
@@ -126,7 +163,6 @@ class QuizSession
      */
     protected $responses;
 
-
     /**
      * @return int
      */
@@ -143,6 +179,7 @@ class QuizSession
     public function setOwner(User $user)
     {
         $this->owner = $user;
+
         return $this;
     }
 
@@ -154,15 +191,17 @@ class QuizSession
     public function setQuiz($quiz)
     {
         $this->quiz = $quiz;
+
         return $this;
     }
 
     /**
      * @param Classroom $classroom
      */
-    public function setClassroom(Classroom $classroom): void
+    public function setClassroom(Classroom $classroom): QuizSession
     {
         $this->classroom = $classroom;
+        return $this;
     }
 
     /**
@@ -176,13 +215,13 @@ class QuizSession
     /**
      * @return int
      */
-    public function getMaxScore(): int
+    public function getMaxScore(): ?int
     {
         return $this->maxScore;
     }
 
     /**
-     * @param array  $meta
+     * @param array $meta
      */
     public function setMeta(array $meta): void
     {
@@ -192,16 +231,15 @@ class QuizSession
     /**
      * @return array
      */
-    public function getMeta(): array
+    public function getMeta(): ?array
     {
         return $this->meta;
     }
 
-
     /**
      * @return int
      */
-    public function getScore(): int
+    public function getScore(): ?int
     {
         return $this->score;
     }
@@ -228,6 +266,7 @@ class QuizSession
     public function setSubmittedAt(\DateTime $submittedAt): QuizSession
     {
         $this->submittedAt = $submittedAt;
+
         return $this;
     }
 
@@ -236,7 +275,7 @@ class QuizSession
      */
     public function getCurrentPage(): int
     {
-        return $this->current_page;
+        return $this->currentPage;
     }
 
     /**
@@ -244,15 +283,14 @@ class QuizSession
      */
     public function setCurrentPage(int $current_page): void
     {
-        $this->current_page = $current_page;
+        $this->currentPage = $current_page;
     }
 
-    public function getNonResponseQuestions()
-    {
-        /** @var QuestionRepository $questionRepository */
-        $questionRepository = \EntityManager::getRepository(QuizQuestion::class);
-        return $questionRepository->filterQuestionsByNotInResponses($this->getQuiz(),$this->getResponses());
-
-    }
-
+//    public function getNonResponseQuestions()
+//    {
+//        /** @var QuestionRepository $questionRepository */
+//        $questionRepository = \EntityManager::getRepository(QuizQuestion::class);
+//
+//        return $questionRepository->filterQuestionsByNotInResponses($this->getQuiz(), $this->getResponses());
+//    }
 }

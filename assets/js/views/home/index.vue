@@ -27,7 +27,7 @@
                                     </el-row>
 
                                     <div class="foot">
-                                        <router-link :to="{name: 'app.exam.start', params: {class_id: _class.id, quiz_id: access.quiz.id} }">
+                                        <router-link :to="{name: 'app.exam.start', params: {quiz_access_id: access.id} }">
                                             <el-button type="primary" style="width: 100%">Start</el-button>
                                         </router-link>
                                     </div>

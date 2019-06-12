@@ -2,22 +2,20 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
-
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
- * Class UserWhitelist
+ * Class UserWhitelist.
  *
  * @ORM\Entity()
  * @ORM\Table(name="`user_whitelist`")
  * @ORM\HasLifecycleCallbacks
- *
  */
 class UserWhitelist
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -50,6 +48,7 @@ class UserWhitelist
     public function setClassroom(Classroom $classroom): UserWhitelist
     {
         $this->classroom = $classroom;
+
         return $this;
     }
 
@@ -67,6 +66,7 @@ class UserWhitelist
     public function setEmail(string $email): UserWhitelist
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -77,5 +77,4 @@ class UserWhitelist
     {
         return $this->email;
     }
-
 }

@@ -10,9 +10,15 @@
 
 <script>
 import { postClassroomQuizStart } from '@/api/classes';
+import {mapGetters} from "vuex";
 export default {
   name: 'ExamStart',
   components: { },
+  computed: {
+      ...mapGetters({
+          'userId': 'user/id',
+      }),
+  },
   data() {
     return {};
   },
@@ -20,7 +26,7 @@ export default {
   },
   methods: {
       handleQuizStart() {
-        postClassroomQuizStart(this.$route.params.class_id,this.$route.params.quiz_id)
+        postClassroomQuizStart(this.$route.params.quiz_access_id,this.userId)
         .then((response) => {
             this.$router.go();
         });

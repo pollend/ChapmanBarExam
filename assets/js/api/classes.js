@@ -32,9 +32,13 @@ export function patchClass(class_id,data) {
   });
 }
 
-export function postClassroomQuizStart(class_id,quiz_id) {
+export function postClassroomQuizStart(quiz_access_id,user_id) {
   return request({
-    url: Routing.generate('post_classroom_quiz_start', {class_id: class_id, quiz_id: quiz_id}),
-    method: 'post'
+    url: '/_api/quiz_sessions/start',
+    method: 'post',
+    data: {
+      'access_id': quiz_access_id,
+      'user_id': user_id
+    }
   })
 }

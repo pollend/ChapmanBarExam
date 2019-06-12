@@ -29,7 +29,7 @@ export const routes = [
   { path: '/401', component: () => import('@/views/errors/401') },
   { path: '/', component: AppLayout, children: [
       { path: '', meta: { roles: [ROLE_USER] }, component: () => import('@/views/home'), name: 'app.home'},
-      { path: '/class/:class_id/exam/:quiz_id/start', meta: { roles: [ROLE_USER] }, name: 'app.exam.start', component: () => import('@/views/exams/start')},
+      { path: '/access/:quiz_access_id', meta: { roles: [ROLE_USER] }, name: 'app.exam.start', component: () => import('@/views/exams/start')},
       { path: '/quiz/page/:page', meta: { roles: [ROLE_USER] }, name: 'app.session.page', component: () => import('@/views/exams/show')},
       { path: '/report', meta: {roles: [ROLE_USER]}, name: 'app.report', component: () => import('@/views/report/index')},
       { path: '/report/:report_id/', meta: {roles: [ROLE_USER]}, component:() => import('@/views/report/container'), children:[

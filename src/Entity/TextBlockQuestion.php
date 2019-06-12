@@ -1,14 +1,13 @@
 <?php
 
-
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
+ *
  * @ORM\Entity()
  * @ORM\Table(name="text_block_question")
  * @ORM\HasLifecycleCallbacks
@@ -22,15 +21,15 @@ class TextBlockQuestion extends QuizQuestion
      */
     protected $content;
 
-
-
     /**
      * @param string $content
+     *
      * @return TextBlockQuestion
      */
     public function setContent(string $content): TextBlockQuestion
     {
         $this->content = $content;
+
         return $this;
     }
 

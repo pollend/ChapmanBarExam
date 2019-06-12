@@ -6,8 +6,8 @@ use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 use Doctrine\ORM\PersistentCollection;
 
 /**
@@ -21,14 +21,13 @@ use Doctrine\ORM\PersistentCollection;
  *    "short_answer": "App\Entity\ShortAnswerQuestion",
  *    "text_block": "App\Entity\TextBlockQuestion"
  * },groups={"detail","list"})
- *
  */
 abstract class QuizQuestion
 {
     use TimestampTrait;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -38,7 +37,7 @@ abstract class QuizQuestion
     protected $id;
 
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(name="`order`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
      * @JMS\Groups({"detail","list"})
@@ -46,7 +45,7 @@ abstract class QuizQuestion
     protected $order;
 
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(name="`group`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
      * @JMS\Groups({"detail","list"})
@@ -72,18 +71,18 @@ abstract class QuizQuestion
 
     /**
      * Many Groups have Many Users.
+     *
      * @ORM\ManyToMany(targetEntity="QuestionTag", inversedBy="questions")
+     *
      * @var PersistentCollection
      * @JMS\Groups({"question_tags"})
      */
     private $tags;
 
-
     public function __construct()
     {
         $this->tags = new ArrayCollection();
     }
-
 
     /**
      * @return int
@@ -93,7 +92,7 @@ abstract class QuizQuestion
         return $this->id;
     }
 
-    function getOrder()
+    public function getOrder()
     {
         return $this->order;
     }
@@ -108,7 +107,6 @@ abstract class QuizQuestion
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
     }
 
-
     /**
      * @return Collection
      */
@@ -119,31 +117,37 @@ abstract class QuizQuestion
 
     /**
      * @param $order
+     *
      * @return $this
      */
     public function setOrder($order)
     {
         $this->order = $order;
+
         return $this;
     }
 
     /**
      * @param Quiz $quiz
+     *
      * @return QuizQuestion
      */
     public function setQuiz(Quiz $quiz): QuizQuestion
     {
         $this->quiz = $quiz;
+
         return $this;
     }
 
     /**
      * @param $group
+     *
      * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
+
         return $this;
     }
 
@@ -151,5 +155,4 @@ abstract class QuizQuestion
     {
         return $this->group;
     }
-
 }

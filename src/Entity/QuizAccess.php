@@ -1,26 +1,24 @@
 <?php
 
-
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
-
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
- * @package App\Entities
- *
  * @ORM\Entity()
  * @ORM\Table(name="quiz_access")
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\QuizAccessRepository")
- *
+ * @ApiResource()
  */
 class QuizAccess
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -38,12 +36,11 @@ class QuizAccess
     protected $isHidden;
 
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(name="num_attempts",type="integer",nullable=true)
      * @JMS\Groups({"list"})
      */
     protected $numAttempts;
-
 
     /**
      * @var \DateTime
@@ -51,7 +48,6 @@ class QuizAccess
      * @JMS\Groups({"list"})
      */
     protected $openDate;
-
 
     /**
      * @var \DateTime
@@ -62,6 +58,7 @@ class QuizAccess
 
     /**
      * One Product has One Shipment.
+     *
      * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="access")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * @JMS\Groups({"access_quiz"})
@@ -70,27 +67,35 @@ class QuizAccess
 
     /**
      * One Classroom has many quizzes.
+     *
      * @ORM\ManyToOne(targetEntity="Classroom",inversedBy="quizAccess")
      * @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      */
     protected $classroom;
 
+    /**
+     * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quizAccess")
+     */
+    protected $quizSessions;
 
     /**
-     * @return mixed
+     * @return Classroom
      */
-    public function getClassroom()
+    public function getClassroom() : Classroom
     {
         return $this->classroom;
+
     }
 
     /**
      * @param mixed $classroom
+     *
      * @return QuizAccess
      */
     public function setClassroom($classroom): QuizAccess
     {
         $this->classroom = $classroom;
+
         return $this;
     }
 
@@ -104,21 +109,25 @@ class QuizAccess
 
     /**
      * @param \DateTime $openDate
+     *
      * @return QuizAccess
      */
     public function setOpenDate(\DateTime $openDate): QuizAccess
     {
         $this->openDate = $openDate;
+
         return $this;
     }
 
     /**
      * @param \DateTime $closeDate
+     *
      * @return QuizAccess
      */
     public function setCloseDate(\DateTime $closeDate): QuizAccess
     {
         $this->closeDate = $closeDate;
+
         return $this;
     }
 
@@ -128,6 +137,7 @@ class QuizAccess
     public function setIsHidden(bool $isHidden): QuizAccess
     {
         $this->isHidden = $isHidden;
+
         return $this;
     }
 
@@ -141,11 +151,13 @@ class QuizAccess
 
     /**
      * @param mixed $quiz
+     *
      * @return QuizAccess
      */
     public function setQuiz($quiz): QuizAccess
     {
         $this->quiz = $quiz;
+
         return $this;
     }
 
@@ -167,18 +179,20 @@ class QuizAccess
 
     /**
      * @param int $numAttempts
+     *
      * @return QuizAccess
      */
     public function setNumAttempts(int $numAttempts): QuizAccess
     {
         $this->numAttempts = $numAttempts;
+
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getQuiz()
+    public function getQuiz() : Quiz
     {
         return $this->quiz;
     }
@@ -191,18 +205,18 @@ class QuizAccess
         return $this->numAttempts;
     }
 
-    public function isOpen($user){
-
-        if (Carbon::today() > $this->closeDate)
+    public function isOpen($user)
+    {
+        if (Carbon::today() > $this->closeDate) {
             return false;
-        if(Carbon::today() < $this->openDate)
-
-
+        }
+        if (Carbon::today() < $this->openDate) {
 //        // number of user attempts exceeds the max attempts on a quiz
-        if ($this->getQuiz()->getQuizSessionsByUser($user)->count() >= $this->numAttempts)
-            return false;
+            if ($this->getQuiz()->getQuizSessionsByUser($user)->count() >= $this->numAttempts) {
+                return false;
+            }
+        }
 
         return true;
     }
-
 }

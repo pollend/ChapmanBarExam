@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Entity\Traits;
-
 
 trait SoftDeleteTrait
 {

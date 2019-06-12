@@ -2,16 +2,14 @@
 
 namespace App\Entity\Traits;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 trait TimestampTrait
 {
-
     /**
      * @ORM\Column(name="created_at",type="datetime",nullable=false)
      * @JMS\Groups({"timestamp"})
-     *
      */
     protected $createdAt;
 
@@ -21,19 +19,23 @@ trait TimestampTrait
      */
     protected $updatedAt;
 
-    public function getUpdatedAt(){
+    public function getUpdatedAt()
+    {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt($updatedAt){
+    public function setUpdatedAt($updatedAt)
+    {
         $this->updatedAt = $updatedAt;
     }
 
-    public function getCreatedAt(){
+    public function getCreatedAt()
+    {
         return $this->createdAt;
     }
 
-    public function setCreatedAt($createdAt){
+    public function setCreatedAt($createdAt)
+    {
         $this->createdAt = $createdAt;
     }
 
@@ -44,9 +46,8 @@ trait TimestampTrait
     public function updatedTimestamps(): void
     {
         $this->setUpdatedAt(new \DateTime('now'));
-        if ($this->getCreatedAt() === null) {
+        if (null === $this->getCreatedAt()) {
             $this->setCreatedAt(new \DateTime('now'));
         }
     }
-
 }

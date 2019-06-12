@@ -2,21 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\SoftDeleteTrait;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
-use JMS\Serializer\Annotation As JMS;
+use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Validator\Constraints as Assert;
+
 /**
- * @package App\Entities
- *
  * @ORM\Entity(repositoryClass="App\Repository\ClassroomRepository")
  * @ORM\Table(name="classroom")
  * @ORM\HasLifecycleCallbacks
- *
+ * @ApiResource()
  */
 class Classroom
 {
@@ -24,7 +24,7 @@ class Classroom
     use SoftDeleteTrait;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -59,15 +59,15 @@ class Classroom
     protected $courseNumber;
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="UserWhitelist",mappedBy="classroom")
      * @JMS\Groups({"classroom_whitelists"})
      */
     protected $emailWhitelist;
 
     /**
-     * @var ArrayCollection
-     * Many Users have Many Groups.
+     * @var persistentCollection
+     *                           Many Users have Many Groups
      * @ORM\ManyToMany(targetEntity="User", inversedBy="classes")
      * @ORM\JoinTable(name="classroom_user")
      * @JMS\Groups({"classroom_registered"})
@@ -75,16 +75,16 @@ class Classroom
     protected $users;
 
     /**
-     * @var ArrayCollection
-     * One Product has One Shipment.
+     * @var arrayCollection
+     *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizAccess",mappedBy="classroom")
      * @JMS\Groups({"classroom_access"})
      */
     protected $quizAccess;
 
     /**
-     * @var ArrayCollection
-     * One Product has One Shipment.
+     * @var arrayCollection
+     *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="classroom")
      * @JMS\Groups({"classroom_quiz_sessions"})
      */
@@ -92,12 +92,13 @@ class Classroom
 
     /**
      * @JMS\VirtualProperty
+     *
      * @return string
      */
-    public function getNumberOfStudents(){
+    public function getNumberOfStudents()
+    {
         return $this->users->count();
     }
-
 
     /**
      * @return int
@@ -108,7 +109,7 @@ class Classroom
     }
 
     /**
-     * @return ArrayCollection
+     * @return PersistentCollection
      */
     public function getUsers()
     {
@@ -116,9 +117,9 @@ class Classroom
     }
 
     /**
-     * @return ArrayCollection
+     * @return PersistentCollection
      */
-    public function getEmailWhitelist(): ArrayCollection
+    public function getEmailWhitelist(): PersistentCollection
     {
         return $this->emailWhitelist;
     }
@@ -155,26 +156,28 @@ class Classroom
         $this->courseNumber = $courseNumber;
     }
 
-
-    public function isUserRegistered(User $user){
-        return $this->getUsers()->matching(Criteria::create()->where(Criteria::expr()->eq('id',$user->getId())))->count() > 0;
+    public function isUserRegistered(User $user)
+    {
+        return $this->getUsers()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $user->getId())))->count() > 0;
     }
 
     /**
      * @return mixed
      */
-    public function getQuizAccess() : PersistentCollection
+    public function getQuizAccess(): PersistentCollection
     {
         return $this->quizAccess;
     }
 
     /**
      * @param string $name
+     *
      * @return Classroom
      */
     public function setName(string $name): Classroom
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -184,6 +187,5 @@ class Classroom
     public function getName(): string
     {
         return $this->name;
-
     }
 }
