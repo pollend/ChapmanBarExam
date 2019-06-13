@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     fields="username",
  *     errorPath="username",
  *     message="username already used")
+ * @ApiResource()
  */
 class User implements UserInterface
 {
@@ -40,20 +43,20 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list","detail","owner"})
+     * @Groups({"list","detail","owner"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="json")
-     * @JMS\Groups({"list","detail","owner"})
+     * @Groups({"list","detail","owner"})
      */
     private $roles = [User::ROLE_USER];
 
     /**
      * @var string
      * @ORM\Column(name="username",type="string",length=100,nullable=false)
-     * @JMS\Groups({"user_name","owner"})
+     * @Groups({"user_name","owner"})
      */
     protected $username;
 
@@ -61,14 +64,14 @@ class User implements UserInterface
      * @var \DateTime
      *
      * @ORM\Column(name="last_login", type="datetime", nullable=true)
-     * @JMS\Groups({"owner"})
+     * @Groups({"owner"})
      */
     private $lastLogin;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=100,nullable=false)
-     * @JMS\Groups({"user_email","owner"})
+     * @Groups({"user_email","owner"})
      */
     protected $email;
 
@@ -81,21 +84,18 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column(name="password",type="string",length=255,nullable=false)
-     * @JMS\Exclude()
      */
     protected $password;
 
     /**
      * @var string
      * @ORM\Column(name="azure_id",type="string",length=50,nullable=false)
-     * @JMS\Exclude()
      */
     protected $azureId;
 
     /**
      * @var string
      * @ORM\Column(name="remember_token",type="string",length=100,nullable=false)
-     * @JMS\Exclude()
      */
     protected $rememberToken;
 
@@ -109,7 +109,7 @@ class User implements UserInterface
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="owner")
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $quizSessions;
 
@@ -243,6 +243,24 @@ class User implements UserInterface
     {
         $this->password = $password;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastLogin(): ?\DateTime
+    {
+        return $this->lastLogin;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getQuizSessions(): Collection
+    {
+        return $this->quizSessions;
+    }
+
+
 
     /**
      * Removes sensitive data from the user.

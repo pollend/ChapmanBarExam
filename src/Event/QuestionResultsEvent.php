@@ -3,7 +3,7 @@
 namespace App\Event;
 
 use App\Entity\QuizSession;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class QuestionResultsEvent extends Event
@@ -11,21 +11,21 @@ class QuestionResultsEvent extends Event
     const QUESTION_RESULTS = 'app.question.result';
 
     /**
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $score;
     /**
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $maxScore;
 
     /**
-     * @JMS\Groups({"result_set_questions"})
+     * @Groups({"result_set_questions"})
      */
     protected $questions;
 
     /**
-     * @JMS\Groups({"result_set_session"})
+     * @Groups({"result_set_session"})
      */
     protected $session;
 

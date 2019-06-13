@@ -2,20 +2,26 @@
 
 namespace App\Entity\Traits;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
+/**
+ * Trait TimestampTrait
+ * @package App\Entity\Traits
+ */
 trait TimestampTrait
 {
     /**
      * @ORM\Column(name="created_at",type="datetime",nullable=false)
-     * @JMS\Groups({"timestamp"})
+     * @Groups({"timestamp"})
      */
     protected $createdAt;
 
     /**
      * @ORM\Column(name="updated_at",type="datetime",nullable=false)
-     * @JMS\Groups({"timestamp"})
+     * @Groups({"timestamp"})
      */
     protected $updatedAt;
 

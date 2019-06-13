@@ -3,39 +3,28 @@
 namespace App\Controller\Api\V1;
 
 use App\Entity\Classroom;
-use App\Entity\Quiz;
 use App\Entity\QuizAccess;
-use App\Entity\QuizSession;
 use App\Entity\User;
 use App\Form\ClassroomType;
 use App\Form\QuizAccessType;
 use App\Repository\ClassroomRepository;
 use App\Repository\QuizAccessRepository;
-use App\Repository\QuizRepository;
-use App\Repository\QuizSessionRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\Patch;
-use FOS\RestBundle\Controller\Annotations\Post;
-use FOS\RestBundle\Controller\Annotations\Route;
-use FOS\RestBundle\Controller\Annotations\View;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
-use JMS\Serializer\EventDispatcher\ObjectEvent;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/v1/")
  */
-class ClassroomController extends AbstractFOSRestController
+class ClassroomController extends AbstractController
 {
     /**
-     * @Get("/classroom/owner/{user_id}", options = { "expose" = true }, name="get_classroom_by_owner")
+     * @Route("/classroom/owner/{user_id}", options = { "expose" = true }, name="get_classroom_by_owner",methods={"GET"})
      */
     public function getClassroomsByOwner($user_id)
     {
@@ -62,19 +51,12 @@ class ClassroomController extends AbstractFOSRestController
                 $classroomRepository = $this->getDoctrine()->getRepository(Classroom::class);
                 $classrooms = $classroomRepository->byUser($targetUser);
 
-                $context = SerializationContext::create()->setGroups([
+
+                return $this->json(['classes' => $classrooms->toArray()],200,[],['groups'=>[
                     'list',
                     'classroom_access',
-                    'quizAccess' => [
-                        'list',
-                        'access_quiz',
-                        'quiz' => [
-                            'list',
-                        ],
-                    ],
-                ]);
-
-                return $this->view($serializer->toArray(['classes' => $classrooms->toArray()], $context));
+                    'access_quiz'
+                ]]);
             }
         }
 
@@ -82,8 +64,7 @@ class ClassroomController extends AbstractFOSRestController
     }
 
     /**
-     * @Post("/classroom/datatable", options = { "expose" = true }, name="get_classrooms_datatable")
-     * @View(serializerGroups={"Default","list","timestamp"})
+     * @Route("/classroom/datatable", options = { "expose" = true }, name="get_classrooms_datatable",methods={"POST"})
      * @Security("has_role('ROLE_ADMIN')")
      */
     public function getClassroomDatatable(Request $request)
@@ -91,17 +72,14 @@ class ClassroomController extends AbstractFOSRestController
         /** @var ClassroomRepository $classRepo */
         $classRepo = $this->getDoctrine()->getRepository(Classroom::class);
 
-        return $this->view(['classes' => $classRepo->dataTable($request)]);
+        return $this->json(['classes' => $classRepo->dataTable($request)],200,[],['groups'=> ["list","timestamp"]]);
     }
 
     /**
-     * @Get("/classroom/{class_id}/access", options = { "expose" = true }, name="get_classroom_quiz_access")
-     * @View(serializerGroups={"list", "access_quiz","quiz":{"list"}})
+     * @Route("/classroom/{class_id}/access", options = { "expose" = true }, name="get_classroom_quiz_access",methods={"GET"})
      * @Security("has_role('ROLE_ADMIN')")
      *
      * @param Request $request
-     *
-     * @return \FOS\RestBundle\View\View
      */
     public function getQuizAccessForClassAction(Request $request, $class_id)
     {
@@ -111,19 +89,16 @@ class ClassroomController extends AbstractFOSRestController
 
         /** @var Classroom $class */
         if ($class = $classRepository->find($class_id)) {
-            return $this->view(['quiz_access' => $class->getQuizAccess()]);
+            return $this->json(['quiz_access' => $class->getQuizAccess()],200,[],['groups'=>["list", "access_quiz","quiz"=>["list"]]]);
         }
         throw $this->createNotFoundException();
     }
 
     /**
-     * @Patch("/classroom/{class_id}/access/{access_id}", options = { "expose" = true }, name="patch_classroom_quiz_access")
+     * @Route("/classroom/{class_id}/access/{access_id}", options = { "expose" = true }, name="patch_classroom_quiz_access",methods={"PATCH"})
      * @Security("has_role('ROLE_ADMIN')")
-     * @View(serializerGroups={"list", "access_quiz","quiz":{"list"}})
-     *
      * @param Request $request
      *
-     * @return \FOS\RestBundle\View\View
      */
     public function patchQuizAccessAction(Request $request, $class_id, $access_id)
     {
@@ -145,23 +120,20 @@ class ClassroomController extends AbstractFOSRestController
                     $em->persist($quizAccess);
                     $em->flush();
 
-                    return $this->view(['quiz_access' => $quizAccess]);
+                    return $this->json(['quiz_access' => $quizAccess],200,[],['groups'=>["list", "access_quiz","quiz"=>["list"]]]);
                 }
 
-                return $this->view($form);
+                return $this->json($form);
             }
         }
         throw $this->createNotFoundException();
     }
 
     /**
-     * @Get("/classroom/{class_id}", options = { "expose" = true }, name="get_classroom")
-     * @View(serializerGroups={"list","timestamp"})
+     * @Route("/classroom/{class_id}", options = { "expose" = true }, name="get_classroom")
      * @Security("has_role('ROLE_ADMIN')")
      *
      * @param Request $request
-     *
-     * @return \FOS\RestBundle\View\View
      */
     public function getClassroomAction($class_id)
     {
@@ -172,7 +144,7 @@ class ClassroomController extends AbstractFOSRestController
 
         /** @var Classroom $class */
         if ($class = $classRepository->find($class_id)) {
-            return $this->view(['classroom' => $class]);
+            return $this->json(['classroom' => $class],200,[],['groups'=>["list","timestamp"]]);
         }
         throw $this->createNotFoundException();
     }
@@ -180,8 +152,7 @@ class ClassroomController extends AbstractFOSRestController
     // tweak the role access with voter
 
     /**
-     * @Patch("/classroom/{class_id}", options = { "expose" = true }, name="patch_classroom")
-     * @View(serializerGroups={"list","timestamp"})
+     * @Route("/classroom/{class_id}", options = { "expose" = true }, name="patch_classroom",methods={"PATCH"})
      * @Security("has_role('ROLE_ADMIN')")
      */
     public function patchClassroomAction(Request $request, $class_id)
@@ -198,10 +169,10 @@ class ClassroomController extends AbstractFOSRestController
                 $em->persist($class);
                 $em->flush();
 
-                return $this->view(['classroom' => $class]);
+                return $this->json(['classroom' => $class],200,[],['groups'=>["list","timestamp"]]);
             }
 
-            return $this->view($form);
+            return $this->json($form);
         }
         throw $this->createNotFoundException();
     }

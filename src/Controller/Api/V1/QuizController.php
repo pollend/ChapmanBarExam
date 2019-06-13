@@ -10,28 +10,27 @@ use App\Grant;
 use App\Repository\QuestionRepository;
 use App\Repository\QuizRepository;
 use App\Repository\QuizSessionRepository;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\Route;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Illuminate\Support\Collection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/v1/")
  */
-class QuizController extends AbstractFOSRestController
+class QuizController extends AbstractController
 {
     /**
-     * @Rest\Get("/quiz/{quiz_id}/questions/{page}",
+     * @Route("/quiz/{quiz_id}/questions/{page}",
      *     options = { "expose" = true },
-     *     name="get_quiz_questions")
-     * @Rest\View(serializerGroups={"detail","tags"})
+     *     name="get_quiz_questions",methods={"GET"})
      *
      * @param int $quiz_id
      * @param int $page
-     *
-     * @return \FOS\RestBundle\View\View|\Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getQuestionsForPage($quiz_id, $page)
     {
@@ -60,10 +59,10 @@ class QuizController extends AbstractFOSRestController
             $groups = $questionRepo->getUniqueGroups($quiz);
 
             if ($activeSession->getQuiz() === $quiz | $this->isGranted(Grant::ROLE_ADMIN)) {
-                return $this->view([
+                return $this->json([
                     'questions' => $questions,
                     'max_pages' => Collection::make($groups)->keys()->max(),
-                ]);
+                ], 200, [], ['groups' => ["detail", "tags"]]);
             }
         }
 
@@ -71,10 +70,9 @@ class QuizController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Post("/quiz/datatable",
+     * @Route("/quiz/datatable",
      *     options = { "expose" = true },
-     *     name="get_quiz_datatable")
-     * @Rest\View(serializerGroups={"Default","list","timestamp"})
+     *     name="get_quiz_datatable",methods={"GET"})
      * @Security("has_role('ROLE_ADMIN')")
      */
     public function getQuizzesDatatable(Request $request)
@@ -82,6 +80,6 @@ class QuizController extends AbstractFOSRestController
         /** @var QuizRepository $quizRepo */
         $quizRepo = $this->getDoctrine()->getRepository(Quiz::class);
 
-        return $this->view(['quizzes' => $quizRepo->dataTable($request)]);
+        return $this->json(['quizzes' => $quizRepo->dataTable($request)],200,[],['groups' => ["Default","list","timestamp"]]);
     }
 }

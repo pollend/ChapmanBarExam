@@ -1,0 +1,1 @@
+[![SymfonyInsight](https://insight.symfony.com/projects/f3389d11-39de-40af-b387-94c04cdd221a/big.svg)](https://insight.symfony.com/projects/f3389d11-39de-40af-b387-94c04cdd221a)

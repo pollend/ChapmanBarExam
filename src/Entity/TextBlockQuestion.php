@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Quiz.
@@ -17,7 +17,7 @@ class TextBlockQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"detail","list"})
      */
     protected $content;
 

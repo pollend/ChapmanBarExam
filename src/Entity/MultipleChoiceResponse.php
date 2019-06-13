@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Quiz.
@@ -20,7 +20,7 @@ class MultipleChoiceResponse extends QuizResponse
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="choice_entry_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"user_response"})
+     * @Groups({"user_response"})
      */
     protected $choice;
 

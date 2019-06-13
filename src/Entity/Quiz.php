@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\SoftDeleteTrait;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -9,6 +10,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Quiz.
@@ -16,6 +18,7 @@ use JMS\Serializer\Annotation as JMS;
  * @ORM\Entity(repositoryClass="App\Repository\QuizRepository")
  * @ORM\Table(name="quiz")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource()
  */
 class Quiz
 {
@@ -28,37 +31,36 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list"})
-     * @JMS\Type("int")
+     * @Groups({"list","detail"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list"})
+     * @Groups({"list","detail"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
-     * @JMS\Groups({"list"})
+     * @Groups({"list","detail"})
      */
     protected $description;
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quiz")
-     * @JMS\Groups({"quiz_sessions"})
+     * @Groups({"quiz_sessions"})
      */
     protected $quizSessions;
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizQuestion",mappedBy="quiz")
-     * @JMS\Groups({"detail"})
-     * @JMS\Groups({"quiz_questions"})
+     * @Groups({"detail"})
+     * @Groups({"quiz_questions"})
      */
     protected $questions;
 
@@ -70,11 +72,9 @@ class Quiz
     protected $access;
 
     /**
-     * @JMS\VirtualProperty
-     * @JMS\SerializedName("num_questions")
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      **/
-    public function numQuestions()
+    public function getNumQuestions()
     {
         return $this->getQuestions()->count();
     }
@@ -129,6 +129,14 @@ class Quiz
     public function getQuestions(): PersistentCollection
     {
         return $this->questions;
+    }
+
+    /**
+     * @return PersistentCollection
+     */
+    public function getQuizSessions(): PersistentCollection
+    {
+        return $this->quizSessions;
     }
 
     /**

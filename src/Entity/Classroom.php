@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\SoftDeleteTrait;
 use App\Entity\Traits\TimestampTrait;
@@ -9,14 +10,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClassroomRepository")
  * @ORM\Table(name="classroom")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource()
+ * @ApiResource(itemOperations={
+ *    "get" = {
+ *       "normalization_context"={"groups"={"get"}}
+ *     }
+ * })
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact", "name":"partial", "description":"partial","courseNumber":"partial"})
+ * @ApiFilter(DateFilter::class,properties={"createdAt","updatedAt"})
+ * @ApiFilter(ExistsFilter::class,properties={"deletedAt"})
  */
 class Classroom
 {
@@ -30,15 +41,14 @@ class Classroom
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("int")
+     * @Groups({"list","detail"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      * @Assert\NotBlank(message="Classroom Name Required")
      * @Assert\NotNull()
      */
@@ -47,21 +57,21 @@ class Classroom
     /**
      * @var string
      * @ORM\Column(name="description",type="string",length=50,nullable=true)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      */
     protected $description;
 
     /**
      * @var string
      * @ORM\Column(name="course_number",type="string",length=50,nullable=true)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      */
     protected $courseNumber;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="UserWhitelist",mappedBy="classroom")
-     * @JMS\Groups({"classroom_whitelists"})
+     * @Groups({"classroom_whitelists"})
      */
     protected $emailWhitelist;
 
@@ -70,7 +80,7 @@ class Classroom
      *                           Many Users have Many Groups
      * @ORM\ManyToMany(targetEntity="User", inversedBy="classes")
      * @ORM\JoinTable(name="classroom_user")
-     * @JMS\Groups({"classroom_registered"})
+     * @Groups({"classroom_registered"})
      */
     protected $users;
 
@@ -78,7 +88,7 @@ class Classroom
      * @var arrayCollection
      *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizAccess",mappedBy="classroom")
-     * @JMS\Groups({"classroom_access"})
+     * @Groups({"classroom_access"})
      */
     protected $quizAccess;
 
@@ -86,12 +96,12 @@ class Classroom
      * @var arrayCollection
      *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="classroom")
-     * @JMS\Groups({"classroom_quiz_sessions"})
+     * @Groups({"classroom_quiz_sessions"})
      */
     protected $quizSessions;
 
     /**
-     * @JMS\VirtualProperty
+     * @Groups({"list"})
      *
      * @return string
      */

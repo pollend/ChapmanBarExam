@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Quiz.
@@ -18,7 +18,7 @@ class ShortAnswerQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)\
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $content;
 

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class UserWhitelist.
@@ -21,7 +22,7 @@ class UserWhitelist
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      * @JMS\Type("int")
      */
     protected $id;
@@ -33,15 +34,14 @@ class UserWhitelist
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      * })
-     *
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      */
     protected $classroom;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list"})
+     * @Groups({"list"})
      */
     protected $email;
 

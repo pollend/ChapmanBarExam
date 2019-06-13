@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Quiz.
@@ -20,21 +20,21 @@ class MultipleChoiceEntry
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $id;
 
     /**
      * @var int
      * @ORM\Column(name="`order`",type="smallint",nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $order;
 
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $content;
 

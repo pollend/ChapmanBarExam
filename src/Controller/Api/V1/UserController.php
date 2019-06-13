@@ -6,20 +6,18 @@ use App\Entity\QuizSession;
 use App\Entity\User;
 use App\Repository\QuizSessionRepository;
 use App\Repository\UserRepository;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\Route;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/v1/")
  */
-class UserController extends AbstractFOSRestController
+class UserController extends AbstractController
 {
     /**
-     * @Rest\Get("user/{user_id}/quiz/session",
+     * @Route("user/{user_id}/quiz/session",
      *     options = { "expose" = true },
      *     name="get_user_quiz_session")
-     * @Rest\View(serializerGroups={"detail", "meta"})
      */
     public function getSessions($user_id)
     {
@@ -36,7 +34,7 @@ class UserController extends AbstractFOSRestController
             if ($targetUser === $user | $this->isGranted('ROLE_ADMIN')) {
                 /** @var QuizSession $session */
                 if ($session = $sessionRepo->getActiveSession($targetUser)) {
-                    return $this->view($session);
+                    return $this->json($session,200,[],['groups' => ["detail", "meta"]]);
                 }
 
                 return $this->createNotFoundException('No Active Session');

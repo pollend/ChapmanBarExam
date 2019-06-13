@@ -4,22 +4,20 @@ namespace App\Controller\Api\V1;
 
 use App\Entity\QuestionTag;
 use App\Repository\QuestionTagRepository;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\Route;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/v1/")
  */
-class QuestionTagController extends AbstractFOSRestController
+class QuestionTagController extends AbstractController
 {
     /**
-     * @Rest\Get("question/tag",
+     * @Route("question/tag",
      *     options = { "expose" = true },
-     *     name="get_question_tag")
-     * @Rest\View(serializerGroups={"list"})
+     *     name="get_question_tag", methods={"GET"})
      */
     public function getTags(Request $request)
     {
@@ -28,14 +26,13 @@ class QuestionTagController extends AbstractFOSRestController
         /** @var QuestionTagRepository $repository */
         $repository = $this->getDoctrine()->getRepository(QuestionTag::class);
 
-        return $this->view(['tags' => $repository->filter($tag)->toArray()]);
+        return $this->json(['tags' => $repository->filter($tag)->toArray()],200,[],['groups' => ['list']]);
     }
 
     /**
-     * @Rest\Put("question/tag/{tag}",
+     * @Route("question/tag/{tag}",
      *     options = { "expose" = true },
-     *     name="put_question_tag")
-     * @Rest\View(serializerGroups={"list"})
+     *     name="put_question_tag", methods={"PUT"})
      * @Security("has_role('ROLE_ADMIN')")
      */
     public function putTag(Request $request, $tag)
@@ -49,17 +46,16 @@ class QuestionTagController extends AbstractFOSRestController
             $em->persist($tag);
             $em->flush();
 
-            return $this->view($tag);
+            return $this->json($tag,200,[],['groups' => ['list']]);
         }
 
         return $this->createNotFoundException();
     }
 
     /**
-     * @Rest\Put("question/tag/{tag}",
+     * @Route("question/tag/{tag}",
      *     options = { "expose" = true },
-     *     name="get_question_tag")
-     * @Rest\View(serializerGroups={"list"})
+     *     name="get_question_tag", methods={"GET"})
      */
     public function getTag(Request $request, $tag)
     {
@@ -67,7 +63,7 @@ class QuestionTagController extends AbstractFOSRestController
         /** @var QuestionTagRepository $repository */
         $repository = $this->getDoctrine()->getRepository(QuestionTag::class);
         if ($tag = $repository->findOneBy(['name' => $tag])) {
-            return $this->view($tag);
+            return $this->json($tag,200,[],['groups' => ['list']]);
         }
 
         return $this->createNotFoundException();

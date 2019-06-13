@@ -7,8 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
 use Doctrine\ORM\PersistentCollection;
+use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuestionRepository")
@@ -16,11 +17,11 @@ use Doctrine\ORM\PersistentCollection;
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\Table(name="quiz_question")
  *
- * @JMS\Discriminator(field = "type", map = {
+ * @DiscriminatorMap(typeProperty = "type", mapping = {
  *    "multiple_choice": "App\Entity\MultipleChoiceQuestion",
  *    "short_answer": "App\Entity\ShortAnswerQuestion",
  *    "text_block": "App\Entity\TextBlockQuestion"
- * },groups={"detail","list"})
+ * })
  */
 abstract class QuizQuestion
 {
@@ -32,7 +33,7 @@ abstract class QuizQuestion
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"detail","list"})
      */
     protected $id;
 
@@ -40,7 +41,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`order`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"detail","list"})
      */
     protected $order;
 
@@ -48,7 +49,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`group`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"detail","list"})
      */
     protected $group;
 
@@ -58,14 +59,14 @@ abstract class QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"quiz"})
+     * @Groups({"quiz"})
      */
     protected $quiz;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="question")
-     * @JMS\Groups({"responses"})
+     * @Groups({"responses"})
      */
     protected $responses;
 
@@ -75,7 +76,7 @@ abstract class QuizQuestion
      * @ORM\ManyToMany(targetEntity="QuestionTag", inversedBy="questions")
      *
      * @var PersistentCollection
-     * @JMS\Groups({"question_tags"})
+     * @Groups({"question_tags"})
      */
     private $tags;
 
@@ -137,6 +138,14 @@ abstract class QuizQuestion
         $this->quiz = $quiz;
 
         return $this;
+    }
+
+    /**
+     * @return Quiz
+     */
+    public function getQuiz(): Quiz
+    {
+        return $this->quiz;
     }
 
     /**

@@ -7,7 +7,7 @@ use App\Entity\Traits\TimestampTrait;
 use App\Repository\QuestionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Quiz.
@@ -18,6 +18,7 @@ use JMS\Serializer\Annotation as JMS;
  * @ApiResource(
  *     collectionOperations={
  *          "post",
+ *          "get",
  *          "post_start" = {
  *              "method"="POST",
  *              "path"="/quiz_sessions/start",
@@ -60,8 +61,7 @@ class QuizSession
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("int")
+     * @Groups({"list","detail"})
      */
     protected $id;
 
@@ -70,8 +70,7 @@ class QuizSession
      *
      * @ORM\Column(name="score", type="integer", nullable=true)
      *
-     * @JMS\Groups({"results"})
-     * @JMS\Type("int")
+     * @Groups({"results"})
      */
     protected $score;
 
@@ -80,8 +79,7 @@ class QuizSession
      *
      * @ORM\Column(name="max_score", type="integer", nullable=true)
      *
-     * @JMS\Groups({"results"})
-     * @JMS\Type("int")
+     * @Groups({"results"})
      */
     protected $maxScore;
 
@@ -96,8 +94,7 @@ class QuizSession
      *
      * @ORM\Column(name="meta", type="json", nullable=true)
      *
-     * @JMS\Groups({"meta"})
-     * @JMS\Type("json_array")
+     * @Groups({"meta"})
      *
      */
     protected $meta;
@@ -105,8 +102,7 @@ class QuizSession
     /**
      * @var \DateTime
      * @ORM\Column(name="submitted_at",type="datetime",nullable=true)
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("DateTime")
+     * @Groups({"list","detail"})
      */
     protected $submittedAt;
 
@@ -118,8 +114,7 @@ class QuizSession
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
      *
-     * @JMS\Groups({"quiz"})
-     * @JMS\Type("DateTime")
+     * @Groups({"quiz"})
      */
     protected $quiz;
 
@@ -131,7 +126,7 @@ class QuizSession
      *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      * })
      *
-     * @JMS\Groups({"classroom"})
+     * @Groups({"session_classroom"})
      */
     protected $classroom;
 
@@ -139,9 +134,7 @@ class QuizSession
      * @var int
      *
      * @ORM\Column(name="current_page", type="integer", nullable=true)
-     *
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("int")
+     * @Groups({"list","detail"})
      */
     protected $currentPage = 0;
 
@@ -151,7 +144,7 @@ class QuizSession
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      */
     protected $owner;
 
@@ -159,7 +152,7 @@ class QuizSession
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="session")
      *
-     * @JMS\Groups({"results"})
+     * @Groups({"results"})
      */
     protected $responses;
 
@@ -202,6 +195,15 @@ class QuizSession
     {
         $this->classroom = $classroom;
         return $this;
+    }
+
+
+    /**
+     * @return Classroom
+     */
+    public function getClassroom(): Classroom
+    {
+        return $this->classroom;
     }
 
     /**
@@ -271,6 +273,14 @@ class QuizSession
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getSubmittedAt(): \DateTime
+    {
+        return $this->submittedAt;
+    }
+
+    /**
      * @return int
      */
     public function getCurrentPage(): int
@@ -286,11 +296,4 @@ class QuizSession
         $this->currentPage = $current_page;
     }
 
-//    public function getNonResponseQuestions()
-//    {
-//        /** @var QuestionRepository $questionRepository */
-//        $questionRepository = \EntityManager::getRepository(QuizQuestion::class);
-//
-//        return $questionRepository->filterQuestionsByNotInResponses($this->getQuiz(), $this->getResponses());
-//    }
 }

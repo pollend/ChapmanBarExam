@@ -3,11 +3,11 @@
         <div class="container">
             <el-table :data="reports">
                 <el-table-column
-                        prop="created_at"
+                        prop="createdAt"
                         label="Created At">
                 </el-table-column>
                 <el-table-column
-                        prop="submitted_at"
+                        prop="submittedAt"
                         label="Submitted At">
                 </el-table-column>
                 <el-table-column

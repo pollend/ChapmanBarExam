@@ -4,7 +4,8 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuizResponseRepository")
@@ -12,10 +13,10 @@ use JMS\Serializer\Annotation as JMS;
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\Table(name="quiz_response")
  *
- * @JMS\Discriminator(field = "type", map = {
+ * @DiscriminatorMap(typeProperty = "type", mapping= {
  *    "multiple_choice": "App\Entity\MultipleChoiceResponse",
  *    "short_answer": "App\Entity\ShortAnswerResponse"
- * },groups={"detail","list"})
+ * })
  */
 abstract class QuizResponse
 {
@@ -25,7 +26,7 @@ abstract class QuizResponse
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      */
     protected $id;
 
@@ -35,7 +36,7 @@ abstract class QuizResponse
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="session_id",referencedColumnName="id")
      * })
-     * @JMS\Groups({"session_info"})
+     * @Groups({"session_info"})
      */
     protected $session;
 
@@ -45,7 +46,7 @@ abstract class QuizResponse
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="question_id",referencedColumnName="id")
      * })
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $question;
 

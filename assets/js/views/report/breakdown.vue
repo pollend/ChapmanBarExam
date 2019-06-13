@@ -9,7 +9,7 @@
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="max_score"
+                    prop="maxScore"
                     label="Possible Points"
                     width="180">
             </el-table-column>
@@ -47,7 +47,7 @@
             for (let key in breakdown) {
                 breakdown[key].subtest = tags[key];
                 breakdown[key].required_to_pass = '67.00%';
-                breakdown[key].percent_score = parseFloat((breakdown[key].score/breakdown[key].max_score) * 100.0).toFixed(2)+"%"
+                breakdown[key].percent_score = parseFloat((breakdown[key].score/breakdown[key].maxScore) * 100.0).toFixed(2)+"%"
             }
             this.breakdown = _.values(breakdown);
         },

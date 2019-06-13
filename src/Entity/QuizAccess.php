@@ -5,8 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity()
@@ -23,36 +22,35 @@ class QuizAccess
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list"})
-     * @JMS\Type("int")
+     * @Groups({"list"})
      */
     protected $id;
 
     /**
      * @var bool
      * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
-     * @JMS\Groups({"list"})
+     * @Groups({"list"})
      */
     protected $isHidden;
 
     /**
      * @var int
      * @ORM\Column(name="num_attempts",type="integer",nullable=true)
-     * @JMS\Groups({"list"})
+     * @Groups({"list"})
      */
     protected $numAttempts;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="open_date",type="datetime",nullable=true)
-     * @JMS\Groups({"list"})
+     * @Groups({"list"})
      */
     protected $openDate;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="close_date",type="datetime",nullable=true)
-     * @JMS\Groups({"list"})
+     * @Groups({"list"})
      */
     protected $closeDate;
 
@@ -61,7 +59,7 @@ class QuizAccess
      *
      * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="access")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
-     * @JMS\Groups({"access_quiz"})
+     * @Groups({"access_quiz"})
      */
     protected $quiz;
 

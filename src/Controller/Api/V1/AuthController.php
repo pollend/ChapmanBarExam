@@ -4,15 +4,14 @@
 
 namespace App\Controller\Api\V1;
 
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\Route;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/v1/")
  */
-class AuthController extends AbstractFOSRestController
+class AuthController extends AbstractController
 {
     private $jwtManager;
 
@@ -22,13 +21,12 @@ class AuthController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get("auth/me",
+     * @Route("auth/me",
      *     options = { "expose" = true },
-     *     name="get_me")
-     * @Rest\View(serializerGroups={"owner"})
+     *     name="get_me",methods={"GET"})
      */
     public function getMe()
     {
-        return $this->view(['user' => $this->getUser()]);
+        return $this->json(['user' => $this->getUser()],200,[],['groups'=>['owner']]);
     }
 }

@@ -15,22 +15,20 @@ use App\Repository\QuestionRepository;
 use App\Repository\QuizResponseRepository;
 use App\Repository\QuizSessionRepository;
 use Carbon\Carbon;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\Route;
 use Illuminate\Support\Collection;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/v1/")
  */
-class QuizSessionController extends AbstractFOSRestController
+class QuizSessionController extends AbstractController
 {
     /**
-     * @Rest\Get("/quiz/session/{session_id}/page/{page}",
+     * @Route("/quiz/session/{session_id}/page/{page}",
      *     options = { "expose" = true },
-     *     name="get_quiz_session_questions")
-     * @Rest\View(serializerGroups={"detail","tags","correct","question":{"list"}})
+     *     name="get_quiz_session_questions", methods={"GET"})
      */
     public function getSessionQuestionPage($session_id, $page)
     {
@@ -55,22 +53,21 @@ class QuizSessionController extends AbstractFOSRestController
                 $questions = $questionRepo->filterByGroup($groups[$page], $quiz);
                 $responses = $quizResponseRepo->filterResponsesBySessionAndQuestions($session, $questions);
 
-                return $this->view([
+                return $this->json([
                     'page' => $page,
                     'session' => $session,
                     'responses' => $responses,
                     'maxPage' => Collection::make($groups)->keys()->max(),
-                ]);
+                ], 200, [], ['ignored_attributes' => ['quizSessions'], 'groups' => ["detail", "tags", "correct"]]);
             }
         }
         throw $this->createNotFoundException();
     }
 
     /**
-     * @Rest\Post("/quiz/session/{session_id}/page/{page}",
+     * @Route("/quiz/session/{session_id}/page/{page}",
      *     options = { "expose" = true },
-     *     name="post_quiz_session_questions")
-     * @Rest\View(serializerGroups={"detail","tags","correct"})
+     *     name="post_quiz_session_questions", methods={"POST"})
      */
     public function postSessionQuestionPage(Request $request, $session_id, $page)
     {
@@ -79,9 +76,10 @@ class QuizSessionController extends AbstractFOSRestController
         /** @var QuestionRepository $questionRepository */
         $questionRepository = $this->getDoctrine()->getRepository(QuizQuestion::class);
 
+        /** @var QuizSession $session */
         if ($session = $this->checkActiveSession($session_id)) {
             //make sure the pages match when submitting
-            if ($session->getCurrentPage() !== (int) $page) {
+            if ($session->getCurrentPage() !== (int)$page) {
                 throw $this->createNotFoundException();
             }
 
@@ -97,23 +95,22 @@ class QuizSessionController extends AbstractFOSRestController
                 $em->persist($session);
                 $em->flush();
 
-                return $this->getSessionQuestionPage($session_id, $page);
+                return $this->json($this->getSessionQuestionPage($session_id, $page), 200, [], ['groups' => ["detail", "tags", "correct"]]);
             }
         }
         throw $this->createNotFoundException();
     }
 
     /**
-     * @Rest\Patch("/quiz/session/{session_id}/page/{page}",
+     * @Route("/quiz/session/{session_id}/page/{page}",
      *     options = { "expose" = true },
-     *     name="patch_quiz_session_questions")
-     * @Rest\View(serializerGroups={"detail","tags","correct"})
+     *     name="patch_quiz_session_questions", methods={"PATCH"})
      */
     public function patchSessionQuestionPage(Request $request, $session_id, $page)
     {
         if ($session = $this->checkActiveSession($session_id)) {
             //make sure the pages match when submitting
-            if ($session->getCurrentPage() !== (int) $page) {
+            if ($session->getCurrentPage() !== (int)$page) {
                 throw $this->createNotFoundException();
             }
 
@@ -125,24 +122,21 @@ class QuizSessionController extends AbstractFOSRestController
         throw $this->createNotFoundException();
     }
 
-    private function checkActiveSession($session_id)
+    private function checkActiveSession($session_id) : QuizSession
     {
         $user = $this->getUser();
         /** @var QuizSessionRepository $sessionRepository */
         $sessionRepository = $this->getDoctrine()->getRepository(QuizSession::class);
-
         /** @var QuizSession $session */
         if ($session = $sessionRepository->getActiveSession($user)) {
-            if ($session->getId() === (int) $session_id) {
+            if ($session->getId() === (int)$session_id)
                 return $session;
-            }
         }
-
         return null;
     }
 
     /**
-     * @param Request     $request
+     * @param Request $request
      * @param QuizSession $session
      * @param $page
      *
@@ -200,10 +194,9 @@ class QuizSessionController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get("/quiz/session/active",
+     * @Route("/quiz/session/active",
      *     options = { "expose" = true },
-     *     name="get_active_session")
-     * @Rest\View(serializerGroups={"classroom","detail","quiz","quiz":{"list"}})
+     *     name="get_active_session", methods={"GET"})
      */
     public function getActiveSession()
     {
@@ -215,23 +208,22 @@ class QuizSessionController extends AbstractFOSRestController
 
         /** @var QuizSession $session */
         if ($session = $sessionRepo->getActiveSession($user)) {
-            return $this->view(['session' => $session]);
+            return $this->json(['session' => $session], 200, [], ['ignored_attributes' => ['questions', 'quizSessions'], 'groups' => ["session_classroom", "detail", "quiz"]]);
         }
         throw $this->createNotFoundException('No Active Session');
     }
 
     /**
-     * @Rest\Get("/quiz/session/{session_id<\d+>}",
+     * @Route("/quiz/session/{session_id<\d+>}",
      *     options = { "expose" = true },
-     *     name="get_session")
-     * @Rest\View(serializerGroups={"classroom","detail","quiz","quiz":{"list"}})
+     *     name="get_session", methods={"GET"})
      */
     public function getSessionById($session_id)
     {
         /** @var QuizSessionRepository $sessionRepo */
         $sessionRepo = $this->getDoctrine()->getRepository(QuizSession::class);
         if ($session = $sessionRepo->find($session_id)) {
-            return $this->view(['session' => $session]);
+            return $this->json(['session' => $session], 200, [], ["classroom", "detail", "quiz", "quiz" => ["list"]]);
         }
         throw  $this->createNotFoundException();
     }

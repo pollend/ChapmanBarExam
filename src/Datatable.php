@@ -3,14 +3,23 @@
 namespace App;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class Datatable
 {
     const ASC = 'ASC';
     const DESC = 'DESC';
 
+    /**
+     * @var array
+     * @Groups({"list"})
+     */
     private $columnSort = [];
 
+    /**
+     * @var
+     * @Groups({"list"})
+     */
     private $payload;
 
     public function __construct()
@@ -37,6 +46,14 @@ class Datatable
                 }
             }
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getColumnSort(): array
+    {
+        return $this->columnSort;
     }
 
     public function getSort()

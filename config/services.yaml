@@ -29,15 +29,10 @@ services:
         resource: '../src/Security/*'
         tags:
             - { name: security.voter }
-#    App\Normalizer\Subscriber\:
-#        resource: '../src/Normalizer/Subscriber/*'
-#        public: true
-#        tags:
-#        - { name: jms_serializer.subscribing_handler }
-#    App\Normalizer\Event\:
-#        resource: '../src/Normalizer/Event/*'
-#        public: true
-#        tags:
-#            - { name: jms_serializer.event_subscriber }
+
+    App\Doctrine\Collection\ClassroomExtension:
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+            - { name: api_platform.doctrine.orm.query_extension.item }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

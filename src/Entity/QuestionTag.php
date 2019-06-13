@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuestionTagRepository")
@@ -17,14 +18,14 @@ class QuestionTag
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      */
     protected $name;
 
@@ -33,7 +34,7 @@ class QuestionTag
      *
      * @ORM\ManyToMany(targetEntity="QuizQuestion", mappedBy="tags" )
      * @ORM\JoinTable(name="quiz_question_question_tag")
-     * @JMS\Groups({"questions"})
+     * @Groups({"questions"})
      */
     protected $questions;
 

@@ -11,10 +11,10 @@ const state = {
 
 const mutations = {
     GET_SESSION: (state, payload) => {
-        const {id, classroom, quiz,current_page } = payload;
+        const {id, classroom, quiz,currentPage } = payload;
         state.session_id = id;
         state.quiz_id = quiz.id;
-        state.current_page = current_page;
+        state.current_page = currentPage;
         state.classroom = classroom;
         state.quiz = quiz;
     },

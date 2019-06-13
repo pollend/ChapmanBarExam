@@ -84,7 +84,7 @@
                 </p>
                 <template>
                     <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
-                        ({{mapCharacterIndex(index)}}) <multiple-choice-entry :correct_entry="q.correct_entry" :entry="e" :response="(q.id in responses) ? responses[q.id].choice : null "></multiple-choice-entry>
+                        ({{mapCharacterIndex(index)}}) <multiple-choice-entry :correct_entry="q.correctEntry" :entry="e" :response="(q.id in responses) ? responses[q.id].choice : null "></multiple-choice-entry>
                     </div>
                 </template>
             </template>
@@ -143,7 +143,7 @@ export default {
           let choice = (question.id in this.responses) ? this.responses[question.id].choice : null;
           if(choice === null)
               return '_';
-          if(question.correct_entry.id === choice.id){
+          if(question.correctEntry.id === choice.id){
               return '-';
           }
           for(const [index,e] of this.orderEntries(question.entries).entries()){

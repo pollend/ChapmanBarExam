@@ -9,7 +9,7 @@
                 <template v-else>
                     <el-card v-for="_class in classes" v-bind:key="_class.id" class="box-card class-box">
                         <h1 class="title"> {{_class.name}}</h1>
-                        <el-row :gutter="20" v-for="(row,index) in group(_class.quiz_access)" v-bind:key="`quiz-${index}`">
+                        <el-row :gutter="20" v-for="(row,index) in group(_class.quizAccess)" v-bind:key="`quiz-${index}`">
                             <el-col :span="6"  v-for="access in row" v-bind:key="access.id">
                                 <el-card class="box-card exam-card">
                                     <div slot="header" class="clearfix">
@@ -19,11 +19,10 @@
                                     <el-divider></el-divider>
                                     <el-row :gutter="20">
                                         <el-col :span="12" >
-                                           {{ access.user_attempts}} / {{ access.num_attempts }}
+                                           {{ access.userAttempts}} / {{ access.numAttempts }}
                                         </el-col>
                                         <el-col :span="12" >
-                                            {{ timestamp(access.open_date) }}
-                                        </el-col>
+                                            {{ timestamp(access.openDate) }}</el-col>
                                     </el-row>
 
                                     <div class="foot">

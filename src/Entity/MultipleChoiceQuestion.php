@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Support\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Quiz.
@@ -20,7 +20,7 @@ class MultipleChoiceQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $content;
 
@@ -30,21 +30,21 @@ class MultipleChoiceQuestion extends QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="correct_entry_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"question_correct_answer"})
+     * @Groups({"question_correct_answer"})
      */
     protected $correctEntry;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceResponse",mappedBy="question")
-     * @JMS\Groups({"responses"})
+     * @Groups({"responses"})
      */
     protected $responses;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceEntry",mappedBy="question")
-     * @JMS\Groups({"detail"})
+     * @Groups({"detail"})
      */
     protected $entries;
 

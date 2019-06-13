@@ -15,17 +15,16 @@ use App\Repository\QuizResponseRepository;
 use App\Repository\QuizSessionRepository;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Criteria;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations\Route;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Illuminate\Support\Collection;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/api/v1/")
  */
-class ReportController extends AbstractFOSRestController
+class ReportController extends AbstractController
 {
     private $dispatcher;
 
@@ -35,10 +34,9 @@ class ReportController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get("/report/user/{user_id}",
+     * @Route("/report/user/{user_id}",
      *     options = { "expose" = true },
      *     name="get_reports_by_user")
-     * @Rest\View(serializerGroups={"list","timestamp","results", "quiz", "quiz":{"list"}})
      */
     public function getReportsByUser($user_id)
     {
@@ -53,27 +51,17 @@ class ReportController extends AbstractFOSRestController
             if ($user === $targetUser | $this->isGranted(Grant::ROLE_ADMIN)) {
                 $sessions = $quizSessionRepo->getSessionsByUser($user);
 
-                return $this->view(['reports' => $sessions]);
+                return $this->json(['reports' => $sessions],200,[],['groups' => ["list","timestamp","results","quiz"]]);
             }
         }
         throw $this->createNotFoundException();
     }
 
-    /**
-     * @Rest\Get("/report",
-     *     options = { "expose" = true },
-     *     name="get_reports")
-     * @Rest\View(serializerGroups={"list","timestamp","results", "quiz", "quiz":{"list"}})
-     */
-    public function getReports(Request $request)
-    {
-    }
 
     /**
-     * @Rest\Get("/report/{report_id}",
+     * @Route("/report/{report_id}",
      *     options = { "expose" = true },
      *     name="get_report")
-     * @Rest\View(serializerGroups={"detail","question_tags","question":{},"user_response","question_correct_answer"})
      */
     public function getReport($report_id)
     {
@@ -90,16 +78,15 @@ class ReportController extends AbstractFOSRestController
             });
             $questions = Collection::make($session->getQuiz()->getQuestions()->matching(Criteria::create()->orderBy(['group' => 'ASC', 'order' => 'ASC'])));
 
-            return $this->view(['questions' => $questions->toArray(), 'responses' => $responses->toArray()]);
+            return $this->json(['questions' => $questions->toArray(), 'responses' => $responses->toArray()], 200, [], ['groups' => ["detail", "question_tags", "user_response", "question_correct_answer"],'ignored_attributes' => ['question']]);
         }
         throw $this->createNotFoundException();
     }
 
     /**
-     * @Rest\Get("/report/{report_id}/breakdown",
+     * @Route("/report/{report_id}/breakdown",
      *     options = { "expose" = true },
      *     name="get_report_breakdown")
-     * @Rest\View(serializerGroups={"detail"})
      */
     public function getReportBreakdown($report_id)
     {
@@ -128,7 +115,7 @@ class ReportController extends AbstractFOSRestController
                 $breakdown->put($tag->getId(), $event);
             }
 
-            return $this->view(['tags' => $tags->toArray(), 'breakdown' => $breakdown->toArray()]);
+            return $this->json(['tags' => $tags->toArray(), 'breakdown' => $breakdown->toArray()],200,[],['groups' => ['detail']]);
         }
         throw $this->createNotFoundException();
     }
