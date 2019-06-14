@@ -3,10 +3,9 @@ import Router from 'vue-router';
 import {routePermissions} from './permission';
 import {routeQuizSession} from "./quiz-session";
 /* Layout */
-import Layout from '@/layout/dashboard/index';
-import AppLayout from '@/layout/app';
-import DashboardLayout from '@/layout/dashboard';
-import {ROLE_ADMIN,ROLE_USER} from '@/utils/role'
+import AppLayout from '../layout/app';
+import DashboardLayout from '../layout/dashboard';
+import {ROLE_ADMIN,ROLE_USER} from '../utils/role'
 /* Router for modules */
 
 Vue.use(Router);
@@ -16,7 +15,7 @@ export const routes = [
     children: [
       {
         path: '/redirect/:path*',
-        component: () => import('@/views/redirect'),
+        component: () => import('../views/redirect'),
       },
     ],
   },

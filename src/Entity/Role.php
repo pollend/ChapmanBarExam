@@ -8,12 +8,14 @@
 
 namespace CoreBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="user_role")
  * @ORM\Entity
+ * @ApiResource()
  */
 class Role
 {

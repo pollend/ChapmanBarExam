@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -28,7 +29,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     fields="username",
  *     errorPath="username",
  *     message="username already used")
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}},
+ *     collectionOperations={
+ *     "post",
+ *     "get" = {
+ *          "access_control"="is_granted('ROLE_USER') and object.owner == user"
+ *     },
+ *     "get_me" = {
+ *         "method" = "GET",
+ *         "path"= "/users/me",
+ *         "controller"=App\Controller\AuthMe::class,
+ *         "access_control"="has_role('ROLE_USER')",
+ *     }
+ * })
  */
 class User implements UserInterface
 {
@@ -43,20 +57,20 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"list","detail","owner"})
+     * @Groups({"read"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"list","detail","owner"})
+     * @Groups({"read"})
      */
     private $roles = [User::ROLE_USER];
 
     /**
      * @var string
      * @ORM\Column(name="username",type="string",length=100,nullable=false)
-     * @Groups({"user_name","owner"})
+     * @Groups({"read"})
      */
     protected $username;
 
@@ -64,14 +78,14 @@ class User implements UserInterface
      * @var \DateTime
      *
      * @ORM\Column(name="last_login", type="datetime", nullable=true)
-     * @Groups({"owner"})
+     * @Groups({"read"})
      */
     private $lastLogin;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=100,nullable=false)
-     * @Groups({"user_email","owner"})
+     * @Groups({"read"})
      */
     protected $email;
 
@@ -103,13 +117,14 @@ class User implements UserInterface
      * Many Groups have Many Users.
      *
      * @ORM\ManyToMany(targetEntity="Classroom", mappedBy="users")
+     * @Groups({"read"})
      */
     protected $classes;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="owner")
-     * @Groups({"detail"})
+     * @Groups({"read"})
      */
     protected $quizSessions;
 
@@ -259,7 +274,6 @@ class User implements UserInterface
     {
         return $this->quizSessions;
     }
-
 
 
     /**

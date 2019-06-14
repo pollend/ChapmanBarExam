@@ -1,6 +1,6 @@
 /* All validations should be defined here */
 
-export function isExternal(path) {
+export function isExternal(path: string) {
   return /^(https?:|mailto:|tel:)/.test(path);
 }
 
@@ -9,7 +9,7 @@ export function isExternal(path) {
  * @param {String} textval
  * @return {Boolean}
  */
-export function validURL(url) {
+export function validURL(url: string) {
   const reg = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
   return reg.test(url);
 }
@@ -19,7 +19,7 @@ export function validURL(url) {
  * @return {Boolean}
  * @param {String} str
  */
-export function validLowerCase(str) {
+export function validLowerCase(str: string) {
   const reg = /^[a-z]+$/;
   return reg.test(str);
 }
@@ -29,7 +29,7 @@ export function validLowerCase(str) {
  * @return {Boolean}
  * @param {String} str
  */
-export function validUpperCase(str) {
+export function validUpperCase(str: string) {
   const reg = /^[A-Z]+$/;
   return reg.test(str);
 }
@@ -39,7 +39,7 @@ export function validUpperCase(str) {
  * @param {String} str
  * @param {Boolean}
  */
-export function validAlphabets(str) {
+export function validAlphabets(str: string) {
   const reg = /^[A-Za-z]+$/;
   return reg.test(str);
 }
@@ -49,7 +49,7 @@ export function validAlphabets(str) {
  * @param {String} email
  * @return {Boolean}
  */
-export function validEmail(email) {
+export function validEmail(email: string) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 }

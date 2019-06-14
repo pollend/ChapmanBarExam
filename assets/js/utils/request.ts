@@ -1,6 +1,12 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
-import store from "@/store";
+import store, {RootState} from "../store";
+import {Module} from "vuex";
+import {AuthState} from "../store/modules/auth";
+
+export const OLD_API = '/api/';
+export const _API = '/_api/';
+
 
 // Create axios instance
 const service = axios.create({
@@ -11,11 +17,11 @@ const service = axios.create({
 // Request intercepter
 service.interceptors.request.use(
   async config => {
-      const refreshToken = store.state.user.refresh_token;
-      if (store.state.user.refresh_token !== null && await store.dispatch('user/isTokenValid') === false) {
+
+      if (store.getters['auth/authRefreshToken'] !== null &&  store.getters['auth/authIsTokenValid'] === false) {
        try {
            console.log("refreshed token");
-           await store.dispatch('user/refresh');
+           await store.dispatch('auth/refresh');
            await new Promise(resolve => setTimeout(resolve, 2000));
        }
        catch (e) {
@@ -23,8 +29,7 @@ service.interceptors.request.use(
        }
       }
 
-
-      const token = store.state.user.token;
+      const token = store.getters['auth/authToken'];
       if (token) {
           config.headers['Authorization'] = 'Bearer ' + token; // Set JWT token
       }

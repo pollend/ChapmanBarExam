@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
@@ -17,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *    "multiple_choice": "App\Entity\MultipleChoiceResponse",
  *    "short_answer": "App\Entity\ShortAnswerResponse"
  * })
+ * @ApiResource()
  */
 abstract class QuizResponse
 {

@@ -9,6 +9,7 @@ import '@/icons'; // icon
 import './styles/index.scss'
 import * as filters from './filters'; // global filters
 
+
 Vue.use(ElementUI, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value),
@@ -21,6 +22,10 @@ Vue.use(VueDataTables)
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key]);
 });
+
+
+console.log(store);
+
 
 Vue.config.productionTip = false;
 

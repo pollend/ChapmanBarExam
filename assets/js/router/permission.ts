@@ -1,7 +1,7 @@
 import store from '@/store';
 import { Message } from 'element-ui';
 import 'nprogress/nprogress.css'; // progress bar style
-import getPageTitle from '@/utils/get-page-title';
+// import getPageTitle from '@/utils/get-page-title';
 
 export function canAccess(roles, permissions, routes) {
   return routes.every((route) => {
@@ -28,13 +28,13 @@ export function canAccess(roles, permissions, routes) {
 
 export async function routePermissions(to, from, next) {
   // set page title
-  document.title = getPageTitle(to.meta.title);
+  // document.title = getPageTitle(to.meta.title);
   // try to access page with no credentials
   if (canAccess([], [], to.matched)) {
     return true;
   } else {
     // check if user has token
-    const hasToken = store.state.user.token;
+    const hasToken = store.state.auth.token;
     if (hasToken) {
       // try to check user with the server
       try {

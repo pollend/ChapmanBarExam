@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,6 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *    "short_answer": "App\Entity\ShortAnswerQuestion",
  *    "text_block": "App\Entity\TextBlockQuestion"
  * })
+ * @ApiResource()
  */
 abstract class QuizQuestion
 {

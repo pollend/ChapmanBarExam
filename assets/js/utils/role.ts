@@ -1,4 +1,4 @@
-import store from '@/store';
+import store from '../store';
 
 export const ROLE_ADMIN = 'ROLE_ADMIN';
 export const ROLE_USER = 'ROLE_USER';
@@ -9,12 +9,12 @@ export const ROLE_USER = 'ROLE_USER';
  * @returns {Boolean}
  * @example see @/views/permission/Directive.vue
  */
-export default function checkRole(value) {
+export default function checkRole(value: string[] | string) {
   if (value && value instanceof Array && value.length > 0) {
     const roles = store.getters && store.getters.roles;
     const requiredRoles = value;
 
-    const hasRole = roles.some(role => {
+    const hasRole = roles.some((role : string)=> {
       return requiredRoles.includes(role);
     });
 

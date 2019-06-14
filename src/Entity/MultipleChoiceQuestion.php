@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Support\Collection;
@@ -14,6 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\MultipleChoiceQuestionRepository")
  * @ORM\Table(name="multiple_choice_question")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource()
  */
 class MultipleChoiceQuestion extends QuizQuestion
 {

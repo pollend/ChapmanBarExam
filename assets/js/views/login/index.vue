@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <h3 class="title">Chapman Bar Exam</h3>
-      <lang-select class="set-language" />
+<!--      <lang-select class="set-language" />-->
       <el-form-item prop="email">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -25,7 +25,7 @@
         </span>
       </el-form-item>
       <el-form-item>
-        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
+        <el-button :loading="isLoading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
           Sign in
         </el-button>
       </el-form-item>
@@ -33,77 +33,86 @@
   </div>
 </template>
 
-<script>
-import LangSelect from '@/components/LangSelect';
-import { validEmail } from '@/utils/validate';
+<script lang="ts">
+import { validEmail } from "../../utils/validate";
 
-export default {
-  name: 'Login',
-  components: { LangSelect },
-  data() {
-    const validateEmail = (rule, value, callback) => {
-      if (!validEmail(value)) {
-        callback(new Error('Please enter the correct email'));
+import {Component, Provide, Vue, Watch} from "vue-property-decorator";
+import "vue-router";
+import {Action, namespace} from "vuex-class";
+import {LoginError} from "../../store/modules/auth";
+
+const validateEmail = (rule: any, value: string, callback: any) => {
+  if (!validEmail(value)) {
+    callback(new Error('Please enter the correct email'));
+  } else {
+    callback();
+  }
+};
+
+const validatePass = (rule: any, value: string, callback: any) => {
+  if (value.length < 4) {
+    callback(new Error('Password cannot be less than 4 digits'));
+  } else {
+    callback();
+  }
+};
+
+const authModule = namespace('auth')
+
+
+@Component
+export default class Login extends Vue {
+  @authModule.Action('login') authLogin: any;
+  @authModule.Getter('isLoading') isLoading: boolean;
+  @authModule.Getter('loginError') loginError: LoginError;
+
+  @Provide() loginRules = {
+    email: [{required: true, trigger: 'blur', validator: validateEmail}],
+    password: [{required: true, trigger: 'blur', validator: validatePass}]
+  };
+  @Provide() loginForm = {
+    email: '',
+    password: ''
+  };
+
+  @Provide() pwdType = 'password';
+  @Provide() redirect: string = null;
+
+  @Watch("loginError")
+  onLoginError(err: LoginError) {
+    this.$message({
+      message: err.message,
+      type: 'error'
+    });
+  }
+
+  @Watch('$route', {immediate: true})
+  onRouteChange(route: any) {
+    this.redirect = route.query && route.query.redirect;
+  }
+
+  showPwd() {
+    if (this.pwdType === 'password') {
+      this.pwdType = '';
+    } else {
+      this.pwdType = 'password';
+    }
+  }
+
+  handleLogin() {
+    let form: any = this.$refs.loginForm;
+    form.validate((valid: any) => {
+      if (valid) {
+        this.authLogin(this.loginForm).then(() => {
+          this.$router.push({path: this.redirect || '/'});
+        }).catch(() => {
+        });
       } else {
-        callback();
+        console.log('error submit!!');
+        return false;
       }
-    };
-    const validatePass = (rule, value, callback) => {
-      if (value.length < 4) {
-        callback(new Error('Password cannot be less than 4 digits'));
-      } else {
-        callback();
-      }
-    };
-    return {
-      loginForm: {
-        email: '',
-        password: '',
-      },
-      loginRules: {
-        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
-        password: [{ required: true, trigger: 'blur', validator: validatePass }],
-      },
-      loading: false,
-      pwdType: 'password',
-      redirect: undefined,
-    };
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect;
-      },
-      immediate: true,
-    },
-  },
-  methods: {
-    showPwd() {
-      if (this.pwdType === 'password') {
-        this.pwdType = '';
-      } else {
-        this.pwdType = 'password';
-      }
-    },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true;
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
-    },
-  },
+    });
+  }
 };
 </script>
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -12,6 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\Table(name="`user_whitelist`")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource()
  */
 class UserWhitelist
 {

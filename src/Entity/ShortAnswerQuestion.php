@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -12,6 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\ShortAnswerQuestionRepository")
  * @ORM\Table(name="short_answer_question")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource()
  */
 class ShortAnswerQuestion extends QuizQuestion
 {

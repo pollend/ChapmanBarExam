@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -11,6 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\Table(name="text_block_question")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource()
  */
 class TextBlockQuestion extends QuizQuestion
 {

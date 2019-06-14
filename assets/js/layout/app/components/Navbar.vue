@@ -14,37 +14,52 @@
 
 </template>
 
-<script>
-  import { mapGetters } from 'vuex';
-  import {ROLE_ADMIN} from "@/utils/role";
+<script lang="ts">
 
-export default {
-  components: {
-  },
-  computed: {
-    ...mapGetters({
-      'roles' : 'user/roles',
-      'name' : 'user/username',
-      'session_id': 'quiz-session/session_id'
-    }),
-    isAdmin(){
-        return ROLE_ADMIN in this.roles
-    },
-    isSessionActive(){
-        return this.session_id !== null;
+import {ROLE_ADMIN} from "../../../utils/role";
+import User from "../../../entity/user";
+import {Component, Provide, Vue, Watch} from "vue-property-decorator";
+import {namespace} from "vuex-class";
+
+const authModule = namespace('auth');
+@Component
+export default class Navbar extends Vue {
+  @authModule.Getter('roles') roles: string[];
+  @authModule.Getter('user') user: User;
+
+  get isAdmin() {
+    return ROLE_ADMIN in this.roles;
+  }
+
+  static get isSessionActive() {
+    return false;
+  }
+
+  handleSelect(key: string, keyPath: number) {
+    if (key === 'logout') {
+      this.$store.dispatch('user/logout');
+    } else {
+      this.$router.push({name: key});
     }
-  },
-  methods: {
-    handleSelect(key, keyPath) {
-      if(key === 'logout'){
-        this.$store.dispatch('user/logout');
-      }
-      else {
-        this.$router.push({name: key});
-      }
-    }
-  },
+  }
 };
+  // computed: {
+  //   ...mapGetters({
+  //     'roles' : 'user/roles',
+  //     'name' : 'user/username',
+  //     'session_id': 'quiz-session/session_id'
+  //   }),
+  //   isAdmin(){
+  //       return ROLE_ADMIN in this.roles
+  //   },
+  //   isSessionActive(){
+  //       return this.session_id !== null;
+  //   }
+  // },
+  // methods: {
+
+  // },
+
 </script>
 
 <style lang="scss" scoped>

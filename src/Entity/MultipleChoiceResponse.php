@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -11,6 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\MultipleChoiceResponseRepository")
  * @ORM\Table(name="multiple_choice_response")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource()
  */
 class MultipleChoiceResponse extends QuizResponse
 {
