@@ -7,6 +7,7 @@
     "preserveConstEnums": true,
     "moduleResolution": "node",
     "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "lib": [
       "dom",

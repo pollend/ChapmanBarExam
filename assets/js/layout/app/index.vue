@@ -5,14 +5,19 @@
     </div>
 </template>
 
-<script lang="ts">
-
-import {Component, Provide, Vue, Watch} from "vue-property-decorator";
-import Navbar from "./components/Navbar";
-
-@Component({components: {Navbar}})
-export default class DashboardLayout extends Vue{
-};
+<script>
+    import { Navbar } from './components';
+    export default {
+        name: 'Layout',
+        components: {
+            Navbar
+        },
+        mixins: [],
+        computed: {
+        },
+        methods: {
+        },
+    };
 </script>
 
 <style lang="scss" scoped>

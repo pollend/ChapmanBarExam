@@ -58,8 +58,6 @@ const validatePass = (rule: any, value: string, callback: any) => {
 };
 
 const authModule = namespace('auth')
-
-
 @Component
 export default class Login extends Vue {
   @authModule.Action('login') authLogin: any;

@@ -40,40 +40,37 @@
     </div>
 </template>
 
-<script>
-import { getClassesByUser } from '@/api/classes';
-import { mapGetters } from 'vuex';
+<script lang="ts">
 import * as moment from 'moment';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import NProgress from 'nprogress';
+import {Component, Provide, Vue} from "vue-property-decorator";
+// import User from "@/entity/user";
+import {namespace} from "vuex-class";
+import User from "../../entity/user";
 
-export default {
-  name: 'Home',
-  components: { },
-  computed: {
-    ...mapGetters({
-        'userId': 'user/id',
-    }),
-  },
-  data() {
-    return {
-      classes: null,
+
+const authModule = namespace('auth')
+
+@Component
+export default class Home extends Vue {
+    @authModule.Getter("user") user: User;
+    @Provide() classes: string = '';
+
+    async created() {
+        NProgress.start();
+        // const response = await getClassesByUser(this.user.id);
+        // this.classes = response.data.classes;
+        NProgress.done();
+    }
+
+    static group(access: any) {
+        return _.chunk(access, 4);
     };
-  },
-  async created() {
-      NProgress.start();
-      const response = await getClassesByUser(this.userId);
-      this.classes = response.data.classes;
-      NProgress.done();
-  },
-  methods: {
-    group(access) {
-      return _.chunk(access, 4);
-    },
-    timestamp(dateTime) {
-      return moment(dateTime).fromNow();
-    },
-  },
+
+    static timestamp(dateTime: any) {
+        return moment(dateTime).fromNow();
+    };
 };
 </script>
 

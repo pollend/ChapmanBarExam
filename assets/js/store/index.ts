@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex, {Module, StoreOptions} from 'vuex';
 import createLogger from 'vuex/dist/logger';
 import {auth, AuthState} from './modules/auth'
-
+import {app} from './modules/app'
 Vue.use(Vuex);
 
 export interface RootState {
@@ -16,7 +16,8 @@ const store: StoreOptions<RootState> = {
     version: '1.0.0'
   },
   modules: {
-    auth
+    auth,
+    app
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

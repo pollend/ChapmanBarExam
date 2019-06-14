@@ -16,7 +16,7 @@ Vue.use(ElementUI, {
 });
 
 import VueDataTables from 'vue-data-tables'
-Vue.use(VueDataTables)
+Vue.use(VueDataTables);
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
