@@ -33,22 +33,27 @@
 
 </template>
 
-<script>
+<script lang="ts">
 import { mapGetters } from 'vuex';
+import {Component, Vue} from "vue-property-decorator";
 
-export default {
-    components: {},
-    computed: {
-        ...mapGetters({
-            'sidebarState': 'dashboard-setting/toggle_sidebar',
-        })
-    },
-    methods: {
-        handleSelect(key, keyPath) {
-            this.$router.push({name: key});
-        }
-    }
-};
+@Component
+export default class LeftSidebar extends Vue {
+}
+
+// export default {
+//     components: {},
+//     computed: {
+//         ...mapGetters({
+//             'sidebarState': 'dashboard-setting/toggle_sidebar',
+//         })
+//     },
+//     methods: {
+//         handleSelect(key, keyPath) {
+//             this.$router.push({name: key});
+//         }
+//     }
+// };
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

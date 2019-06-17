@@ -3,7 +3,7 @@
         <div class="container">
             <!-- $t is vue-i18n global function to translate lang -->
             <div class="app-container">
-                <template v-if="classes === null">
+                <template v-if="classes.length === 0">
                     <el-card v-for="i in [1,2,3,4]" v-bind:key="i" class="box-card class-box empty-box"></el-card>
                 </template>
                 <template v-else>
@@ -19,7 +19,7 @@
                                     <el-divider></el-divider>
                                     <el-row :gutter="20">
                                         <el-col :span="12" >
-                                           {{ access.userAttempts}} / {{ access.numAttempts }}
+                                           0 / {{ access.numAttempts }}
                                         </el-col>
                                         <el-col :span="12" >
                                             {{ timestamp(access.openDate) }}</el-col>
@@ -45,30 +45,82 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import NProgress from 'nprogress';
 import {Component, Provide, Vue} from "vue-property-decorator";
-// import User from "@/entity/user";
 import {namespace} from "vuex-class";
 import User from "../../entity/user";
-
+import service from "../../utils/request";
+import Classroom from "../../entity/classroom";
+import {HydraCollection} from "../../entity/hydra";
+import {FilterBuilder, SearchFilter} from "../../api/filters/filter";
+import UserQuizAccess from "../../entity/user-quiz-access";
 
 const authModule = namespace('auth')
 
 @Component
 export default class Home extends Vue {
     @authModule.Getter("user") user: User;
-    @Provide() classes: string = '';
+    @Provide() classes: Classroom[] = [];
+    @Provide() access: UserQuizAccess[] = [];
 
-    async created() {
-        NProgress.start();
-        // const response = await getClassesByUser(this.user.id);
-        // this.classes = response.data.classes;
-        NProgress.done();
+    getClasses(query: string){
+        service({
+            url: query,
+            method: 'GET'
+        }).then((response) => {
+            const collection: HydraCollection<Classroom> =  response.data;
+            this.classes = this.classes.concat(collection["hydra:member"]);
+            if(collection["hydra:view"]["hydra:next"]){
+                this.getClasses(collection["hydra:view"]["hydra:next"]);
+            }
+            else{
+                NProgress.done();
+
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+
     }
 
-    static group(access: any) {
+    getUserAccess(query:string){
+        service({
+            url: query,
+            method: 'GET'
+        }).then((response) => {
+            const collection: HydraCollection<UserQuizAccess> = response.data;
+            this.access = this.access.concat(collection["hydra:member"]);
+            if(collection["hydra:view"]["hydra:next"]){
+                this.getUserAccess(collection["hydra:view"]["hydra:next"]);
+            }
+
+        }).catch((err) => {
+
+        });
+    }
+
+    get quizByAccess() {
+        return _.keyBy(this.access,(e) => e.quiz);
+    }
+
+    created() {
+        NProgress.start();
+
+        this.getClasses('_api/classrooms?' + (new FilterBuilder()).addFilter(new SearchFilter('users',this.user.id+'')).build());
+
+        const accessBuilder = new FilterBuilder();
+        service({
+            url: '_api/user_quiz_accesses',
+            method: 'GET'
+        }).then((response) => {
+
+        }).catch((err) => {
+        });
+    }
+
+    group(access: any) {
         return _.chunk(access, 4);
     };
 
-    static timestamp(dateTime: any) {
+    timestamp(dateTime: any) {
         return moment(dateTime).fromNow();
     };
 };

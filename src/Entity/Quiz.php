@@ -30,21 +30,21 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"list","detail"})
+     * @Groups({"classroom:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"list","detail"})
+     * @Groups({"classroom:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
-     * @Groups({"list","detail"})
+     * @Groups({"classroom:get"})
      */
     protected $description;
 

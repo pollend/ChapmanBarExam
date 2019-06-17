@@ -7,8 +7,7 @@ export interface AuthState {
     user: User | null,
     token: string | null,
     loginError: LoginError | null,
-    refreshToken?: string,
-    roles: string[],
+    refreshToken?: string | null,
     ttl: number,
     isLoading: boolean
 }
@@ -25,7 +24,6 @@ export interface LoginError {
 
 const AUTH_SET_TOKEN = "AUTH_SET_TOKEN";
 const AUTH_SET_REFRESH_TOKEN = "AUTH_SET_REFRESH_TOKEN";
-const AUTH_SET_ROLES = "AUTH_SET_ROLES";
 const AUTH_SET_USER = "AUTH_SET_USER";
 const AUTH_CLEAR = "AUTH_CLEAR";
 const AUTH_SET_LOADING_STATUS = "AUTH_SET_LOADING_STATUS";
@@ -38,22 +36,22 @@ const mutations: MutationTree<AuthState> = {
     [AUTH_SET_USER]: (state, user: User) => {
         state.user = user;
     },
-    [AUTH_SET_ROLES]: (state, roles: string[]) => {
-        state.roles = roles;
-    },
     [AUTH_SET_TOKEN]: (state, token: string) => {
         state.token = token;
         state.ttl = Date.now();
+        localStorage.setItem(AUTH_TOKEN,token);
     },
     [AUTH_SET_REFRESH_TOKEN]: (state, token: string) => {
         state.refreshToken = token;
         state.ttl = Date.now();
+        localStorage.setItem(AUTH_REFRESH_TOKEN,token);
     },
     [AUTH_CLEAR]: (state) => {
         state.refreshToken = null;
         state.token = null;
         state.user = null;
-        state.roles = [];
+        localStorage.removeItem(AUTH_TOKEN);
+        localStorage.removeItem(AUTH_REFRESH_TOKEN);
     },
     [AUTH_SET_LOADING_STATUS]: (state, isLoading: boolean) => {
         state.isLoading = isLoading;
@@ -68,10 +66,10 @@ const getters: GetterTree<AuthState,RootState> = {
     user: state => state.user,
     token: state => state.token,
     refreshToken: state => state.token,
-    isTokenValid: state => (state.ttl ?  Math.abs(Date.now() - state.ttl)  > 1000 * 1200: false),
+    isTokenValid: state => (state.ttl ?  Math.abs(Date.now() - state.ttl)  < 1000 * 1200: false),
     isLoading: state => state.isLoading,
     loginError: state => state.loginError,
-    roles: state => state.roles
+    roles: state => state.user ? state.user.roles : []
 };
 
 const actions: ActionTree<AuthState,RootState> = {
@@ -88,11 +86,13 @@ const actions: ActionTree<AuthState,RootState> = {
                 context.commit(AUTH_SET_TOKEN, result.token);
                 context.commit(AUTH_SET_REFRESH_TOKEN, result.refresh_token);
                 context.dispatch('me').then((response)=>{
-                context.commit(AUTH_SET_LOADING_STATUS,false);
+                    context.commit(AUTH_SET_LOADING_STATUS,false);
+                    resolve(result);
                 }).catch((error) => {
                     console.log(error);
+                    reject(error);
+                    context.commit(AUTH_SET_LOADING_STATUS,false);
                 });
-                resolve(result);
             }).catch((error) => {
                 context.commit(AUTH_CLEAR);
                 console.log(error);
@@ -104,15 +104,13 @@ const actions: ActionTree<AuthState,RootState> = {
             });
         });
     },
-    me(context, payload: any) {
+    me(context) {
         return new Promise((resolve, reject) => {
             service({
                 url: '/_api/users/me',
                 method: 'get'
             }).then((response) => {
                 const user: User = response.data;
-
-                context.commit(AUTH_SET_ROLES, user.roles);
                 context.commit(AUTH_SET_USER, user);
                 resolve(user);
             }).catch((error) => {
@@ -124,7 +122,7 @@ const actions: ActionTree<AuthState,RootState> = {
     logout(context): void{
         context.commit(AUTH_CLEAR);
     },
-    refresh(context,payload: any): any {
+    refresh(context): any {
         return new Promise((resolve, reject) => {
             service({
                 url: '/api/auth/refresh',
@@ -150,7 +148,6 @@ export const auth: Module<AuthState,RootState> = {
         token: localStorage.getItem(AUTH_TOKEN),
         refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),
         ttl: Date.now(),
-        roles: [],
         isLoading: false,
         loginError:null,
         user: null

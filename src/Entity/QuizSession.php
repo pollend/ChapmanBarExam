@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use App\Repository\QuestionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+
 
 /**
  * Class Quiz.
@@ -16,14 +20,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="quiz_session")
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
+ *     itemOperations={
+ *          "get" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') | is_granted('ROLE_USER') and object.owner == user"
+ *          },
+ *          "put" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "delete" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *          }
+ *     },
  *     collectionOperations={
- *          "post",
- *          "get",
+ *          "post" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')",
+ *           },
+ *          "get" = {
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "normalization_context"={"groups"={"quiz_session:get"}}
+ *           },
  *          "post_start" = {
  *              "method"="POST",
  *              "path"="/quiz_sessions/start",
  *              "controller"=App\Controller\CreateQuizSessionByAccess::class,
- *              "access_control"="has_role('ROLE_USER')",
+ *              "access_control"="is_granted('ROLE_USER')",
  *              "swagger_context" = {
  *                  "description" = "Starts a new Quiz Session from access",
  *                  "parameters" = {
@@ -31,7 +51,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                      "name" = "body",
  *                      "in" = "body",
  *                      "type" = "object",
-*                       "properties" = {"access_id" = { "type" =  "string"},"user_id" = { "type" =  "string"}},
+ *                      "properties" = {"access_id" = { "type" =  "string"},"user_id" = { "type" =  "string"}},
  *                      },
  *                      {
  *                      "name" = "id",
@@ -50,6 +70,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }
  *     }
  * )
+ *
+ * @ApiFilter(ExistsFilter::class, properties={"submittedAt"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact"})
  */
 class QuizSession
 {
@@ -61,7 +84,7 @@ class QuizSession
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @Groups({"list","detail"})
+     * @Groups({"quiz_session:get"})
      */
     protected $id;
 
@@ -70,7 +93,7 @@ class QuizSession
      *
      * @ORM\Column(name="score", type="integer", nullable=true)
      *
-     * @Groups({"results"})
+     * @Groups({"quiz_session:get"})
      */
     protected $score;
 
@@ -79,7 +102,7 @@ class QuizSession
      *
      * @ORM\Column(name="max_score", type="integer", nullable=true)
      *
-     * @Groups({"results"})
+     * @Groups({"quiz_session:get"})
      */
     protected $maxScore;
 
@@ -102,7 +125,7 @@ class QuizSession
     /**
      * @var \DateTime
      * @ORM\Column(name="submitted_at",type="datetime",nullable=true)
-     * @Groups({"list","detail"})
+     * @Groups({"quiz_session:get"})
      */
     protected $submittedAt;
 
@@ -126,7 +149,7 @@ class QuizSession
      *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      * })
      *
-     * @Groups({"session_classroom"})
+     * @Groups({"quiz_session:get"})
      */
     protected $classroom;
 
@@ -134,7 +157,7 @@ class QuizSession
      * @var int
      *
      * @ORM\Column(name="current_page", type="integer", nullable=true)
-     * @Groups({"list","detail"})
+     * @Groups({"quiz_session:get"})
      */
     protected $currentPage = 0;
 
@@ -275,7 +298,7 @@ class QuizSession
     /**
      * @return \DateTime
      */
-    public function getSubmittedAt(): \DateTime
+    public function getSubmittedAt(): ?\DateTime
     {
         return $this->submittedAt;
     }

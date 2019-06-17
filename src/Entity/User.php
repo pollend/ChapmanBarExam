@@ -30,17 +30,34 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     errorPath="username",
  *     message="username already used")
  * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
+ *     itemOperations= {
+ *          "delete" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and object == user"
+ *          },
+ *          "put" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and previous_object == user",
+ *              "normalization_context"={"groups" = {"put"}}
+ *          },
+ *          "get" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and object == user",
+ *              "normalization_context"={"groups" = {"get"}}
+ *          }
+ *     },
  *     collectionOperations={
- *     "post",
+ *     "post" = {
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "normalization_context"={"groups" = {"post"}}
+ *     },
  *     "get" = {
- *          "access_control"="is_granted('ROLE_USER') and object.owner == user"
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "normalization_context"={"groups" = {"get"}}
  *     },
  *     "get_me" = {
  *         "method" = "GET",
  *         "path"= "/users/me",
  *         "controller"=App\Controller\AuthMe::class,
- *         "access_control"="has_role('ROLE_USER')",
+ *         "access_control"="is_granted('ROLE_USER')",
+ *         "normalization_context"={"groups" = {"get"}}
  *     }
  * })
  */
@@ -57,20 +74,22 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $roles = [User::ROLE_USER];
 
     /**
      * @var string
      * @ORM\Column(name="username",type="string",length=100,nullable=false)
-     * @Groups({"read"})
+     * @Groups({"get","put","post"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min="4",max="100")
      */
     protected $username;
 
@@ -78,14 +97,15 @@ class User implements UserInterface
      * @var \DateTime
      *
      * @ORM\Column(name="last_login", type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $lastLogin;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=100,nullable=false)
-     * @Groups({"read"})
+     * @Groups({"get"})
+     * @Assert\Email()
      */
     protected $email;
 
@@ -117,14 +137,14 @@ class User implements UserInterface
      * Many Groups have Many Users.
      *
      * @ORM\ManyToMany(targetEntity="Classroom", mappedBy="users")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     protected $classes;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="owner")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     protected $quizSessions;
 

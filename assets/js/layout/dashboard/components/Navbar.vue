@@ -14,30 +14,39 @@
 
 </template>
 
-<script>
+<script lang="ts">
 import {mapGetters} from 'vuex';
-import Hamburger from '@/components/Hamburger';
+import {Component, Vue} from "vue-property-decorator";
+import Hamburger from '../../../components/Hamburger';
 
-export default {
-  components: {
-      Hamburger
-  },
-  computed: {
-      ...mapGetters({
-          'sidebarState': 'dashboard-setting/toggle_sidebar',
-          'name' : 'user/username',
-      })
-  },
-  methods: {
-    toggleSideBar() {
-      this.$store.dispatch('dashboard-setting/toggleSidebar');
-    },
+@Component({
+    components: {Hamburger}
+})
+export default class Navbar extends Vue{
+
     async logout() {
-      await this.$store.dispatch('user/logout');
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`);
-    },
-  },
+        await this.$store.dispatch('user/logout');
+        this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+    }
 };
+
+//
+//
+// computed: {
+// ...mapGetters({
+//         'sidebarState': 'dashboard-setting/toggle_sidebar',
+//         'name' : 'user/username',
+//     })
+// },
+// methods: {
+//     toggleSideBar() {
+//         this.$store.dispatch('dashboard-setting/toggleSidebar');
+//     },
+//     async logout() {
+//         await this.$store.dispatch('user/logout');
+//         this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+//     },
+// },
 </script>
 
 <style lang="scss" scoped>

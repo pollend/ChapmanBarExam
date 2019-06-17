@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * Class UserWhitelist.
@@ -14,18 +17,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="`user_whitelist`")
  * @ORM\HasLifecycleCallbacks
  * @ApiResource()
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","classroom":"exact","email": "partial"})
  */
 class UserWhitelist
 {
     /**
-     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @Groups({"list","detail"})
-     * @JMS\Type("int")
      */
     protected $id;
 
@@ -36,16 +37,22 @@ class UserWhitelist
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      * })
-     * @Groups({"list","detail"})
      */
     protected $classroom;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=50,nullable=false)
-     * @Groups({"list"})
      */
     protected $email;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function setClassroom(Classroom $classroom): UserWhitelist
     {

@@ -1,9 +1,9 @@
-import store from '@/store';
+import store from '../store';
 import { Message } from 'element-ui';
-import 'nprogress/nprogress.css'; // progress bar style
-// import getPageTitle from '@/utils/get-page-title';
+import 'nprogress/nprogress.css';
+import {NavigationGuard, RouteRecord} from "vue-router"; // progress bar style
 
-export function canAccess(roles, permissions, routes) {
+function canAccess(roles: string[], permissions: string[], routes: RouteRecord[]) {
   return routes.every((route) => {
     if (route.meta) {
       let hasRole = true;
@@ -25,8 +25,7 @@ export function canAccess(roles, permissions, routes) {
   });
 }
 
-
-export async function routePermissions(to, from, next) {
+export const routePermissions: NavigationGuard = async (to, from, next) => {
   // set page title
   // document.title = getPageTitle(to.meta.title);
   // try to access page with no credentials
@@ -38,8 +37,10 @@ export async function routePermissions(to, from, next) {
     if (hasToken) {
       // try to check user with the server
       try {
-        const {roles, permissions} = await store.dispatch('user/getInfo');
-        if (canAccess(roles, permissions, to.matched)) {
+        if(!store.getters['auth/user'])
+          await store.dispatch('auth/me')
+        const roles = store.getters['auth/roles'];
+        if (canAccess(roles, [], to.matched)) {
           return true;
         } else {
           next(`/login?redirect=${to.path}`);

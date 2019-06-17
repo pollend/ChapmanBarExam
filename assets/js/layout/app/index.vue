@@ -5,19 +5,17 @@
     </div>
 </template>
 
-<script>
-    import { Navbar } from './components';
-    export default {
-        name: 'Layout',
-        components: {
-            Navbar
-        },
-        mixins: [],
-        computed: {
-        },
-        methods: {
-        },
-    };
+<script lang="ts">
+
+    import {Component, Vue} from "vue-property-decorator";
+    import Navbar from "./components/Navbar";
+
+    @Component({
+        components: {Navbar}
+    })
+    export default class Layout extends Vue{
+
+    }
 </script>
 
 <style lang="scss" scoped>

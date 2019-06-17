@@ -20,12 +20,19 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  * @ORM\Entity(repositoryClass="App\Repository\ClassroomRepository")
  * @ORM\Table(name="classroom")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(itemOperations={
+ * @ApiResource(
+ * attributes={"pagination_items_per_page"=100},
+ * itemOperations={
  *    "get" = {
- *       "normalization_context"={"groups"={"get"}}
+ *       "normalization_context"={"groups"={"classroom:get"}}
+ *     }
+ * },
+ * collectionOperations={
+ *     "get" = {
+ *          "normalization_context"={"groups"={"classroom:get"}}
  *     }
  * })
- * @ApiFilter(SearchFilter::class,properties={"id":"exact", "name":"partial", "description":"partial","courseNumber":"partial"})
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","users":"exact", "name":"partial", "description":"partial","courseNumber":"partial","users":"exact"})
  * @ApiFilter(DateFilter::class,properties={"createdAt","updatedAt"})
  * @ApiFilter(ExistsFilter::class,properties={"deletedAt"})
  */
@@ -41,7 +48,7 @@ class Classroom
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @Groups({"list","detail"})
+     * @Groups({"classroom:get"})
      */
     protected $id;
 
@@ -51,27 +58,28 @@ class Classroom
      * @Groups({"list","detail"})
      * @Assert\NotBlank(message="Classroom Name Required")
      * @Assert\NotNull()
+     * @Groups({"classroom:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="string",length=50,nullable=true)
-     * @Groups({"list","detail"})
+     * @Groups({"classroom:get"})
      */
     protected $description;
 
     /**
      * @var string
      * @ORM\Column(name="course_number",type="string",length=50,nullable=true)
-     * @Groups({"list","detail"})
+     * @Groups({"classroom:get"})
      */
     protected $courseNumber;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="UserWhitelist",mappedBy="classroom")
-     * @Groups({"classroom_whitelists"})
+     * @Groups({"admin:get"})
      */
     protected $emailWhitelist;
 
@@ -80,7 +88,7 @@ class Classroom
      *                           Many Users have Many Groups
      * @ORM\ManyToMany(targetEntity="User", inversedBy="classes")
      * @ORM\JoinTable(name="classroom_user")
-     * @Groups({"classroom_registered"})
+     * @Groups({"classroom:admin:get"})
      */
     protected $users;
 
@@ -88,7 +96,7 @@ class Classroom
      * @var arrayCollection
      *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizAccess",mappedBy="classroom")
-     * @Groups({"classroom_access"})
+     * @Groups({"classroom:get"})
      */
     protected $quizAccess;
 
@@ -96,14 +104,12 @@ class Classroom
      * @var arrayCollection
      *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="classroom")
-     * @Groups({"classroom_quiz_sessions"})
+     * @Groups({"classroom:admin:get"})
      */
     protected $quizSessions;
 
     /**
-     * @Groups({"list"})
-     *
-     * @return string
+     * @Groups({"classroom:admin:get"})
      */
     public function getNumberOfStudents()
     {

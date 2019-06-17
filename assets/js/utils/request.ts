@@ -18,7 +18,7 @@ const service = axios.create({
 service.interceptors.request.use(
   async config => {
 
-      if (store.getters['auth/authRefreshToken'] !== null &&  store.getters['auth/authIsTokenValid'] === false) {
+      if (store.getters['auth/refreshToken'] !== null &&  store.getters['auth/isTokenValid'] === false) {
        try {
            console.log("refreshed token");
            await store.dispatch('auth/refresh');
@@ -29,7 +29,7 @@ service.interceptors.request.use(
        }
       }
 
-      const token = store.getters['auth/authToken'];
+      const token = store.getters['auth/token'];
       if (token) {
           config.headers['Authorization'] = 'Bearer ' + token; // Set JWT token
       }

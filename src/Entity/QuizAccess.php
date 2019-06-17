@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -22,35 +23,35 @@ class QuizAccess
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"list"})
+     * @Groups({"classroom:get"})
      */
     protected $id;
 
     /**
      * @var bool
      * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
-     * @Groups({"list"})
+     * @Groups({"classroom:get"})
      */
     protected $isHidden;
 
     /**
      * @var int
      * @ORM\Column(name="num_attempts",type="integer",nullable=true)
-     * @Groups({"list"})
+     * @Groups({"classroom:get"})
      */
     protected $numAttempts;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="open_date",type="datetime",nullable=true)
-     * @Groups({"list"})
+     * @Groups({"classroom:get"})
      */
     protected $openDate;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="close_date",type="datetime",nullable=true)
-     * @Groups({"list"})
+     * @Groups({"classroom:get"})
      */
     protected $closeDate;
 
@@ -59,7 +60,7 @@ class QuizAccess
      *
      * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="access")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
-     * @Groups({"access_quiz"})
+     * @Groups({"classroom:get"})
      */
     protected $quiz;
 
@@ -95,6 +96,14 @@ class QuizAccess
         $this->classroom = $classroom;
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getQuizSessions() : Collection
+    {
+        return $this->quizSessions;
     }
 
     /**
@@ -142,7 +151,7 @@ class QuizAccess
     /**
      * @return bool
      */
-    public function isHidden(): bool
+    public function getIsHidden(): bool
     {
         return $this->isHidden;
     }

@@ -30,9 +30,12 @@ services:
         tags:
             - { name: security.voter }
 
-    App\Doctrine\Collection\ClassroomExtension:
+    App\Doctrine\AccessControlExtension:
         tags:
             - { name: api_platform.doctrine.orm.query_extension.collection }
             - { name: api_platform.doctrine.orm.query_extension.item }
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+
+    App\Serializer\ClassroomContextBuilder:
+        decorates: 'api_platform.serializer.context_builder'
+        arguments: [ '@App\Serializer\ClassroomContextBuilder.inner' ]
+        autoconfigure: false

@@ -28,6 +28,7 @@ class ClassroomController extends AbstractController
      */
     public function getClassroomsByOwner($user_id)
     {
+
         /** @var UserRepository $userRepository */
         $userRepository = $this->getDoctrine()->getRepository(User::class);
 

@@ -4,27 +4,21 @@
 namespace App\Security;
 
 
-use App\Entity\Classroom;
 use App\Entity\QuizAccess;
 use App\Entity\QuizSession;
 use App\Entity\User;
-use App\Repository\ClassroomRepository;
-use App\Repository\QuizAccessRepository;
-use App\Repository\QuizSessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 
-class QuizAccessVoter extends Voter
+class QuizSessionVoter extends Voter
 {
-    const VIEW = 'view';
-    const EDIT = 'edit';
-    const START = 'start';
 
+    const EDIT = 'edit';
+    const SUBMIT_QUESTIONS = 'edit.questions';
+    const VIEW = 'view';
     private $security;
     private $accessDecisionManager;
     private $entityManager;
@@ -48,12 +42,12 @@ class QuizAccessVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::START])) {
+        if (!in_array($attribute, [self::EDIT,self::SUBMIT_QUESTIONS,self::VIEW])) {
             return false;
         }
 
         // only vote on Post objects inside this voter
-        if (!$subject instanceof QuizAccess) {
+        if (!$subject instanceof QuizSession) {
             return false;
         }
 
@@ -72,30 +66,42 @@ class QuizAccessVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+
         /** @var User $user */
         $user = $token->getUser();
 
         /** make sure user is logged in */
-        if(!$user instanceof User){
+        if (!$user instanceof User) {
             return false;
         }
 
+        if ($this->security->isGranted(User::ROLE_ADMIN)) {
+            return true;
+        }
 
-        /** @var QuizAccess $access */
-        $access =  $subject;
 
-        switch ($attribute) {
-            case self::START:
-                return $this->canStart($access, $user);
+        /** @var QuizSession  $quiz_session */
+        $quiz_session = $subject;
 
+        switch ($attribute){
+            case self::EDIT:
+                return $this->canSubmitQuestion($quiz_session,$user);
+            case self::VIEW:
+                return $this->canViewQuestions($quiz_session,$user);
 
         }
         throw new \LogicException('This code should not be reached!');
     }
 
+    private function canViewQuestions(QuizSession $session, User $user){
+        if($session->getOwner() === $user){
+            return true;
+        }
+        return false;
+    }
 
-    private function canStart(QuizAccess $access, User $user){
-        if($access->isOpen($user) && $access->getClassroom()->isUserRegistered($user)){
+    private function canSubmitQuestion(QuizSession $session, User $user){
+        if($session->getOwner() === $user){
             return true;
         }
         return false;

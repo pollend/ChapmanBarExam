@@ -27,7 +27,6 @@ Encore
     .addEntry('app', './assets/js/app.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
-    .configureBabel()
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
@@ -80,4 +79,5 @@ config.resolve.alias = {
     vue$: 'vue/dist/vue.esm.js',
     '@': path.join(__dirname, '/assets/js')
 };
+// config.plugins.push('syntax-dynamic-import')
 module.exports = config;

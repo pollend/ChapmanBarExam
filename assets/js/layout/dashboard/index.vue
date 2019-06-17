@@ -10,27 +10,23 @@
   </div>
 </template>
 
-<script>
-  import {mapGetters, mapState} from 'vuex';
-import { Navbar, LeftSidebar } from './components';
+<script lang="ts">
 
-export default {
-  name: 'Layout',
-  components: {
-    Navbar,
-    LeftSidebar
-  },
-  computed: {
-    ...mapGetters({
-      'sidebarState': 'dashboard-setting/toggle_sidebar',
-    }),
-    classObj() {
-      return {
-        hideSidebar: this.sidebarState
-      };
-    },
-  },
-};
+  import {Component, Vue} from "vue-property-decorator";
+
+import  Navbar  from './components/Navbar';
+import  LeftSidebar  from './components/LeftSidebar';
+
+@Component({
+  components: {Navbar,LeftSidebar}
+})
+export default class Layout extends Vue {
+  get classObj() {
+    return {
+      hideSidebar: true
+    }
+  }
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

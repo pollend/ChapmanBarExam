@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,11 +20,23 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="quiz_question")
  *
  * @DiscriminatorMap(typeProperty = "type", mapping = {
- *    "multiple_choice": "App\Entity\MultipleChoiceQuestion",
- *    "short_answer": "App\Entity\ShortAnswerQuestion",
- *    "text_block": "App\Entity\TextBlockQuestion"
+ *    "multipleChoice": "App\Entity\MultipleChoiceQuestion",
+ *    "shortAnswer": "App\Entity\ShortAnswerQuestion",
+ *    "textBlock": "App\Entity\TextBlockQuestion"
  * })
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get_questions_by_session_page" = {
+ *              "method"="GET",
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "controller"=App\Controller\GetQuizQuestionBySessionAndPage::class,
+ *              "path" = "/questions/sessions/{session_id}/{page}",
+ *              "normalization_context"={"groups"={"quiz_question:get"}}
+ *          },
+ *          "get",
+ *          "post"
+ *     }
+ * )
  */
 abstract class QuizQuestion
 {
@@ -35,7 +48,7 @@ abstract class QuizQuestion
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"detail","list"})
+     * @Groups({"quiz_question:get"})
      */
     protected $id;
 
@@ -43,7 +56,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`order`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @Groups({"detail","list"})
+     * @Groups({"quiz_question:get"})
      */
     protected $order;
 
@@ -51,7 +64,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`group`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @Groups({"detail","list"})
+     * @Groups({"quiz_question:get"})
      */
     protected $group;
 
@@ -61,14 +74,12 @@ abstract class QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
-     * @Groups({"quiz"})
      */
     protected $quiz;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="question")
-     * @Groups({"responses"})
      */
     protected $responses;
 
@@ -78,7 +89,6 @@ abstract class QuizQuestion
      * @ORM\ManyToMany(targetEntity="QuestionTag", inversedBy="questions")
      *
      * @var PersistentCollection
-     * @Groups({"question_tags"})
      */
     private $tags;
 
