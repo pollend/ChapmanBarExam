@@ -87,8 +87,6 @@ class QuizAccessVoter extends Voter
         switch ($attribute) {
             case self::START:
                 return $this->canStart($access, $user);
-
-
         }
         throw new \LogicException('This code should not be reached!');
     }

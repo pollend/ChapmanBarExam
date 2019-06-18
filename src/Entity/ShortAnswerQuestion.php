@@ -20,7 +20,7 @@ class ShortAnswerQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)\
-     * @Groups({"detail"})
+     * @Groups({"quiz_question:get"})
      */
     protected $content;
 

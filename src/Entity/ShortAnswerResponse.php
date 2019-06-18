@@ -19,7 +19,7 @@ class ShortAnswerResponse extends QuizResponse
     /**
      * @var string
      * @ORM\Column(name="content", type="text",nullable=true)
-     * @Groups({"correct"})
+     * @Groups({"quiz_response:get"})
      */
     protected $content;
 
@@ -39,5 +39,10 @@ class ShortAnswerResponse extends QuizResponse
         $this->content = $content;
 
         return $this;
+    }
+
+    public function isCorrectResponse()
+    {
+       return false;
     }
 }

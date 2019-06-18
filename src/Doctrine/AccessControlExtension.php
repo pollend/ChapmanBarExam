@@ -6,6 +6,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInter
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Classroom;
+use App\Entity\QuizResponse;
 use App\Entity\QuizSession;
 use App\Entity\User;
 use App\Entity\UserQuizAccess;
@@ -48,6 +49,11 @@ class AccessControlExtension implements QueryCollectionExtensionInterface, Query
             case QuizSession::class:
                 $queryBuilder->andWhere($queryBuilder->expr()->eq(sprintf('%s.owner',$rootAlias),":extension_owner"))
                     ->setParameter("extension_owner",$user);
+                break;
+            case QuizResponse::class:
+                $queryBuilder->innerJoin(sprintf('%s.session', $rootAlias), 'extension_session')
+                    ->andWhere($queryBuilder->expr()->eq('extension_session.owner',':extension_owner'))
+                    ->setParameter('extension_owner', $user);
                 break;
         }
     }

@@ -18,8 +18,8 @@
                                     {{access.quiz.description}}
                                     <el-divider></el-divider>
                                     <el-row :gutter="20">
-                                        <el-col :span="12" >
-                                           0 / {{ access.numAttempts }}
+                                        <el-col :span="12">
+                                            {{ (access.quiz['@id'] in quizByAccess ? quizByAccess[access.quiz['@id']].userAttempts : 0 )}} / {{ access.numAttempts }}
                                         </el-col>
                                         <el-col :span="12" >
                                             {{ timestamp(access.openDate) }}</el-col>
@@ -61,26 +61,6 @@ export default class Home extends Vue {
     @Provide() classes: Classroom[] = [];
     @Provide() access: UserQuizAccess[] = [];
 
-    getClasses(query: string){
-        service({
-            url: query,
-            method: 'GET'
-        }).then((response) => {
-            const collection: HydraCollection<Classroom> =  response.data;
-            this.classes = this.classes.concat(collection["hydra:member"]);
-            if(collection["hydra:view"]["hydra:next"]){
-                this.getClasses(collection["hydra:view"]["hydra:next"]);
-            }
-            else{
-                NProgress.done();
-
-            }
-        }).catch((err) => {
-            console.log(err);
-        });
-
-    }
-
     getUserAccess(query:string){
         service({
             url: query,
@@ -104,14 +84,23 @@ export default class Home extends Vue {
     created() {
         NProgress.start();
 
-        this.getClasses('_api/classrooms?' + (new FilterBuilder()).addFilter(new SearchFilter('users',this.user.id+'')).build());
-
-        const accessBuilder = new FilterBuilder();
         service({
-            url: '_api/user_quiz_accesses',
+            url: '_api/classrooms/user/' + this.user.id,
             method: 'GET'
         }).then((response) => {
-
+            const collection: HydraCollection<Classroom> =  response.data;
+            this.classes = this.classes.concat(collection["hydra:member"]);
+            NProgress.done();
+        }).catch((err) => {
+            console.log(err);
+        });
+        const accessBuilder = new FilterBuilder();
+        service({
+            url: '_api/user_quiz_accesses?' + (new FilterBuilder()).addFilter(new SearchFilter('owner',this.user.id+'')).build(),
+            method: 'GET'
+        }).then((response) => {
+            const collection: HydraCollection<UserQuizAccess> = response.data;
+            this.access = collection["hydra:member"];
         }).catch((err) => {
         });
     }

@@ -15,11 +15,14 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *
  * @ORM\Table(name="user_quiz_access")
  * @ORM\Entity(readOnly=true,repositoryClass="App\Repository\UserQuizAccessRepository")
- * @ApiResource(itemOperations={
+ * @ApiResource(
+ *     itemOperations={
  *      "get"
- *     },collectionOperations={
- *     "get"
- * })
+ *     },
+ *     collectionOperations={
+ *      "get"
+ *     }
+ * )
  *
  * @ApiFilter(SearchFilter::class,properties={"owner" = "exact"})
  */

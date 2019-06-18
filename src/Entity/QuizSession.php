@@ -29,6 +29,27 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  *          },
  *          "delete" = {
  *              "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "get_tag_breakdown" = {
+ *              "method"="GET",
+ *              "controller"=App\Controller\GetTagBreakdownAction::class,
+ *              "path"="/quiz_sessions/{id}/breakdown",
+ *              "normalization_context"={"groups"={"tag:breakdown"}},
+ *              "access_control"="is_granted('ROLE_USER') && is_granted('view.report',object)",
+ *          },
+ *          "post_submit_questions" = {
+ *              "method"="POST",
+ *              "controller"=App\Controller\CreateQuestionBySessionAndPageAction::class,
+ *              "path"="/quiz_sessions/{id}/questions/{page}",
+ *              "normalization_context"={"groups"={"quiz_session:get"}},
+ *              "access_control"="is_granted('ROLE_USER') && is_granted('edit.questions',object)",
+ *          },
+ *          "patch_submit_questions" = {
+ *              "method"="PUT",
+ *              "controller"=App\Controller\CreateQuestionBySessionAndPageAction::class,
+ *              "path"="/quiz_sessions/{id}/questions/{page}",
+ *              "normalization_context"={"groups"={"quiz_session:get"}},
+ *              "access_control"="is_granted('ROLE_USER') && is_granted('edit.questions',object)",
  *          }
  *     },
  *     collectionOperations={
@@ -37,7 +58,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  *           },
  *          "get" = {
  *              "access_control"="is_granted('ROLE_USER')",
- *              "normalization_context"={"groups"={"quiz_session:get"}}
+ *              "normalization_context"={"groups"={"quiz_session:get", "timestamp"}}
  *           },
  *          "post_start" = {
  *              "method"="POST",
@@ -48,22 +69,22 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  *                  "description" = "Starts a new Quiz Session from access",
  *                  "parameters" = {
  *                      {
- *                      "name" = "body",
- *                      "in" = "body",
- *                      "type" = "object",
- *                      "properties" = {"access_id" = { "type" =  "string"},"user_id" = { "type" =  "string"}},
+ *                          "name" = "body",
+ *                          "in" = "body",
+ *                          "type" = "object",
+ *                          "properties" = {"access_id" = { "type" =  "string"},"user_id" = { "type" =  "string"}},
  *                      },
  *                      {
- *                      "name" = "id",
- *                      "in" = "path",
- *                      "required" = "true",
- *                      "type" = "integer"
+ *                          "name" = "id",
+ *                          "in" = "path",
+ *                          "required" = "true",
+ *                          "type" = "integer"
  *                      },
  *                      {
- *                      "name" = "user_id",
- *                      "in" = "path",
- *                      "required" = "true",
- *                      "type" = "integer"
+ *                          "name" = "user_id",
+ *                          "in" = "path",
+ *                          "required" = "true",
+ *                          "type" = "integer"
  *                      }
  *                   },
  *               },
@@ -137,7 +158,7 @@ class QuizSession
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
      *
-     * @Groups({"quiz"})
+     * @Groups({"quiz_session:get"})
      */
     protected $quiz;
 
@@ -167,7 +188,6 @@ class QuizSession
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
      * })
-     * @Groups({"list","detail"})
      */
     protected $owner;
 
@@ -175,7 +195,6 @@ class QuizSession
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="session")
      *
-     * @Groups({"results"})
      */
     protected $responses;
 
@@ -209,6 +228,22 @@ class QuizSession
         $this->quiz = $quiz;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuizAccess()
+    {
+        return $this->quizAccess;
+    }
+
+    /**
+     * @param mixed $quizAccess
+     */
+    public function setQuizAccess($quizAccess): void
+    {
+        $this->quizAccess = $quizAccess;
     }
 
     /**

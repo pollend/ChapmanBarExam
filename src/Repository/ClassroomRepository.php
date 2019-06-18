@@ -16,25 +16,20 @@ class ClassroomRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('c');
 
-        return Collection::make($qb->innerJoin('c.users', 'u', 'WITH', $qb->expr()->eq('u.id', ':user'))
+        return $qb->innerJoin('c.users', 'u', 'WITH', $qb->expr()->eq('u.id', ':user'))
             ->setParameter('user', $user)
             ->getQuery()
-            ->getResult())->keyBy(function ($c) {
-                return $c->getId();
-            });
+            ->getResult();
     }
 
     public function byEmail($email)
     {
         $qb = $this->createQueryBuilder('c');
 
-        return Collection::make($qb
-            ->innerJoin('c.emailWhitelist', 'w', 'WITH', $qb->expr()->eq('w.email', ':email'))
+        return $qb->innerJoin('c.emailWhitelist', 'w', 'WITH', $qb->expr()->eq('w.email', ':email'))
             ->setParameter('email', $email)
             ->getQuery()
-            ->getResult())->keyBy(function ($c) {
-                return $c->getId();
-            });
+            ->getResult();
     }
 
     private function _filter(Request $request)

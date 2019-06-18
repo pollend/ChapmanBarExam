@@ -30,6 +30,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  * collectionOperations={
  *     "get" = {
  *          "normalization_context"={"groups"={"classroom:get"}}
+ *     },
+ *     "get_by_user" = {
+ *          "method"="GET",
+ *          "access_control"="is_granted('ROLE_USER')",
+ *          "controller"=App\Controller\GetClassesByUser::class,
+ *          "path"= "/classrooms/user/{user_id}",
+ *          "normalization_context"={"groups"={"classroom:get"}},
+ *          "swagger_context" = {
+ *                  "description" = "Starts a new Quiz Session from access",
+ *                  "parameters" = {}
+ *          }
  *     }
  * })
  * @ApiFilter(SearchFilter::class,properties={"id":"exact","users":"exact", "name":"partial", "description":"partial","courseNumber":"partial","users":"exact"})

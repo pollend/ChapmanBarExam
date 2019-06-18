@@ -296,6 +296,12 @@ class User implements UserInterface
     }
 
 
+    public function getActiveSession()
+    {
+        return $this->quizSessions->matching(Criteria::create()->where(Criteria::expr()->isNull('submittedAt')));
+    }
+
+
     /**
      * Removes sensitive data from the user.
      *

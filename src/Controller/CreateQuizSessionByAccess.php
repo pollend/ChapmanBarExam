@@ -57,12 +57,12 @@ class CreateQuizSessionByAccess
         if (empty($content)) {
             throw new BadRequestHttpException("Content is empty");
         }
-        $contstraints = new Assert\Collection([
+        $constraints = new Assert\Collection([
             'access_id' => [new Assert\NotBlank(), new Assert\Type("int")],
             'user_id' => [new Assert\NotBlank(), new Assert\Type("int")]
         ]);
         $data = json_decode($request->getContent(), true);
-        $errors = $this->validator->validate($data, $contstraints);
+        $errors = $this->validator->validate($data, $constraints);
         if (count($errors) > 0)
             return $errors;
 
@@ -76,7 +76,8 @@ class CreateQuizSessionByAccess
                 $session = new QuizSession();
                 $session->setOwner($user)
                     ->setClassroom($access->getClassroom())
-                    ->setQuiz($access->getQuiz());
+                    ->setQuiz($access->getQuiz())
+                    ->setQuizAccess($access);
                 $session->setMeta([]);
                 $em->persist($session);
                 $em->flush();

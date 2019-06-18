@@ -4,12 +4,12 @@
                 :data="breakdown"
                 style="width: 100%">
             <el-table-column
-                    prop="subtest.name"
+                    prop="tag.name"
                     label="Subtest Name"
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="maxScore"
+                    prop="result.maxScore"
                     label="Possible Points"
                     width="180">
             </el-table-column>
@@ -18,7 +18,7 @@
                     label=" % Required To Pass">
             </el-table-column>
             <el-table-column
-                    prop="score"
+                    prop="result.score"
                     label="Points Scored">
             </el-table-column>
             <el-table-column
@@ -29,31 +29,30 @@
     </div>
 </template>
 
-<script>
-    import {getReportBreakdown} from "@/api/report";
-    import  _ from 'lodash';
-    export default {
-        name: 'ReportBreakdown',
-        components: { },
-        data() {
-            return {
-                breakdown: null
-            };
-        },
+<script lang="ts">
+    import {Component, Provide, Vue} from "vue-property-decorator";
+    import service from "../../utils/request";
+
+
+    @Component
+    export default class BreakdownReport extends Vue {
+        @Provide() breakdown: any[] = [];
+
         async created(){
-            const response = await getReportBreakdown(this.$route.params.report_id);
-            const {breakdown,tags} = response.data;
-            console.log(breakdown);
-            for (let key in breakdown) {
-                breakdown[key].subtest = tags[key];
-                breakdown[key].required_to_pass = '67.00%';
-                breakdown[key].percent_score = parseFloat((breakdown[key].score/breakdown[key].maxScore) * 100.0).toFixed(2)+"%"
-            }
-            this.breakdown = _.values(breakdown);
-        },
-        methods: {
-        },
-    };
+            await service({
+              url:'/_api/quiz_sessions/'+  this.$router.currentRoute.params['report_id'] +'/breakdown',
+                method:'GET'
+            }).then((response) => {
+                this.breakdown = response.data;
+                this.breakdown.forEach((e) => {
+                   e.required_to_pass = '67.00%';
+                   e.percent_score = parseFloat(((+e['result']['score']/+e['result']['maxScore']) * 100.0) + '').toFixed(2)+"%";
+                });
+            }).catch((err) => {
+
+            });
+        }
+    }
 </script>
 
 <style>

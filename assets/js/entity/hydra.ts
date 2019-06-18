@@ -16,3 +16,13 @@ export interface HydraCollection<T extends Hydra> extends Hydra{
     }
 }
 
+
+export function hydraGetID(target: any) {
+    if(target instanceof String){
+        return target;
+    }else {
+        const hy: Hydra = target;
+        return hy["@id"];
+    }
+
+}

@@ -19,6 +19,7 @@ class QuizSessionVoter extends Voter
     const EDIT = 'edit';
     const SUBMIT_QUESTIONS = 'edit.questions';
     const VIEW = 'view';
+    const VIEW_REPORT = 'view.report';
     private $security;
     private $accessDecisionManager;
     private $entityManager;
@@ -42,7 +43,7 @@ class QuizSessionVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::EDIT,self::SUBMIT_QUESTIONS,self::VIEW])) {
+        if (!in_array($attribute, [self::EDIT,self::SUBMIT_QUESTIONS,self::VIEW,self::VIEW_REPORT])) {
             return false;
         }
 
@@ -88,14 +89,46 @@ class QuizSessionVoter extends Voter
                 return $this->canSubmitQuestion($quiz_session,$user);
             case self::VIEW:
                 return $this->canViewQuestions($quiz_session,$user);
+            case self::SUBMIT_QUESTIONS:
+                return $this->canSubmitQuestionsSession($quiz_session,$user);
+            case self::VIEW_REPORT:
+                return $this->canViewReport($quiz_session,$user);
 
         }
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canViewQuestions(QuizSession $session, User $user){
-        if($session->getOwner() === $user){
+    public function canViewReport(QuizSession $session, User $user ){
+        $activeSession = $user->getActiveSession();
+        if ($activeSession->count() > 0) {
+            return false;
+        }
+        if($session->getOwner() === $user && $session->getSubmittedAt() !== null){
             return true;
+        }
+        return false;
+    }
+
+    private function canSubmitQuestionsSession(QuizSession $session, User $user)
+    {
+        /** make sure the user is the owner and the exam isn't submitted */
+        if($session->getOwner() === $user && $session->getSubmittedAt() === null){
+            return true;
+        }
+        return false;
+    }
+
+    private function canViewQuestions(QuizSession $session, User $user)
+    {
+        $activeSession = $user->getActiveSession();
+        if ($activeSession->count() > 0) {
+            if ($session->getOwner() === $user && $user->getActiveSession()->contains($session)) {
+                return true;
+            }
+        } else {
+            if ($session->getOwner() === $user) {
+                return true;
+            }
         }
         return false;
     }

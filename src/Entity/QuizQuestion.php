@@ -26,11 +26,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * })
  * @ApiResource(
  *     collectionOperations={
+ *          "get_questions_by_session" = {
+ *              "method"="GET",
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "controller"=App\Controller\GetQuizQuestionBySession::class,
+ *              "path" = "/questions/sessions/{session_id}",
+ *              "normalization_context"={"groups"={"quiz_question:get"}}
+ *          },
  *          "get_questions_by_session_page" = {
  *              "method"="GET",
  *              "access_control"="is_granted('ROLE_USER')",
  *              "controller"=App\Controller\GetQuizQuestionBySessionAndPage::class,
- *              "path" = "/questions/sessions/{session_id}/{page}",
+ *              "path" = "/questions/sessions/{session_id}/page/{page}",
  *              "normalization_context"={"groups"={"quiz_question:get"}}
  *          },
  *          "get",

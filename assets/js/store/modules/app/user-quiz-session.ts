@@ -35,7 +35,14 @@ const actions: ActionTree<SessionState,RootState> = {
     begin(context,access){
 
     },
-    check(context){
+    submitQuestions(context) : Promise<QuizSession>
+    {
+        return null;
+    },
+    start(context): Promise<QuizSession> {
+        return null;
+    },
+    check(context) : Promise<QuizSession>{
         const builder = new FilterBuilder();
         // get entries that are not submitted
         builder.addFilter(new ExistFilter("submittedAt",false));
@@ -54,6 +61,7 @@ const actions: ActionTree<SessionState,RootState> = {
                     context.commit(QUIZ_SESSION_SET_SESSION,session);
                     resolve(session);
                 }else{
+                    context.commit(QUIZ_SESSION_CLEAR_SESSION);
                     resolve(null);
                 }
                 context.commit(QUIZ_SESSION_SET_LOADING,false);

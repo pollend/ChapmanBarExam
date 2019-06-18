@@ -22,7 +22,7 @@ class MultipleChoiceQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @Groups({"detail"})
+     * @Groups({"quiz_question:get"})
      */
     protected $content;
 
@@ -32,21 +32,19 @@ class MultipleChoiceQuestion extends QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="correct_entry_id", referencedColumnName="id")
      * })
-     * @Groups({"question_correct_answer"})
      */
     protected $correctEntry;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceResponse",mappedBy="question")
-     * @Groups({"responses"})
      */
     protected $responses;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceEntry",mappedBy="question")
-     * @Groups({"detail"})
+     * @Groups({"quiz_question:get"})
      */
     protected $entries;
 

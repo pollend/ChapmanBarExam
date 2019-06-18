@@ -41,7 +41,7 @@ class QuizResponseRepository extends EntityRepository
      *
      * @return ArrayCollection
      */
-    public function filterResponsesBySession(QuizSession $session)
+    public function bySession(QuizSession $session)
     {
         $qb = $this->createQueryBuilder('r');
 

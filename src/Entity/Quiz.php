@@ -30,14 +30,14 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz_session:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz_session:get"})
      */
     protected $name;
 

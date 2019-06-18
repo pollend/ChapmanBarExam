@@ -20,14 +20,14 @@ class QuestionTag
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"list","detail"})
+     * @Groups({"tag:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"list","detail"})
+     * @Groups({"tag:get"})
      */
     protected $name;
 
@@ -36,7 +36,7 @@ class QuestionTag
      *
      * @ORM\ManyToMany(targetEntity="QuizQuestion", mappedBy="tags" )
      * @ORM\JoinTable(name="quiz_question_question_tag")
-     * @Groups({"questions"})
+     * @Groups({"tag:get"})
      */
     protected $questions;
 

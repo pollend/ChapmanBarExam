@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\QuizQuestion;
 use App\Entity\QuizSession;
 use App\Repository\QuestionRepository;
@@ -13,9 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Security\Core\Security;
 
-class GetQuizQuestionBySessionAndPage
+class GetQuizQuestionBySession
 {
-
     private $entityManager;
     private $security;
     private $context;
@@ -27,11 +27,8 @@ class GetQuizQuestionBySessionAndPage
         $this->context = $context;
     }
 
-    public function __invoke(Request $request, $session_id, $page)
+    public function __invoke(Request $request, $session_id)
     {
-
-        /** @var QuestionRepository $questionRepo */
-        $questionRepo = $this->entityManager->getRepository(QuizQuestion::class);
 
         /** @var QuizSessionRepository $sessionRepo */
         $sessionRepo = $this->entityManager->getRepository(QuizSession::class);
@@ -39,12 +36,9 @@ class GetQuizQuestionBySessionAndPage
         /** @var QuizSession $session */
         if ($session = $sessionRepo->find($session_id)) {
             $quiz = $session->getQuiz();
-            if ($this->security->isGranted(QuizSessionVoter::VIEW, $session) && ($session->getSubmittedAt() !== null || $session->getCurrentPage() == $page)) {
-                $groups = $questionRepo->getUniqueGroups($quiz);
-                $questions = $questionRepo->filterByGroup($groups[$page], $quiz);
+            if ($this->security->isGranted(QuizSessionVoter::VIEW, $session)) {
                 $this->context->setParameter('session_id', $session_id);
-                $this->context->setParameter('page', $page);
-                return $questions;
+                return $quiz->getQuestions();
             }
 
         }

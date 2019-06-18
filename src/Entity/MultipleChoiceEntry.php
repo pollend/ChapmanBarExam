@@ -22,21 +22,22 @@ class MultipleChoiceEntry
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"detail"})
+     * @Groups({"quiz_question:get","quiz_response:get"})
      */
     protected $id;
 
     /**
      * @var int
      * @ORM\Column(name="`order`",type="smallint",nullable=false)
-     * @Groups({"detail"})
+     * @Groups({"quiz_question:get","quiz_response:get"})
+     * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $order;
 
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @Groups({"detail"})
+     * @Groups({"quiz_question:get","quiz_response:get"})
      */
     protected $content;
 

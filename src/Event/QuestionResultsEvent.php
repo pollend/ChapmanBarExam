@@ -11,21 +11,21 @@ class QuestionResultsEvent extends Event
     const QUESTION_RESULTS = 'app.question.result';
 
     /**
-     * @Groups({"detail"})
+     * @Groups({"question_result:score"})
      */
     protected $score;
     /**
-     * @Groups({"detail"})
+     * @Groups({"question_result:score"})
      */
     protected $maxScore;
 
     /**
-     * @Groups({"result_set_questions"})
+     * @Groups({"question_result:question"})
      */
     protected $questions;
 
     /**
-     * @Groups({"result_set_session"})
+     * @Groups({"question_result:session"})
      */
     protected $session;
 

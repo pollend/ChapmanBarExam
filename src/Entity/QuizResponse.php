@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuizResponseRepository")
@@ -18,7 +20,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *    "multiple_choice": "App\Entity\MultipleChoiceResponse",
  *    "short_answer": "App\Entity\ShortAnswerResponse"
  * })
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={
+ *          "get" = {"normalization_context"={"groups"={"quiz_response:get"}}}
+ *     },
+ *     collectionOperations={
+ *          "get" = {"normalization_context"={"groups"={"quiz_response:get"}}},
+ *          "get_by_session" = {
+ *              "method"="GET",
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "path" = "/quiz_responses/session/{session_id}",
+ *              "controller"=App\Controller\GetQuizResponsesBySession::class,
+ *              "normalization_context"={"groups"={"quiz_response:get"}}
+ *          }
+ *     }
+ * )
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","session":"exact"})
  */
 abstract class QuizResponse
 {
@@ -28,7 +45,7 @@ abstract class QuizResponse
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"list","detail"})
+     * @Groups({"quiz_response:get"})
      */
     protected $id;
 
@@ -38,7 +55,7 @@ abstract class QuizResponse
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="session_id",referencedColumnName="id")
      * })
-     * @Groups({"session_info"})
+     * @Groups({"quiz_response:get"})
      */
     protected $session;
 
@@ -48,9 +65,11 @@ abstract class QuizResponse
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="question_id",referencedColumnName="id")
      * })
-     * @Groups({"detail"})
+     * @Groups({"quiz_response:get"})
      */
     protected $question;
+
+    public abstract function isCorrectResponse();
 
     /**
      * @return int

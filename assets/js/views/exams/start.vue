@@ -16,10 +16,12 @@ import User from "../../entity/user";
 import QuizSession from "../../entity/quiz-session";
 
 const authModule = namespace('auth')
+const quizSessionModel = namespace('app/user-quiz-session');
 
 @Component
 export default class StartQuiz extends Vue {
     @authModule.Getter("user") user: User;
+    @quizSessionModel.Action("check") check: () => Promise<QuizSession>;
 
     startQuiz() {
         service({
@@ -29,14 +31,13 @@ export default class StartQuiz extends Vue {
                 'access_id': +this.$router.currentRoute.params['quiz_access_id'],
                 'user_id': this.user.id
             }
-        }).then((response) => {
+        }).then(async (response) => {
             const session: QuizSession = response.data;
+            await this.check();
             this.$router.push({
                 name: 'app.session.page',
                 params: {['page']: session.currentPage + ''}
             });
-
-
         }).catch((err) => {
 
         });

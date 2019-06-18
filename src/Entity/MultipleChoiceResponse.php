@@ -22,7 +22,7 @@ class MultipleChoiceResponse extends QuizResponse
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="choice_entry_id", referencedColumnName="id")
      * })
-     * @Groups({"user_response"})
+     * @Groups({"quiz_response:get"})
      */
     protected $choice;
 
@@ -36,9 +36,25 @@ class MultipleChoiceResponse extends QuizResponse
 
     /**
      * @param MultipleChoiceEntry $choice
+     *
      */
     public function setChoice(MultipleChoiceEntry $choice): void
     {
         $this->choice = $choice;
+    }
+
+    /**
+     * @return bool
+     * @Groups({"quiz_response:get"})
+     */
+    public function isCorrectResponse()
+    {
+        $question = $this->getQuestion();
+        if($question instanceof MultipleChoiceQuestion){
+            return $question->getCorrectEntry() === $this->getChoice();
+
+        }
+        return false;
+
     }
 }
