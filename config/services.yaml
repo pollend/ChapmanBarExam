@@ -39,3 +39,7 @@ services:
         decorates: 'api_platform.serializer.context_builder'
         arguments: [ '@App\Serializer\ClassroomContextBuilder.inner' ]
         autoconfigure: false
+
+    'App\Serializer\QuizAccessNormalizer':
+        decorates: 'api_platform.jsonld.normalizer.item'
+        arguments: [ '@App\Serializer\QuizAccessNormalizer.inner' ]

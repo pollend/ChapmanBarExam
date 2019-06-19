@@ -6,6 +6,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInter
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Classroom;
+use App\Entity\QuizAccess;
 use App\Entity\QuizResponse;
 use App\Entity\QuizSession;
 use App\Entity\User;
@@ -55,6 +56,11 @@ class AccessControlExtension implements QueryCollectionExtensionInterface, Query
                     ->andWhere($queryBuilder->expr()->eq('extension_session.owner',':extension_owner'))
                     ->setParameter('extension_owner', $user);
                 break;
+            case QuizAccess::class:
+                $queryBuilder->innerJoin(sprintf('%s.classroom',$rootAlias),'classroom_extension')
+                    ->innerJoin('classroom_extension.users', 'extension_user', 'WITH', $queryBuilder->expr()->eq('extension_user.id', ':extension_user'))
+                    ->setParameter('extension_user', $user);
+                break;
         }
     }
 
@@ -78,6 +84,11 @@ class AccessControlExtension implements QueryCollectionExtensionInterface, Query
             case QuizSession::class:
                 $queryBuilder->andWhere($queryBuilder->expr()->eq(sprintf('%s.owner', $rootAlias), ":extension_owner"))
                     ->setParameter("extension_owner", $user);
+                break;
+            case QuizAccess::class:
+                $queryBuilder->innerJoin(sprintf('%s.classroom',$rootAlias),'classroom_extension')
+                    ->innerJoin('classroom_extension.users', 'extension_user', 'WITH', $queryBuilder->expr()->eq('extension_user.id', ':extension_user'))
+                    ->setParameter('extension_user', $user);
                 break;
         }
     }

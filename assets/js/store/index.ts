@@ -3,6 +3,7 @@ import Vuex, {Module, StoreOptions} from 'vuex';
 import createLogger from 'vuex/dist/logger';
 import {auth, AuthState} from './modules/auth'
 import {app} from "./modules/app/app";
+import {dashboard} from "./modules/dashboard/dashboard";
 Vue.use(Vuex);
 
 export interface RootState {
@@ -17,7 +18,8 @@ const store: StoreOptions<RootState> = {
   },
   modules: {
     auth,
-    app
+    app,
+    dashboard
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

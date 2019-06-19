@@ -1,10 +1,12 @@
 import {ActionTree, GetterTree, Module, MutationTree} from "vuex";
 import {RootState} from "../../index";
 import service from "../../../utils/request";
-import {ExistFilter, FilterBuilder} from "../../../api/filters/filter";
+import {ExistFilter, FilterBuilder, SearchFilter} from "../../../api/filters/filter";
 import {HydraCollection} from "../../../entity/hydra";
 import QuizSession from "../../../entity/quiz-session";
-
+import User from "../../../entity/user";
+import QuizAccess from "../../../entity/quiz-access";
+import store from '../../index'
 export interface SessionState {
     session: QuizSession,
     isLoading: boolean
@@ -35,12 +37,45 @@ const actions: ActionTree<SessionState,RootState> = {
     begin(context,access){
 
     },
-    submitQuestions(context) : Promise<QuizSession>
+    submit(context,payload:{session:QuizSession, page: number , payload: {}}) : Promise<QuizSession>
     {
-        return null;
+        return new Promise<QuizSession>((resolve,reject) => {
+
+            service({
+                url: '/_api/quiz_sessions/' + payload.session.id + '/questions/' + payload.page,
+                method:'POST',
+                data: payload.payload
+            }).then(async (response) => {
+                const session: QuizSession = response.data;
+                // only set the session if it's a live session
+                if (session.submittedAt === null) {
+                    context.commit(QUIZ_SESSION_SET_SESSION, session);
+                } else {
+                    context.commit(QUIZ_SESSION_CLEAR_SESSION);
+                }
+                resolve(session);
+            }).catch((err) => {
+                reject(err);
+            });
+        });
     },
-    start(context): Promise<QuizSession> {
-        return null;
+    start(context, payload: {user: User, access: QuizAccess}): Promise<QuizSession> {
+        return new Promise<QuizSession>((resolve,reject) => {
+            service({
+                url: '/_api/quiz_sessions/start',
+                method: 'post',
+                data: {
+                    'access_id': payload.access.id,
+                    'user_id': payload.user.id
+                }
+            }).then(async (response) => {
+                const session: QuizSession = response.data;
+                context.commit(QUIZ_SESSION_SET_SESSION,session);
+                resolve(session);
+            }).catch((err) => {
+                reject(err);
+            });
+        });
     },
     check(context) : Promise<QuizSession>{
         const builder = new FilterBuilder();
@@ -51,7 +86,7 @@ const actions: ActionTree<SessionState,RootState> = {
             context.commit(QUIZ_SESSION_SET_LOADING,true);
 
             service({
-                url: '/_api/quiz_sessions?' + builder.build(),
+                url: '/_api/quiz_sessions?' + builder.addFilter(new SearchFilter("owner", context.rootGetters['auth/user'].id + '')).build(),
                 method: 'GET'
             }).then((response) => {
                 const collection: HydraCollection<QuizSession> = response.data;

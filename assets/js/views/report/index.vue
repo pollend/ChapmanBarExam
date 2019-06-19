@@ -32,7 +32,7 @@ import {Component, Provide, Vue, Watch} from "vue-property-decorator";
 import {namespace} from "vuex-class";
 import User from "../../entity/user";
 import service from "../../utils/request";
-import {ExistFilter, FilterBuilder} from "../../api/filters/filter";
+import {ExistFilter, FilterBuilder, SearchFilter} from "../../api/filters/filter";
 import {HydraCollection} from "../../entity/hydra";
 import QuizSession from "../../entity/quiz-session";
 
@@ -48,7 +48,7 @@ export default class ReportList extends Vue {
     }
     created() {
         service({
-            url: '/_api/quiz_sessions?' + (new FilterBuilder()).addFilter(new ExistFilter('submittedAt',true)).build(),
+            url: '/_api/quiz_sessions?' + (new FilterBuilder()).addFilter(new ExistFilter('submittedAt',true)).addFilter(new SearchFilter("owner",this.user.id + '')).build(),
             method: 'GET'
         }).then((response) => {
             this.reports = response.data;

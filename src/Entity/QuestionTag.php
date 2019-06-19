@@ -7,10 +7,19 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+//TODO: add put and post for tags
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuestionTagRepository")
  * @ORM\Table(name="question_tag")
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get" = {"normalization_context"={"groups"={"tag:get"}}}
+ *     },
+ *     itemOperations={
+ *          "get" = {"normalization_context"={"groups"={"tag:get"}}}
+ *     }
+ * )
  */
 class QuestionTag
 {
@@ -36,7 +45,6 @@ class QuestionTag
      *
      * @ORM\ManyToMany(targetEntity="QuizQuestion", mappedBy="tags" )
      * @ORM\JoinTable(name="quiz_question_question_tag")
-     * @Groups({"tag:get"})
      */
     protected $questions;
 

@@ -13,7 +13,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="quiz_access")
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="App\Repository\QuizAccessRepository")
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get" = {
+ *               "normalization_context"={"groups" = {"quiz-access:get"}}
+ *          },
+ *          "post" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          }
+ *     },
+ *     itemOperations={
+ *          "get" = {
+ *              "normalization_context"={"groups" = {"quiz-access:get","item:quiz-access:get"}}
+ *          },
+ *          "put" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "delete" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          }
+ *     }
+ * )
  */
 class QuizAccess
 {
@@ -23,35 +43,35 @@ class QuizAccess
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $id;
 
     /**
      * @var bool
      * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $isHidden;
 
     /**
      * @var int
      * @ORM\Column(name="num_attempts",type="integer",nullable=true)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $numAttempts;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="open_date",type="datetime",nullable=true)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $openDate;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="close_date",type="datetime",nullable=true)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $closeDate;
 
@@ -60,7 +80,7 @@ class QuizAccess
      *
      * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="access")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $quiz;
 
@@ -69,6 +89,7 @@ class QuizAccess
      *
      * @ORM\ManyToOne(targetEntity="Classroom",inversedBy="quizAccess")
      * @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
+     * @Groups({"quiz-access:get"})
      */
     protected $classroom;
 
@@ -80,7 +101,7 @@ class QuizAccess
     /**
      * @return Classroom
      */
-    public function getClassroom() : Classroom
+    public function getClassroom(): Classroom
     {
         return $this->classroom;
 
@@ -101,7 +122,7 @@ class QuizAccess
     /**
      * @return Collection
      */
-    public function getQuizSessions() : Collection
+    public function getQuizSessions(): Collection
     {
         return $this->quizSessions;
     }
@@ -199,7 +220,7 @@ class QuizAccess
     /**
      * @return mixed
      */
-    public function getQuiz() : Quiz
+    public function getQuiz(): Quiz
     {
         return $this->quiz;
     }
@@ -214,14 +235,18 @@ class QuizAccess
 
     public function isOpen($user)
     {
+        if ($this->isHidden == true)
+            return false;
+
         if (Carbon::today() > $this->closeDate) {
             return false;
         }
         if (Carbon::today() < $this->openDate) {
-//        // number of user attempts exceeds the max attempts on a quiz
-            if ($this->getQuiz()->getQuizSessionsByUser($user)->count() >= $this->numAttempts) {
-                return false;
-            }
+            return false;
+        }
+        // number of user attempts exceeds the max attempts on a quiz
+        if ($this->getQuiz()->getQuizSessionsByUser($user)->count() >= $this->numAttempts) {
+            return false;
         }
 
         return true;

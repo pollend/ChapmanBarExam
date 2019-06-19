@@ -11,19 +11,22 @@
 </template>
 
 <script lang="ts">
-
-  import {Component, Vue} from "vue-property-decorator";
-
+import {Component, Vue} from "vue-property-decorator";
 import  Navbar  from './components/Navbar';
 import  LeftSidebar  from './components/LeftSidebar';
+import {namespace} from "vuex-class";
+
+const dashboardSettingsModule = namespace('dashboard/settings');
 
 @Component({
   components: {Navbar,LeftSidebar}
 })
 export default class Layout extends Vue {
+  @dashboardSettingsModule.Getter("toggleLeftPanel") sidebarState: boolean;
+
   get classObj() {
     return {
-      hideSidebar: true
+      hideSidebar: this.sidebarState
     }
   }
 }

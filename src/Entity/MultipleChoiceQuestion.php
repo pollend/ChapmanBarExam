@@ -15,7 +15,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\MultipleChoiceQuestionRepository")
  * @ORM\Table(name="multiple_choice_question")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  */
 class MultipleChoiceQuestion extends QuizQuestion
 {

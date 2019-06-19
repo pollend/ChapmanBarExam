@@ -12,7 +12,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\MultipleChoiceEntryRepository")
  * @ORM\Table(name="multiple_choice")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  */
 class MultipleChoiceEntry
 {

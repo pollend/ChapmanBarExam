@@ -17,7 +17,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\Entity(readOnly=true,repositoryClass="App\Repository\UserQuizAccessRepository")
  * @ApiResource(
  *     itemOperations={
- *      "get"
+ *      "get",
  *     },
  *     collectionOperations={
  *      "get"

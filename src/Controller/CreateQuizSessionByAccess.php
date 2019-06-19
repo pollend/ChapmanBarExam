@@ -68,20 +68,23 @@ class CreateQuizSessionByAccess
 
         /** @var QuizAccess $access */
         if ($access = $quizAccessRepository->find($data['access_id'])) {
-            if ($user === $userRepository->find($data['user_id'])) {
-                if (Collection::make($quizSessionRepository->getActiveSessions($user))->count() > 0) {
-                    throw new \Exception("Session already Started");
-                }
+            // check if the quiz can start
+            if ($this->security->isGranted(QuizAccessVoter::START, $access)) {
+                if ($user === $userRepository->find($data['user_id'])) {
+                    if (Collection::make($quizSessionRepository->getActiveSessions($user))->count() > 0) {
+                        throw new \Exception("Session already Started");
+                    }
 
-                $session = new QuizSession();
-                $session->setOwner($user)
-                    ->setClassroom($access->getClassroom())
-                    ->setQuiz($access->getQuiz())
-                    ->setQuizAccess($access);
-                $session->setMeta([]);
-                $em->persist($session);
-                $em->flush();
-                return $session;
+                    $session = new QuizSession();
+                    $session->setOwner($user)
+                        ->setClassroom($access->getClassroom())
+                        ->setQuiz($access->getQuiz())
+                        ->setQuizAccess($access);
+                    $session->setMeta([]);
+                    $em->persist($session);
+                    $em->flush();
+                    return $session;
+                }
             }
         }
         throw new \Exception("Can't Start New Session");

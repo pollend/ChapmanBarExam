@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.134",
+    "@types/luxon": "^1.15.1",
     "@types/nprogress": "^0.2.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.1",

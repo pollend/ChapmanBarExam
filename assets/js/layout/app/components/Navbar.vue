@@ -4,7 +4,8 @@
       <template slot="title"><i class="el-icon-menu"></i>{{user.username}}</template>
       <!--      <el-menu-item index="4-1"><i class="el-icon-setting"></i> Settings</el-menu-item>-->
       <!--      <el-menu-item index="4-2"><i class="el-icon-information"></i> About</el-menu-item>-->
-      <el-menu-item index="dashboard.home" :v-if="isAdmin"><i class="el-icon-s-management"></i> Admin</el-menu-item>
+
+      <el-menu-item index="dashboard.home" :disabled="!containsRole('ROLE_ADMIN')"><i class="el-icon-s-management"></i> Admin</el-menu-item>
       <el-menu-item index="logout"><i class="el-icon-circle-close"></i> Logout</el-menu-item>
     </el-submenu>
     <el-menu-item>Chapman Bar Exam</el-menu-item>
@@ -15,7 +16,6 @@
 </template>
 
 <script lang="ts">
-  import {ROLE_ADMIN} from "../../../utils/role";
   import {Component, Vue} from "vue-property-decorator";
   import "vue-router";
   import {namespace, Getter} from "vuex-class";
@@ -29,18 +29,21 @@
   export default class Navbar extends Vue {
     @authModule.Getter("roles") roles: string[];
     @authModule.Getter("user") user : User;
+    @authModule.Action("logout") logout: () => void;
     @sessionModule.Getter("session") session: QuizSession;
 
-    get isAdmin() {
-      return ROLE_ADMIN in this.roles
-    }
-    static get isSessionActive() {
+    containsRole(role: string) {
+      for(const r of this.roles){
+        if(r == role)
+          return true;
+      }
       return false;
     }
 
     handleSelect(key: string, keyPath: string) {
       if (key === 'logout') {
-        this.$store.dispatch('auth/logout');
+        this.logout();
+        this.$router.push({name: 'app.login'})
       } else {
         this.$router.push({name: key});
       }

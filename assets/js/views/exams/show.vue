@@ -8,8 +8,8 @@
                     </p>
                     <template>
                         <el-radio-group v-model="q.value">
-                            <div v-for="e in q.entries"  :key="e.id" >
-                                <el-radio :label="e.id">{{ e.content }}</el-radio>
+                            <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
+                                <el-radio :label="e.id">({{mapCharacterIndex(index)}}) {{ e.content }}</el-radio>
                             </div>
                         </el-radio-group>
                     </template>
@@ -38,7 +38,8 @@ import User from "../../entity/user";
 import QuizSession from "../../entity/quiz-session";
 import service from "../../utils/request";
 import {HydraCollection} from "../../entity/hydra";
-import {MultipleChoiceQuestion, TextBlockQuestion} from "../../entity/quiz-question";
+import {MultipleChoiceEntry, MultipleChoiceQuestion, TextBlockQuestion} from "../../entity/quiz-question";
+import _ from 'lodash';
 
 const authModule = namespace('auth');
 const quizSessionModel = namespace('app/user-quiz-session');
@@ -47,7 +48,7 @@ const quizSessionModel = namespace('app/user-quiz-session');
 export default class ShowQuizPage extends Vue {
     @authModule.Getter("user") user: User;
     @quizSessionModel.Getter("session") session: QuizSession;
-    @quizSessionModel.Action("check") check: () => Promise<QuizSession>;
+    @quizSessionModel.Action("submit") submit: ({}) => Promise<QuizSession>;
     @Provide() questions: HydraCollection<MultipleChoiceQuestion | TextBlockQuestion> = null;
 
     created() {
@@ -78,30 +79,37 @@ export default class ShowQuizPage extends Vue {
         return target;
     }
 
+    orderEntries(entries: MultipleChoiceEntry[]) {
+        return _.orderBy(entries, function (o) {
+            return o.order;
+        })
+    }
+
+
+    mapCharacterIndex(index: number) {
+        const lookup = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+        return lookup[index];
+    }
+
+
     submitResults() {
         let result = this.getValues();
         NProgress.start();
-        service({
-            url: '/_api/quiz_sessions/' + this.session.id + '/questions/' + this.$router.currentRoute.params['page'],
-            method:'POST',
-            data: result
-        }).then(async (response) => {
-            await this.check();
-            const session: QuizSession =  response.data;
-            if(session.submittedAt){
-                this.$router.push({name:'app.home'});
-            }
-            else{
-                this.$router.push({
-                    name: 'app.session.page',
-                    params: {['page']: session.currentPage + ''}
-                }, () => {
-                    this.query();
-                });
-            }
-            NProgress.done();
-        }).catch((err) => {
-            console.log(err);
+        this.submit({session: this.session , page:  +this.$router.currentRoute.params['page'], payload: result})
+            .then((session:QuizSession) => {
+                if(session.submittedAt){
+                    this.$router.push({name:'app.home'});
+                }
+                else {
+                    this.$router.push({
+                        name: 'app.session.page',
+                        params: {['page']: session.currentPage + ''}
+                    }, () => {
+                        this.query();
+                    });
+                }
+                NProgress.done();
+            }).catch((err) => {
 
         });
     }

@@ -19,7 +19,7 @@ export const routes = [
       },
     ],
   },
-  { path: '/login', component: () => import('./../views/login/index') , beforeEnter: async (to, from, next) => {
+  { path: '/login', component: () => import('./../views/login/index'), name: 'app.login' , beforeEnter: async (to, from, next) => {
     if(await routePermissions(to,from,next) === true)
       next();
   }},

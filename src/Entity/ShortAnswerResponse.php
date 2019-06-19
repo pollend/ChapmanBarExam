@@ -12,7 +12,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\Table(name="short_answer_response")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource()
+ * @ApiResource(
+ *   collectionOperations={"get"},
+ *   itemOperations={"get"}
+ * )
  */
 class ShortAnswerResponse extends QuizResponse
 {

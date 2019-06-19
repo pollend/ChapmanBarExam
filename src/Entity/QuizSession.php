@@ -93,7 +93,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  * )
  *
  * @ApiFilter(ExistsFilter::class, properties={"submittedAt"})
- * @ApiFilter(SearchFilter::class, properties={"id":"exact"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact","owner":"exact"})
  */
 class QuizSession
 {

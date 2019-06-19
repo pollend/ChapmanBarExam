@@ -32,21 +32,24 @@
 <script lang="ts">
     import {Component, Provide, Vue} from "vue-property-decorator";
     import service from "../../utils/request";
+    import NProgress from "nprogress";
 
 
     @Component
     export default class BreakdownReport extends Vue {
         @Provide() breakdown: any[] = [];
 
-        async created(){
+        async created() {
+            NProgress.start();
             await service({
-              url:'/_api/quiz_sessions/'+  this.$router.currentRoute.params['report_id'] +'/breakdown',
-                method:'GET'
+                url: '/_api/quiz_sessions/' + this.$router.currentRoute.params['report_id'] + '/breakdown',
+                method: 'GET'
             }).then((response) => {
+                NProgress.done();
                 this.breakdown = response.data;
                 this.breakdown.forEach((e) => {
-                   e.required_to_pass = '67.00%';
-                   e.percent_score = parseFloat(((+e['result']['score']/+e['result']['maxScore']) * 100.0) + '').toFixed(2)+"%";
+                    e.required_to_pass = '67.00%';
+                    e.percent_score = parseFloat(((+e['result']['score'] / +e['result']['maxScore']) * 100.0) + '').toFixed(2) + "%";
                 });
             }).catch((err) => {
 

@@ -5,5 +5,7 @@ export default interface QuizAccess  extends Hydra{
     numAttempts: number;
     openDate: string;
     closeDate: string;
+    isHidden: boolean;
+    isOpen: boolean;
     quiz: string | QuizAccess;
 }

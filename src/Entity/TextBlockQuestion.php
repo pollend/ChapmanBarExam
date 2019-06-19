@@ -12,7 +12,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\Table(name="text_block_question")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource()
+ * @ApiResource(
+ *   collectionOperations={"get"},
+ *   itemOperations={"get"}
+ * )
  */
 class TextBlockQuestion extends QuizQuestion
 {

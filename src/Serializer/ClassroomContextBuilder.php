@@ -34,6 +34,7 @@ class ClassroomContextBuilder implements SerializerContextBuilderInterface
 
         if($resourceClass == Classroom::class && isset($context['groups']) && $this->authorizationChecker->isGranted("ROLE_ADMIN")){
             $context['groups'][] = 'classroom:admin:get';
+            $context['groups'][] = 'item:classroom:admin:get';
         }
         return $context;
     }

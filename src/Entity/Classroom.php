@@ -59,7 +59,7 @@ class Classroom
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $id;
 
@@ -69,14 +69,14 @@ class Classroom
      * @Groups({"list","detail"})
      * @Assert\NotBlank(message="Classroom Name Required")
      * @Assert\NotNull()
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="string",length=50,nullable=true)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $description;
 

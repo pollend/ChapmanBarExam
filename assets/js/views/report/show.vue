@@ -135,14 +135,14 @@ export default class ReportShowOverview extends Vue {
         }).catch((err) => {
 
         }),
-            service({
-                url: '/_api/questions/sessions/' + this.$router.currentRoute.params['report_id'],
-                method: 'GET'
-            }).then((response) => {
-                this.questions = response.data;
-            }).catch((err) => {
+        service({
+            url: '/_api/questions/sessions/' + this.$router.currentRoute.params['report_id'],
+            method: 'GET'
+        }).then((response) => {
+            this.questions = response.data;
+        }).catch((err) => {
 
-            })]);
+        })]);
         NProgress.done();
     }
 
@@ -169,7 +169,7 @@ export default class ReportShowOverview extends Vue {
         })
     }
 
-    choiceMatch(c1: MultipleChoiceEntry, c2: MultipleChoiceEntry) : boolean{
+    choiceMatch(c1: MultipleChoiceEntry, c2: MultipleChoiceEntry): boolean {
         return hydraGetID(c1) == hydraGetID(c2);
     }
 
@@ -192,65 +192,6 @@ export default class ReportShowOverview extends Vue {
         return '?';
     }
 }
-//
-// export default {
-//   name: 'ReportShow',
-//   components: {MultipleChoiceEntry },
-//   data() {
-//     return {
-//         questions: null,
-//         responses: null,
-//         started_loading: false,
-//         question_mark: ''
-//     };
-//   },
-//   watch: {
-//     '$route' (to, from) {
-//         this.question_mark =  to.hash.split('#')[1]
-//     }
-//   },
-//   async created(){
-//       let _this = this;
-//       NProgress.start();
-//       let response = await getReport(this.$route.params.report_id);
-//       const {questions,responses} = response.data;
-//       _this.questions = questions;
-//       _this.responses = responses;
-//       NProgress.done();
-//   },
-//   computed: {
-//       chunkedRespones() {
-//           return _.chunk(_.chunk(_.filter(this.questions,function (q) {
-//               return q.type === 'multiple_choice';
-//           }),5),10)
-//       }
-//   },
-//   methods: {
-//       responseCharacter(question) {
-//           let choice = (question.id in this.responses) ? this.responses[question.id].choice : null;
-//           if(choice === null)
-//               return '_';
-//           if(question.correctEntry.id === choice.id){
-//               return '-';
-//           }
-//           for(const [index,e] of this.orderEntries(question.entries).entries()){
-//               if(e.id === choice.id){
-//                   return this.mapCharacterIndex(index);
-//               }
-//           }
-//           return '?';
-//       },
-//       orderEntries(entries){
-//           return _.orderBy(entries,function (o) {
-//               return o.order;
-//           })
-//       },
-//       mapCharacterIndex(index){
-//           const lookup = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'];
-//           return lookup[index];
-//       }
-//   },
-// };
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

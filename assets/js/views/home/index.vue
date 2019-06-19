@@ -16,19 +16,36 @@
                                         <span> {{ access.quiz.name }}</span>
                                     </div>
                                     {{access.quiz.description}}
+                                    <div class="small-text">
+                                        {{formattedTime(access.openDate)}} -- {{formattedTime(access.closeDate)}}
+                                    </div>
                                     <el-divider></el-divider>
                                     <el-row :gutter="20">
                                         <el-col :span="12">
                                             {{ (access.quiz['@id'] in quizByAccess ? quizByAccess[access.quiz['@id']].userAttempts : 0 )}} / {{ access.numAttempts }}
                                         </el-col>
                                         <el-col :span="12" >
-                                            {{ timestamp(access.openDate) }}</el-col>
+                                            <template v-if="isLessThenNow(access.openDate)">
+                                                Opens {{ timestamp(access.openDate) }}
+                                            </template>
+                                            <template v-else-if="isLessThenNow(access.closeDate)">
+                                                Closes {{ timestamp(access.closeDate) }}
+                                            </template>
+                                            <template v-else>
+                                                Closed {{ timestamp(access.closeDate) }}
+                                            </template>
+                                            </el-col>
                                     </el-row>
 
                                     <div class="foot">
-                                        <router-link :to="{name: 'app.exam.start', params: {quiz_access_id: access.id} }">
-                                            <el-button type="primary" style="width: 100%">Start</el-button>
-                                        </router-link>
+                                        <template v-if="access.isOpen">
+                                            <router-link :to="{name: 'app.exam.start', params: {quiz_access_id: access.id} }">
+                                                <el-button type="primary" style="width: 100%">Start</el-button>
+                                            </router-link>
+                                        </template>
+                                        <template v-else>
+                                            <el-button type="primary" style="width: 100%" disabled>Locked</el-button>
+                                        </template>
                                     </div>
                                 </el-card>
                             </el-col>
@@ -41,8 +58,7 @@
 </template>
 
 <script lang="ts">
-import * as moment from 'moment';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import NProgress from 'nprogress';
 import {Component, Provide, Vue} from "vue-property-decorator";
 import {namespace} from "vuex-class";
@@ -52,6 +68,9 @@ import Classroom from "../../entity/classroom";
 import {HydraCollection} from "../../entity/hydra";
 import {FilterBuilder, SearchFilter} from "../../api/filters/filter";
 import UserQuizAccess from "../../entity/user-quiz-access";
+import QuizAccess from "../../entity/quiz-access";
+import { DateTime } from 'luxon';
+import * as moment from 'moment';
 
 const authModule = namespace('auth')
 
@@ -90,6 +109,13 @@ export default class Home extends Vue {
         }).then((response) => {
             const collection: HydraCollection<Classroom> =  response.data;
             this.classes = this.classes.concat(collection["hydra:member"]);
+            this.classes.forEach((c : Classroom) => {
+                c.quizAccess = _.filter(<QuizAccess[]>c.quizAccess,(a:QuizAccess) => {
+                    return !a.isHidden;
+                });
+
+            });
+
             NProgress.done();
         }).catch((err) => {
             console.log(err);
@@ -108,6 +134,13 @@ export default class Home extends Vue {
     group(access: any) {
         return _.chunk(access, 4);
     };
+
+    formattedTime(dateTime: any) {
+        return moment(dateTime).format("d/M/Y, h:mm:ss a");
+    }
+    isLessThenNow(dateTime: any){
+        return  moment(dateTime).isAfter(moment.now())
+    }
 
     timestamp(dateTime: any) {
         return moment(dateTime).fromNow();
@@ -130,6 +163,9 @@ export default class Home extends Vue {
        }
        &.empty-box{
         height: 40rem;
+       }
+       .small-text{
+           font-size: .6rem;
        }
    }
 </style>

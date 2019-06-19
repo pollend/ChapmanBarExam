@@ -13,6 +13,7 @@ use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+//TODO: need to work out the rules for deleting a question
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuestionRepository")
  * @ORM\InheritanceType("JOINED")
@@ -25,6 +26,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *    "textBlock": "App\Entity\TextBlockQuestion"
  * })
  * @ApiResource(
+ *     itemOperations={
+ *        "put" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *         },
+ *         "get" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *         }
+ *     },
  *     collectionOperations={
  *          "get_questions_by_session" = {
  *              "method"="GET",
@@ -33,15 +42,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "path" = "/questions/sessions/{session_id}",
  *              "normalization_context"={"groups"={"quiz_question:get"}}
  *          },
- *          "get_questions_by_session_page" = {
+ *          "get_questions_by_session_and_page" = {
  *              "method"="GET",
  *              "access_control"="is_granted('ROLE_USER')",
  *              "controller"=App\Controller\GetQuizQuestionBySessionAndPage::class,
  *              "path" = "/questions/sessions/{session_id}/page/{page}",
  *              "normalization_context"={"groups"={"quiz_question:get"}}
  *          },
- *          "get",
- *          "post"
+ *          "get" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "post" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          }
  *     }
  * )
  */

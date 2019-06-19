@@ -11,13 +11,33 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+//TODO: add Delete for quiz
+//TODO: work out access for user
+
 /**
  * Class Quiz.
  *
  * @ORM\Entity(repositoryClass="App\Repository\QuizRepository")
  * @ORM\Table(name="quiz")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={
+ *          "get" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "put" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *     },
+ *     collectionOperations={
+ *          "get" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "post" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *      }
+ * )
  */
 class Quiz
 {
@@ -30,21 +50,21 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"classroom:get","quiz_session:get"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"classroom:get","quiz_session:get"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $description;
 
