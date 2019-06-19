@@ -19,7 +19,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *               "normalization_context"={"groups" = {"quiz-access:get"}}
  *          },
  *          "post" = {
- *               "access_control"="is_granted('ROLE_ADMIN')"
+ *               "access_control"="is_granted('ROLE_ADMIN')",
+ *               "normalization_context"={"groups" = {"quiz-access:post"}}
  *          }
  *     },
  *     itemOperations={
@@ -27,7 +28,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "normalization_context"={"groups" = {"quiz-access:get","item:quiz-access:get"}}
  *          },
  *          "put" = {
- *               "access_control"="is_granted('ROLE_ADMIN')"
+ *               "access_control"="is_granted('ROLE_ADMIN')",
+ *               "normalization_context"={"groups" = {"quiz-access:put"}}
  *          },
  *          "delete" = {
  *               "access_control"="is_granted('ROLE_ADMIN')"
@@ -50,28 +52,28 @@ class QuizAccess
     /**
      * @var bool
      * @ORM\Column(name="is_hidden",type="boolean",nullable=true)
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz-access:post","quiz-access:put"})
      */
     protected $isHidden;
 
     /**
      * @var int
      * @ORM\Column(name="num_attempts",type="integer",nullable=true)
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz-access:post","quiz-access:put"})
      */
     protected $numAttempts;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="open_date",type="datetime",nullable=true)
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz-access:post","quiz-access:put"})
      */
     protected $openDate;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="close_date",type="datetime",nullable=true)
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz-access:post","quiz-access:put"})
      */
     protected $closeDate;
 
@@ -80,7 +82,7 @@ class QuizAccess
      *
      * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="access")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz-access:post"})
      */
     protected $quiz;
 
@@ -89,7 +91,7 @@ class QuizAccess
      *
      * @ORM\ManyToOne(targetEntity="Classroom",inversedBy="quizAccess")
      * @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
-     * @Groups({"quiz-access:get"})
+     * @Groups({"quiz-access:get","quiz-access:post"})
      */
     protected $classroom;
 

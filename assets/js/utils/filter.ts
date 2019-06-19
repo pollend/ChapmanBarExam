@@ -24,6 +24,13 @@ export class ExistFilter implements FilterOps{
     }
 }
 
+enum Sort {
+    Ascending = 1,
+    Descending,
+}
+
+
+
 export class SearchFilter implements FilterOps {
     prop: string;
     target:string;
@@ -37,6 +44,8 @@ export class SearchFilter implements FilterOps {
         return {key: this.prop, value: this.target};
     }
 }
+
+
 
 
 export class FilterBuilder {

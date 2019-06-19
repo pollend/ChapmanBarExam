@@ -2,17 +2,13 @@
     <div>Dashboard</div>
 </template>
 
-<script>
-    export default {
-        name: 'DashboardHome',
-        components: { },
-        data() {
-            return {
-            };
-        },
-        methods: {
-        },
-    };
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+
+    @Component
+    export default class DashboardHome extends  Vue {
+
+    }
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

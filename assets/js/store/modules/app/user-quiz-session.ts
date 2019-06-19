@@ -1,7 +1,7 @@
 import {ActionTree, GetterTree, Module, MutationTree} from "vuex";
 import {RootState} from "../../index";
 import service from "../../../utils/request";
-import {ExistFilter, FilterBuilder, SearchFilter} from "../../../api/filters/filter";
+import {ExistFilter, FilterBuilder, SearchFilter} from "../../../utils/filter";
 import {HydraCollection} from "../../../entity/hydra";
 import QuizSession from "../../../entity/quiz-session";
 import User from "../../../entity/user";

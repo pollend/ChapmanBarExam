@@ -110,7 +110,6 @@
 <script lang="ts">
 import {Vue, Component, Provide} from "vue-property-decorator";
 import service from "../../utils/request";
-import {FilterBuilder, SearchFilter} from "../../api/filters/filter";
 import {HydraCollection, hydraGetID} from "../../entity/hydra";
 import {MultipleChoiceEntry, MultipleChoiceQuestion, QuizQuestion} from "../../entity/quiz-question";
 import {MultipleChoiceResponse, QuizQuestionResponse} from "../../entity/quiz-response";

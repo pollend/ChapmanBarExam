@@ -32,7 +32,7 @@ import {Component, Provide, Vue, Watch} from "vue-property-decorator";
 import {namespace} from "vuex-class";
 import User from "../../entity/user";
 import service from "../../utils/request";
-import {ExistFilter, FilterBuilder, SearchFilter} from "../../api/filters/filter";
+import {ExistFilter, FilterBuilder, SearchFilter} from "../../utils/filter";
 import {HydraCollection} from "../../entity/hydra";
 import QuizSession from "../../entity/quiz-session";
 

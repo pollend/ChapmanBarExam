@@ -66,7 +66,7 @@ import User from "../../entity/user";
 import service from "../../utils/request";
 import Classroom from "../../entity/classroom";
 import {HydraCollection} from "../../entity/hydra";
-import {FilterBuilder, SearchFilter} from "../../api/filters/filter";
+import {FilterBuilder, SearchFilter} from "../../utils/filter";
 import UserQuizAccess from "../../entity/user-quiz-access";
 import QuizAccess from "../../entity/quiz-access";
 import { DateTime } from 'luxon';

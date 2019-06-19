@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *     itemOperations={
  *          "get" = {
- *               "access_control"="is_granted('ROLE_ADMIN')"
+ *               "access_control"="is_granted('ROLE_ADMIN')",
  *          },
  *          "put" = {
  *               "access_control"="is_granted('ROLE_ADMIN')"
@@ -31,7 +31,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     collectionOperations={
  *          "get" = {
- *               "access_control"="is_granted('ROLE_ADMIN')"
+ *               "access_control"="is_granted('ROLE_ADMIN')",
+ *               "normalization_context"={"groups"={"quiz:get"}},
  *          },
  *          "post" = {
  *               "access_control"="is_granted('ROLE_ADMIN')"
@@ -50,28 +51,28 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"classroom:get","quiz_session:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"classroom:get","quiz_session:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz:get"})
      */
     protected $description;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quiz")
-     * @Groups({"quiz_sessions"})
+     * @Groups({"quiz_sessions","quiz:get"})
      */
     protected $quizSessions;
 

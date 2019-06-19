@@ -9,6 +9,8 @@ Rules for Serilization
 
 ### collection operations
 
+collection operations are a subset of item operations
+
 \<class\>:\<method\>:(?\<admin\>)
 
 
