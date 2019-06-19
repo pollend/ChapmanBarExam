@@ -33,22 +33,22 @@
 
 </template>
 
-<script>
-import { mapGetters } from 'vuex';
+<script lang="ts">
+import {Component, Vue} from "vue-property-decorator";
+import {namespace} from "vuex-class";
 
-export default {
-    components: {},
-    computed: {
-        ...mapGetters({
-            'sidebarState': 'dashboard-setting/toggle_sidebar',
-        })
-    },
-    methods: {
-        handleSelect(key, keyPath) {
-            this.$router.push({name: key});
-        }
+const dashboardSettingsModule = namespace('dashboard/settings')
+
+@Component
+export default class LeftSidebar extends Vue {
+
+    @dashboardSettingsModule.Getter("toggleLeftPanel") sidebarState: boolean;
+
+    handleSelect(key: string, keyPath: string) {
+        this.$router.push({name: key});
     }
-};
+}
+
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

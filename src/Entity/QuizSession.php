@@ -1,73 +1,152 @@
 <?php
+
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use App\Repository\QuestionRepository;
-use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
-use JMS\Serializer\Annotation As JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
+ *
  * @ORM\Entity(repositoryClass="App\Repository\QuizSessionRepository")
  * @ORM\Table(name="quiz_session")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource(
+ *     itemOperations={
+ *          "get" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') | is_granted('ROLE_USER') and object.owner == user"
+ *          },
+ *          "put" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "delete" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "get_tag_breakdown" = {
+ *              "method"="GET",
+ *              "controller"=App\Controller\GetTagBreakdownAction::class,
+ *              "path"="/quiz_sessions/{id}/breakdown",
+ *              "normalization_context"={"groups"={"tag:breakdown"}},
+ *              "access_control"="is_granted('ROLE_USER') && is_granted('view.report',object)",
+ *          },
+ *          "post_submit_questions" = {
+ *              "method"="POST",
+ *              "controller"=App\Controller\CreateQuestionBySessionAndPageAction::class,
+ *              "path"="/quiz_sessions/{id}/questions/{page}",
+ *              "normalization_context"={"groups"={"quiz_session:get"}},
+ *              "access_control"="is_granted('ROLE_USER') && is_granted('edit.questions',object)",
+ *          },
+ *          "patch_submit_questions" = {
+ *              "method"="PUT",
+ *              "controller"=App\Controller\CreateQuestionBySessionAndPageAction::class,
+ *              "path"="/quiz_sessions/{id}/questions/{page}",
+ *              "normalization_context"={"groups"={"quiz_session:get"}},
+ *              "access_control"="is_granted('ROLE_USER') && is_granted('edit.questions',object)",
+ *          }
+ *     },
+ *     collectionOperations={
+ *          "post" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')",
+ *           },
+ *          "get" = {
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "normalization_context"={"groups"={"quiz_session:get", "timestamp"}}
+ *           },
+ *          "post_start" = {
+ *              "method"="POST",
+ *              "path"="/quiz_sessions/start",
+ *              "controller"=App\Controller\CreateQuizSessionByAccess::class,
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "swagger_context" = {
+ *                  "description" = "Starts a new Quiz Session from access",
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "body",
+ *                          "in" = "body",
+ *                          "type" = "object",
+ *                          "properties" = {"access_id" = { "type" =  "string"},"user_id" = { "type" =  "string"}},
+ *                      },
+ *                      {
+ *                          "name" = "id",
+ *                          "in" = "path",
+ *                          "required" = "true",
+ *                          "type" = "integer"
+ *                      },
+ *                      {
+ *                          "name" = "user_id",
+ *                          "in" = "path",
+ *                          "required" = "true",
+ *                          "type" = "integer"
+ *                      }
+ *                   },
+ *               },
+ *          }
+ *     }
+ * )
  *
- *
+ * @ApiFilter(ExistsFilter::class, properties={"submittedAt"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact","owner":"exact"})
  */
 class QuizSession
 {
     use TimestampTrait;
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("int")
+     * @Groups({"quiz_session:get"})
      */
     protected $id;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="score", type="integer", nullable=true)
      *
-     * @JMS\Groups({"results"})
-     * @JMS\Type("int")
+     * @Groups({"quiz_session:get"})
      */
     protected $score;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="max_score", type="integer", nullable=true)
      *
-     * @JMS\Groups({"results"})
-     * @JMS\Type("int")
+     * @Groups({"quiz_session:get"})
      */
     protected $maxScore;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="QuizAccess", inversedBy="quizSessions")
+     * @ORM\JoinColumn(name="quiz_access_id", referencedColumnName="id",nullable=true)
+     */
+    protected $quizAccess;
 
     /**
      * @var array
      *
      * @ORM\Column(name="meta", type="json", nullable=true)
      *
-     * @JMS\Groups({"meta"})
-     * @JMS\Type("json_array")
+     * @Groups({"meta"})
+     *
      */
     protected $meta;
-
 
     /**
      * @var \DateTime
      * @ORM\Column(name="submitted_at",type="datetime",nullable=true)
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("DateTime")
+     * @Groups({"quiz_session:get"})
      */
     protected $submittedAt;
 
@@ -79,11 +158,9 @@ class QuizSession
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
      *
-     * @JMS\Groups({"quiz"})
-     * @JMS\Type("DateTime")
+     * @Groups({"quiz_session:get"})
      */
     protected $quiz;
-
 
     /**
      * @var Classroom
@@ -93,20 +170,17 @@ class QuizSession
      *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      * })
      *
-     * @JMS\Groups({"classroom"})
+     * @Groups({"quiz_session:get"})
      */
     protected $classroom;
 
-
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="current_page", type="integer", nullable=true)
-     *
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("int")
+     * @Groups({"quiz_session:get"})
      */
-    protected $current_page = 0;
+    protected $currentPage = 0;
 
     /**
      * @var User
@@ -114,7 +188,6 @@ class QuizSession
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"list","detail"})
      */
     protected $owner;
 
@@ -122,10 +195,8 @@ class QuizSession
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="session")
      *
-     * @JMS\Groups({"results"})
      */
     protected $responses;
-
 
     /**
      * @return int
@@ -143,6 +214,7 @@ class QuizSession
     public function setOwner(User $user)
     {
         $this->owner = $user;
+
         return $this;
     }
 
@@ -154,15 +226,42 @@ class QuizSession
     public function setQuiz($quiz)
     {
         $this->quiz = $quiz;
+
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuizAccess()
+    {
+        return $this->quizAccess;
+    }
+
+    /**
+     * @param mixed $quizAccess
+     */
+    public function setQuizAccess($quizAccess): void
+    {
+        $this->quizAccess = $quizAccess;
     }
 
     /**
      * @param Classroom $classroom
      */
-    public function setClassroom(Classroom $classroom): void
+    public function setClassroom(Classroom $classroom): QuizSession
     {
         $this->classroom = $classroom;
+        return $this;
+    }
+
+
+    /**
+     * @return Classroom
+     */
+    public function getClassroom(): Classroom
+    {
+        return $this->classroom;
     }
 
     /**
@@ -176,13 +275,13 @@ class QuizSession
     /**
      * @return int
      */
-    public function getMaxScore(): int
+    public function getMaxScore(): ?int
     {
         return $this->maxScore;
     }
 
     /**
-     * @param array  $meta
+     * @param array $meta
      */
     public function setMeta(array $meta): void
     {
@@ -192,16 +291,15 @@ class QuizSession
     /**
      * @return array
      */
-    public function getMeta(): array
+    public function getMeta(): ?array
     {
         return $this->meta;
     }
 
-
     /**
      * @return int
      */
-    public function getScore(): int
+    public function getScore(): ?int
     {
         return $this->score;
     }
@@ -228,7 +326,16 @@ class QuizSession
     public function setSubmittedAt(\DateTime $submittedAt): QuizSession
     {
         $this->submittedAt = $submittedAt;
+
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getSubmittedAt(): ?\DateTime
+    {
+        return $this->submittedAt;
     }
 
     /**
@@ -236,7 +343,7 @@ class QuizSession
      */
     public function getCurrentPage(): int
     {
-        return $this->current_page;
+        return $this->currentPage;
     }
 
     /**
@@ -244,15 +351,7 @@ class QuizSession
      */
     public function setCurrentPage(int $current_page): void
     {
-        $this->current_page = $current_page;
-    }
-
-    public function getNonResponseQuestions()
-    {
-        /** @var QuestionRepository $questionRepository */
-        $questionRepository = \EntityManager::getRepository(QuizQuestion::class);
-        return $questionRepository->filterQuestionsByNotInResponses($this->getQuiz(),$this->getResponses());
-
+        $this->currentPage = $current_page;
     }
 
 }

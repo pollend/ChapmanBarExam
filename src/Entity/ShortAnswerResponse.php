@@ -2,22 +2,27 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
+ *
  * @ORM\Entity()
  * @ORM\Table(name="short_answer_response")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource(
+ *   collectionOperations={"get"},
+ *   itemOperations={"get"}
+ * )
  */
 class ShortAnswerResponse extends QuizResponse
 {
-
     /**
      * @var string
      * @ORM\Column(name="content", type="text",nullable=true)
-     * @JMS\Groups({"correct"})
+     * @Groups({"quiz_response:get"})
      */
     protected $content;
 
@@ -29,16 +34,18 @@ class ShortAnswerResponse extends QuizResponse
         return $this->content;
     }
 
-
     /**
      * @param string $content
      */
     public function setContent(string $content): ShortAnswerResponse
     {
         $this->content = $content;
+
         return $this;
     }
 
-
-
+    public function isCorrectResponse()
+    {
+       return false;
+    }
 }

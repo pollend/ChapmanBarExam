@@ -2,29 +2,38 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
-
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * Class UserWhitelist
+ * Class UserWhitelist.
  *
  * @ORM\Entity()
  * @ORM\Table(name="`user_whitelist`")
  * @ORM\HasLifecycleCallbacks
- *
+ * @ApiResource(
+ *   collectionOperations={
+ *      "get"= { "access_control"="is_granted('ROLE_ADMIN')"},
+ *      "post" = { "access_control"="is_granted('ROLE_ADMIN')" }
+ *   },
+ *   itemOperations={
+ *     "get" = { "access_control"="is_granted('ROLE_ADMIN')"},
+ *     "put" = { "access_control"="is_granted('ROLE_ADMIN')"},
+ *     "delete" = { "access_control"="is_granted('ROLE_ADMIN')"}
+ *   }
+ * )
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","classroom":"exact","email": "partial"})
  */
 class UserWhitelist
 {
     /**
-     * @var integer
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("int")
      */
     protected $id;
 
@@ -35,21 +44,27 @@ class UserWhitelist
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="classroom_id", referencedColumnName="id")
      * })
-     *
-     * @JMS\Groups({"list","detail"})
      */
     protected $classroom;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list"})
      */
     protected $email;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function setClassroom(Classroom $classroom): UserWhitelist
     {
         $this->classroom = $classroom;
+
         return $this;
     }
 
@@ -67,6 +82,7 @@ class UserWhitelist
     public function setEmail(string $email): UserWhitelist
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -77,5 +93,4 @@ class UserWhitelist
     {
         return $this->email;
     }
-
 }

@@ -2,37 +2,44 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\TimestampTrait;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
+ *
  * @ORM\Entity(repositoryClass="App\Repository\ShortAnswerQuestionRepository")
  * @ORM\Table(name="short_answer_question")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource(
+ *   collectionOperations={"get"},
+ *   itemOperations={"get"}
+ * )
  */
 class ShortAnswerQuestion extends QuizQuestion
 {
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)\
-     * @JMS\Groups({"detail"})
+     * @Groups({"quiz_question:get"})
      */
     protected $content;
 
-    public function answers(){
-       return $this->responses;
+    public function answers()
+    {
+        return $this->responses;
     }
 
     /**
      * @param $session
+     *
      * @return \Doctrine\Common\Collections\ArrayCollection|\Doctrine\Common\Collections\Collection
      */
-    public function answersBySession($session){
-        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
+    public function answersBySession($session)
+    {
+        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
     }
 
     /**
@@ -41,6 +48,7 @@ class ShortAnswerQuestion extends QuizQuestion
     public function setContent(string $content): ShortAnswerQuestion
     {
         $this->content = $content;
+
         return $this;
     }
 
@@ -59,5 +67,4 @@ class ShortAnswerQuestion extends QuizQuestion
     {
         return $this->content;
     }
-
 }

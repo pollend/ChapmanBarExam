@@ -1,36 +1,40 @@
 <?php
 
-
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
+ *
  * @ORM\Entity()
  * @ORM\Table(name="text_block_question")
  * @ORM\HasLifecycleCallbacks
+ * @ApiResource(
+ *   collectionOperations={"get"},
+ *   itemOperations={"get"}
+ * )
  */
 class TextBlockQuestion extends QuizQuestion
 {
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"quiz_question:get"})
      */
     protected $content;
 
-
-
     /**
      * @param string $content
+     *
      * @return TextBlockQuestion
      */
     public function setContent(string $content): TextBlockQuestion
     {
         $this->content = $content;
+
         return $this;
     }
 

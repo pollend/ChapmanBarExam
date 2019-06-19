@@ -72,19 +72,25 @@
             </tbody>
         </table>
 
-        <div v-for="(q,index) in questions" v-bind:key="q.id" v-bind:id="`question-${q.id}`">
+        <div v-for="(q,index) in questions['hydra:member']" v-bind:key="q.id" v-bind:id="`question-${q.id}`">
             <div class="tag-container">
                 <!-- el-tag elements clogging up event queue when unbinding replaced with span for performance -->
                 <span v-for="tag in q.tags" :key="tag.id" class="el-tag el-tag--info el-tag--medium el-tag--light">{{tag.name}}</span>
 <!--                <el-tag :disableTransitions="true" type="info" v-for="tag in q.tags" :key="tag.id">{{tag.name}}</el-tag>-->
             </div>
-            <template v-if="q.type === 'multiple_choice'">
+            <template v-if="q['@type']=== 'MultipleChoiceQuestion'">
                 <p class="question_statement"  v-bind:class="{'question-selected': question_mark ===  `question-${q.id}` }">
                     {{index + 1}}. {{q.content}}
                 </p>
                 <template>
                     <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
-                        ({{mapCharacterIndex(index)}}) <multiple-choice-entry :correct_entry="q.correct_entry" :entry="e" :response="(q.id in responses) ? responses[q.id].choice : null "></multiple-choice-entry>
+                        ({{mapCharacterIndex(index)}})
+                        <template v-if="q['@id'] in questionResponse">
+                            <multiple-choice-selection :type="choiceMatch(questionResponse[q['@id']].choice,e) ? (questionResponse[q['@id']].correctResponse? 'correct': 'in-correct') : ''"  :content="e.content"></multiple-choice-selection>
+                        </template>
+                        <template v-else>
+                            <multiple-choice-selection :content="e.content"></multiple-choice-selection>
+                        </template>
                     </div>
                 </template>
             </template>
@@ -101,69 +107,90 @@
     </div>
 </template>
 
-<script>
-import {getReport} from "@/api/report";
+<script lang="ts">
+import {Vue, Component, Provide} from "vue-property-decorator";
+import service from "../../utils/request";
+import {HydraCollection, hydraGetID} from "../../entity/hydra";
+import {MultipleChoiceEntry, MultipleChoiceQuestion, QuizQuestion} from "../../entity/quiz-question";
+import {MultipleChoiceResponse, QuizQuestionResponse} from "../../entity/quiz-response";
 import NProgress from 'nprogress';
-import MultipleChoiceEntry from './component/MultipleChoiceEntry'
-import  _ from 'lodash';
-export default {
-  name: 'ReportShow',
-  components: {MultipleChoiceEntry },
-  data() {
-    return {
-        questions: null,
-        responses: null,
-        started_loading: false,
-        question_mark: ''
-    };
-  },
-  watch: {
-    '$route' (to, from) {
-        this.question_mark =  to.hash.split('#')[1]
+import _ from 'lodash';
+import MultipleChoiceSelection from "./component/MultipleChoiceSelection.vue";
+
+@Component({components: {MultipleChoiceSelection}})
+export default class ReportShowOverview extends Vue {
+    @Provide() questions: HydraCollection<QuizQuestion> = null;
+    @Provide() responses: HydraCollection<MultipleChoiceResponse> = null;
+    @Provide() started_loading: [];
+    @Provide() question_mark: string = '';
+
+    async created() {
+        NProgress.start();
+        await Promise.all([service({
+            url: '/_api/quiz_responses/session/' + this.$router.currentRoute.params['report_id'],
+            method: 'GET'
+        }).then((response) => {
+            this.responses = response.data;
+        }).catch((err) => {
+
+        }),
+        service({
+            url: '/_api/questions/sessions/' + this.$router.currentRoute.params['report_id'],
+            method: 'GET'
+        }).then((response) => {
+            this.questions = response.data;
+        }).catch((err) => {
+
+        })]);
+        NProgress.done();
     }
-  },
-  async created(){
-      let _this = this;
-      NProgress.start();
-      let response = await getReport(this.$route.params.report_id);
-      const {questions,responses} = response.data;
-      _this.questions = questions;
-      _this.responses = responses;
-      NProgress.done();
-  },
-  computed: {
-      chunkedRespones() {
-          return _.chunk(_.chunk(_.filter(this.questions,function (q) {
-              return q.type === 'multiple_choice';
-          }),5),10)
-      }
-  },
-  methods: {
-      responseCharacter(question) {
-          let choice = (question.id in this.responses) ? this.responses[question.id].choice : null;
-          if(choice === null)
-              return '_';
-          if(question.correct_entry.id === choice.id){
-              return '-';
-          }
-          for(const [index,e] of this.orderEntries(question.entries).entries()){
-              if(e.id === choice.id){
-                  return this.mapCharacterIndex(index);
-              }
-          }
-          return '?';
-      },
-      orderEntries(entries){
-          return _.orderBy(entries,function (o) {
-              return o.order;
-          })
-      },
-      mapCharacterIndex(index){
-          const lookup = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'];
-          return lookup[index];
-      }
-  },
-};
+
+    get chunkedRespones() {
+        return _.chunk(_.chunk(_.filter(this.questions["hydra:member"], function (q) {
+            return q['@type'] === 'MultipleChoiceQuestion';
+        }), 5), 10)
+    }
+
+    get questionResponse() {
+        return _.keyBy(this.responses["hydra:member"], (response) => {
+            return response.question;
+        });
+    }
+
+    mapCharacterIndex(index: number) {
+        const lookup = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+        return lookup[index];
+    }
+
+    orderEntries(entries: MultipleChoiceEntry[]) {
+        return _.orderBy(entries, function (o) {
+            return o.order;
+        })
+    }
+
+    choiceMatch(c1: MultipleChoiceEntry, c2: MultipleChoiceEntry): boolean {
+        return hydraGetID(c1) == hydraGetID(c2);
+    }
+
+    responseCharacter(question: MultipleChoiceQuestion) {
+        const choice: MultipleChoiceResponse = (question["@id"] in this.questionResponse) ? this.questionResponse[question["@id"]] : null;
+
+        if (choice) {
+            if (choice.correctResponse === true) {
+                return '-'
+            } else {
+                for (const [index, e] of this.orderEntries(question.entries).entries()) {
+                    if (hydraGetID(e) == hydraGetID(choice.choice)) {
+                        return this.mapCharacterIndex(index);
+                    }
+                }
+            }
+        } else {
+            return '_';
+        }
+        return '?';
+    }
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

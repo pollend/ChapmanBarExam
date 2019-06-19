@@ -1,13 +1,13 @@
 <template>
     <div class="section">
         <div class="container">
-            <el-table :data="reports">
+            <el-table :data="reports['hydra:member']">
                 <el-table-column
-                        prop="created_at"
+                        prop="createdAt"
                         label="Created At">
                 </el-table-column>
                 <el-table-column
-                        prop="submitted_at"
+                        prop="submittedAt"
                         label="Submitted At">
                 </el-table-column>
                 <el-table-column
@@ -26,34 +26,38 @@
     </div>
 </template>
 
-<script>
-import {getReports} from "@/api/report";
-import {mapGetters} from "vuex";
+<script lang="ts">
 
-export default {
-  name: 'ReportIndex',
-  components: { },
-  computed: {
-      ...mapGetters({
-          'userId': 'user/id',
-      }),
-  },
-  data() {
-    return {
-        reports: null
-    };
-  },
-  async created() {
-      const response = await getReports(this.userId);
-      const {reports} = response.data;
-      this.reports = reports;
-  },
-  methods: {
-      handleView(row){
-          this.$router.push({'name':'app.report.show','params':{'report_id': row.id}})
-      }
-  },
-};
+import {Component, Provide, Vue, Watch} from "vue-property-decorator";
+import {namespace} from "vuex-class";
+import User from "../../entity/user";
+import service from "../../utils/request";
+import {ExistFilter, FilterBuilder, SearchFilter} from "../../utils/filter";
+import {HydraCollection} from "../../entity/hydra";
+import QuizSession from "../../entity/quiz-session";
+
+const authModule = namespace('auth')
+
+@Component
+export default class ReportList extends Vue {
+    @authModule.Getter("user") user: User;
+    @Provide() reports: HydraCollection<QuizSession> = null;
+
+    handleView(row: any){
+        this.$router.push({'name':'app.report.show','params':{'report_id': row.id}})
+    }
+    created() {
+        service({
+            url: '/_api/quiz_sessions?' + (new FilterBuilder()).addFilter(new ExistFilter('submittedAt',true)).addFilter(new SearchFilter("owner",this.user.id + '')).build(),
+            method: 'GET'
+        }).then((response) => {
+            this.reports = response.data;
+        }).catch((error) => {
+
+        });
+    }
+}
+
 </script>
 
 <style>

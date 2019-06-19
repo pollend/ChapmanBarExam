@@ -1,45 +1,46 @@
 <?php
 
-
 namespace App\Entity;
 
-use App\Entity\Traits\TimestampTrait;
-
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
  *
  * @ORM\Entity(repositoryClass="App\Repository\MultipleChoiceEntryRepository")
  * @ORM\Table(name="multiple_choice")
  * @ORM\HasLifecycleCallbacks
- *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  */
 class MultipleChoiceEntry
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"quiz_question:get","quiz_response:get"})
      */
     protected $id;
 
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(name="`order`",type="smallint",nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"quiz_question:get","quiz_response:get"})
+     * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $order;
 
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"quiz_question:get","quiz_response:get"})
      */
     protected $content;
 
@@ -66,6 +67,7 @@ class MultipleChoiceEntry
     public function setContent(string $content): MultipleChoiceEntry
     {
         $this->content = $content;
+
         return $this;
     }
 
@@ -75,6 +77,7 @@ class MultipleChoiceEntry
     public function setQuestion(MultipleChoiceQuestion $question): MultipleChoiceEntry
     {
         $this->question = $question;
+
         return $this;
     }
 
@@ -84,6 +87,7 @@ class MultipleChoiceEntry
     public function setOrder(int $order): MultipleChoiceEntry
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -95,8 +99,8 @@ class MultipleChoiceEntry
         return $this->order;
     }
 
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
-
 }

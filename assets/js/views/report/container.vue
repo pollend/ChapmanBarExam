@@ -7,23 +7,17 @@
     </div>
 </template>
 
-<script>
-    import {getReports} from "@/api/report";
-    import {mapGetters} from "vuex";
+<script lang="ts">
+    import {Component, Provide, Vue} from "vue-property-decorator";
 
-    export default {
-        name: 'Report',
-        data (){
-          return {
-              tab: this.$router.currentRoute.name
-          };
-        },
-        methods: {
-            handleReportTabs(tab, event) {
-                this.$router.push({name: tab.name,params:{report_id:this.$route.params.report_id}})
-            }
+    @Component
+    export default class ReportContainer extends Vue{
+        @Provide() tab: string = this.$router.currentRoute.name;
+
+        handleReportTabs(tab: any, event: string) {
+            this.$router.push({name: tab.name, params: {report_id: this.$route.params.report_id}})
         }
-    };
+    }
 </script>
 
 <style>

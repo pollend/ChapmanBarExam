@@ -3,8 +3,9 @@
  * Created by PhpStorm.
  * User: michaelpollind
  * Date: 5/26/17
- * Time: 10:29 AM
+ * Time: 10:29 AM.
  */
+
 namespace App\Normalizer\Subscriber;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -13,13 +14,10 @@ use JMS\Serializer\GraphNavigatorInterface;
 use JMS\Serializer\Handler\SubscribingHandlerInterface;
 use JMS\Serializer\JsonSerializationVisitor;
 
-
-
 class PaginatorSubscriber implements SubscribingHandlerInterface
 {
-
     /**
-     * Return format:
+     * Return format:.
      *
      *      array(
      *          array(
@@ -53,13 +51,11 @@ class PaginatorSubscriber implements SubscribingHandlerInterface
         $perPage = $query->getMaxResults();
         $offset = $query->getFirstResult();
 
-
         return [
-            "count" => $count,
-            "per_page" => $perPage,
-            "page" => (int)ceil( $offset/$perPage),
-            "result" =>
-                $context->getNavigator()->accept($query->getResult())
+            'count' => $count,
+            'per_page' => $perPage,
+            'page' => (int) ceil($offset / $perPage),
+            'result' => $context->getNavigator()->accept($query->getResult()),
         ];
     }
 }

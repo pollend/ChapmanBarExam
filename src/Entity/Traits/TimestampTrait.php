@@ -2,38 +2,46 @@
 
 namespace App\Entity\Traits;
 
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
+/**
+ * Trait TimestampTrait
+ * @package App\Entity\Traits
+ */
 trait TimestampTrait
 {
-
     /**
      * @ORM\Column(name="created_at",type="datetime",nullable=false)
-     * @JMS\Groups({"timestamp"})
-     *
+     * @Groups({"timestamp"})
      */
     protected $createdAt;
 
     /**
      * @ORM\Column(name="updated_at",type="datetime",nullable=false)
-     * @JMS\Groups({"timestamp"})
+     * @Groups({"timestamp"})
      */
     protected $updatedAt;
 
-    public function getUpdatedAt(){
+    public function getUpdatedAt()
+    {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt($updatedAt){
+    public function setUpdatedAt($updatedAt)
+    {
         $this->updatedAt = $updatedAt;
     }
 
-    public function getCreatedAt(){
+    public function getCreatedAt()
+    {
         return $this->createdAt;
     }
 
-    public function setCreatedAt($createdAt){
+    public function setCreatedAt($createdAt)
+    {
         $this->createdAt = $createdAt;
     }
 
@@ -44,9 +52,8 @@ trait TimestampTrait
     public function updatedTimestamps(): void
     {
         $this->setUpdatedAt(new \DateTime('now'));
-        if ($this->getCreatedAt() === null) {
+        if (null === $this->getCreatedAt()) {
             $this->setCreatedAt(new \DateTime('now'));
         }
     }
-
 }

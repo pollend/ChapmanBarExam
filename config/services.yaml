@@ -24,15 +24,22 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    App\Normalizer\Subscriber\:
-        resource: '../src/Normalizer/Subscriber/*'
-        public: true
+    App\Security\:
+        public: false
+        resource: '../src/Security/*'
         tags:
-        - { name: jms_serializer.subscribing_handler }
-    App\Normalizer\Event\:
-        resource: '../src/Normalizer/Event/*'
-        public: true
+            - { name: security.voter }
+
+    App\Doctrine\AccessControlExtension:
         tags:
-            - { name: jms_serializer.event_subscriber }
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+            - { name: api_platform.doctrine.orm.query_extension.item }
+
+    App\Serializer\ClassroomContextBuilder:
+        decorates: 'api_platform.serializer.context_builder'
+        arguments: [ '@App\Serializer\ClassroomContextBuilder.inner' ]
+        autoconfigure: false
+
+    'App\Serializer\QuizAccessNormalizer':
+        decorates: 'api_platform.jsonld.normalizer.item'
+        arguments: [ '@App\Serializer\QuizAccessNormalizer.inner' ]

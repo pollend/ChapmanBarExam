@@ -1,17 +1,20 @@
 <?php
+
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class User
+ * Class User.
  *
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="`user`")
@@ -26,7 +29,37 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     fields="username",
  *     errorPath="username",
  *     message="username already used")
- *
+ * @ApiResource(
+ *     itemOperations= {
+ *          "delete" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and object == user"
+ *          },
+ *          "put" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and previous_object == user",
+ *              "normalization_context"={"groups" = {"put"}}
+ *          },
+ *          "get" = {
+ *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and object == user",
+ *              "normalization_context"={"groups" = {"get"}}
+ *          }
+ *     },
+ *     collectionOperations={
+ *     "post" = {
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "normalization_context"={"groups" = {"post"}}
+ *     },
+ *     "get" = {
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "normalization_context"={"groups" = {"get"}}
+ *     },
+ *     "get_me" = {
+ *         "method" = "GET",
+ *         "path"= "/users/me",
+ *         "controller"=App\Controller\AuthMe::class,
+ *         "access_control"="is_granted('ROLE_USER')",
+ *         "normalization_context"={"groups" = {"get"}}
+ *     }
+ * })
  */
 class User implements UserInterface
 {
@@ -36,26 +69,27 @@ class User implements UserInterface
     const ROLE_ADMIN = 'ROLE_ADMIN';
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list","detail","owner"})
+     * @Groups({"get"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="json")
-     * @JMS\Groups({"list","detail","owner"})
+     * @Groups({"get"})
      */
     private $roles = [User::ROLE_USER];
-
 
     /**
      * @var string
      * @ORM\Column(name="username",type="string",length=100,nullable=false)
-     * @JMS\Groups({"user_name","owner"})
+     * @Groups({"get","put","post"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min="4",max="100")
      */
     protected $username;
 
@@ -63,14 +97,15 @@ class User implements UserInterface
      * @var \DateTime
      *
      * @ORM\Column(name="last_login", type="datetime", nullable=true)
-     * @JMS\Groups({"owner"})
+     * @Groups({"get"})
      */
     private $lastLogin;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=100,nullable=false)
-     * @JMS\Groups({"user_email","owner"})
+     * @Groups({"get"})
+     * @Assert\Email()
      */
     protected $email;
 
@@ -83,44 +118,43 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column(name="password",type="string",length=255,nullable=false)
-     * @JMS\Exclude()
      */
     protected $password;
 
     /**
      * @var string
      * @ORM\Column(name="azure_id",type="string",length=50,nullable=false)
-     * @JMS\Exclude()
      */
     protected $azureId;
 
     /**
      * @var string
      * @ORM\Column(name="remember_token",type="string",length=100,nullable=false)
-     * @JMS\Exclude()
      */
     protected $rememberToken;
 
     /**
      * Many Groups have Many Users.
+     *
      * @ORM\ManyToMany(targetEntity="Classroom", mappedBy="users")
+     * @Groups({"get"})
      */
     protected $classes;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="owner")
-     * @JMS\Groups({"detail"})
+     * @Groups({"get"})
      */
     protected $quizSessions;
 
     /**
      * @Assert\NotBlank()
      * @Assert\Length(max=4096)
+     *
      * @var string
      */
     private $plainTextPassword;
-
 
     /**
      * @param string $rememberToken
@@ -129,7 +163,6 @@ class User implements UserInterface
     {
         $this->rememberToken = $rememberToken;
     }
-
 
     /**
      * @param string $azureId
@@ -144,7 +177,6 @@ class User implements UserInterface
         $this->emailVerifiedAt = $emailVerifiedAt;
     }
 
-
     /**
      * @return int
      */
@@ -152,7 +184,6 @@ class User implements UserInterface
     {
         return $this->id;
     }
-
 
     /**
      * @return string
@@ -170,7 +201,6 @@ class User implements UserInterface
         $this->email = $email;
     }
 
-
     /**
      * Returns the roles granted to the user.
      *
@@ -185,7 +215,8 @@ class User implements UserInterface
      *
      * @return (Role|string)[] The user roles
      */
-    public function getRoles(){
+    public function getRoles()
+    {
         return array_unique($this->roles);
     }
 
@@ -249,6 +280,29 @@ class User implements UserInterface
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getLastLogin(): ?\DateTime
+    {
+        return $this->lastLogin;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getQuizSessions(): Collection
+    {
+        return $this->quizSessions;
+    }
+
+
+    public function getActiveSession()
+    {
+        return $this->quizSessions->matching(Criteria::create()->where(Criteria::expr()->isNull('submittedAt')));
+    }
+
+
+    /**
      * Removes sensitive data from the user.
      *
      * This is important if, at any given point, sensitive information like
@@ -258,6 +312,4 @@ class User implements UserInterface
     {
         $this->plainTextPassword = '';
     }
-
-
 }

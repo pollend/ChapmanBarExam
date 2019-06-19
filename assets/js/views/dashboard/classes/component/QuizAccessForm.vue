@@ -38,7 +38,6 @@
 
 <script>
     import { DateTime } from 'luxon';
-    import {getQuizAccess, patchQuizAccess} from "@/api/quiz-access";
     export default {
         props:['classId'],
         data() {
@@ -66,13 +65,13 @@
                 this.loading = true;
                 for (const access of this.data){
                     if(access.isMarked) {
-                        const response = await patchQuizAccess(this.classId, access.id, {
-                            'is_hidden': access.is_hidden,
-                            'num_attempts': access.num_attempts,
-                            'open_date': access.range[0],
-                            'close_date':  access.range[1],
-                            'quiz': access.quiz.id
-                        });
+                        // const response = await patchQuizAccess(this.classId, access.id, {
+                        //     'is_hidden': access.is_hidden,
+                        //     'num_attempts': access.num_attempts,
+                        //     'open_date': access.range[0],
+                        //     'close_date':  access.range[1],
+                        //     'quiz': access.quiz.id
+                        // });
                     }
                 }
                 await this.loadAccessData();

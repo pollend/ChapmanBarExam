@@ -1,24 +1,44 @@
 <?php
+
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\SoftDeleteTrait;
 use App\Entity\Traits\TimestampTrait;
-use Carbon\Carbon;
-use Carbon\Traits\Date;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+//TODO: add Delete for quiz
+//TODO: work out access for user
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
  *
  * @ORM\Entity(repositoryClass="App\Repository\QuizRepository")
  * @ORM\Table(name="quiz")
  * @ORM\HasLifecycleCallbacks
- *
+ * @ApiResource(
+ *     itemOperations={
+ *          "get" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')",
+ *          },
+ *          "put" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *     },
+ *     collectionOperations={
+ *          "get" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')",
+ *               "normalization_context"={"groups"={"quiz:get"}},
+ *          },
+ *          "post" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *      }
+ * )
  */
 class Quiz
 {
@@ -26,57 +46,56 @@ class Quiz
     use SoftDeleteTrait;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"list"})
-     * @JMS\Type("int")
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
-     * @JMS\Groups({"list"})
+     * @Groups({"classroom:get","quiz-access:get","quiz:get"})
      */
     protected $description;
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quiz")
-     * @JMS\Groups({"quiz_sessions"})
+     * @Groups({"quiz_sessions","quiz:get"})
      */
     protected $quizSessions;
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizQuestion",mappedBy="quiz")
-     * @JMS\Groups({"detail"})
-     * @JMS\Groups({"quiz_questions"})
+     * @Groups({"detail"})
+     * @Groups({"quiz_questions"})
      */
     protected $questions;
 
     /**
      * One product has many features. This is the inverse side.
+     *
      * @ORM\OneToMany(targetEntity="QuizAccess", mappedBy="quiz")
      */
     protected $access;
 
     /**
-     * @JMS\VirtualProperty
-     * @JMS\SerializedName("num_questions")
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      **/
-    public function numQuestions(){
+    public function getNumQuestions()
+    {
         return $this->getQuestions()->count();
     }
 
@@ -102,6 +121,7 @@ class Quiz
     public function setName(string $name): Quiz
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -119,33 +139,33 @@ class Quiz
     public function setDescription(string $description): Quiz
     {
         $this->description = $description;
+
         return $this;
     }
 
     /**
      * @return ArrayCollection
      */
-    public function getQuestions() : PersistentCollection
+    public function getQuestions(): PersistentCollection
     {
         return $this->questions;
     }
 
     /**
-     *
-     * @param $user
-     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
+     * @return PersistentCollection
      */
-    public function getQuizSessionsByUser($user){
-        return $this->quizSessions->matching(Criteria::create()->where(Criteria::expr()->eq('owner',$user)));
+    public function getQuizSessions(): PersistentCollection
+    {
+        return $this->quizSessions;
     }
 
     /**
-     * @return \DateTime
+     * @param $user
+     *
+     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
      */
-    public function getCloseDate(): \Carbon\Carbon
+    public function getQuizSessionsByUser($user)
     {
-        return Carbon::instance($this->closeDate);
+        return $this->quizSessions->matching(Criteria::create()->where(Criteria::expr()->eq('owner', $user)));
     }
-
-
 }

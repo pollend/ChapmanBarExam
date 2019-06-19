@@ -2,21 +2,50 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\SoftDeleteTrait;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
-use JMS\Serializer\Annotation As JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+
 /**
- * @package App\Entities
- *
  * @ORM\Entity(repositoryClass="App\Repository\ClassroomRepository")
  * @ORM\Table(name="classroom")
  * @ORM\HasLifecycleCallbacks
- *
+ * @ApiResource(
+ * attributes={"pagination_items_per_page"=100},
+ * itemOperations={
+ *    "get" = {
+ *       "normalization_context"={"groups"={"classroom:get"}}
+ *     }
+ * },
+ * collectionOperations={
+ *     "get" = {
+ *          "normalization_context"={"groups"={"classroom:get"}}
+ *     },
+ *     "get_by_user" = {
+ *          "method"="GET",
+ *          "access_control"="is_granted('ROLE_USER')",
+ *          "controller"=App\Controller\GetClassesByUser::class,
+ *          "path"= "/classrooms/user/{user_id}",
+ *          "normalization_context"={"groups"={"classroom:get"}},
+ *          "swagger_context" = {
+ *                  "description" = "Starts a new Quiz Session from access",
+ *                  "parameters" = {}
+ *          }
+ *     }
+ * })
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","users":"exact", "name":"partial", "description":"partial","courseNumber":"partial","users":"exact"})
+ * @ApiFilter(DateFilter::class,properties={"createdAt","updatedAt"})
+ * @ApiFilter(ExistsFilter::class,properties={"deletedAt"})
  */
 class Classroom
 {
@@ -24,80 +53,79 @@ class Classroom
     use SoftDeleteTrait;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @JMS\Groups({"list","detail"})
-     * @JMS\Type("int")
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"list","detail"})
      * @Assert\NotBlank(message="Classroom Name Required")
      * @Assert\NotNull()
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="string",length=50,nullable=true)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"classroom:get","quiz-access:get"})
      */
     protected $description;
 
     /**
      * @var string
      * @ORM\Column(name="course_number",type="string",length=50,nullable=true)
-     * @JMS\Groups({"list","detail"})
+     * @Groups({"classroom:get"})
      */
     protected $courseNumber;
 
     /**
-     * @var ArrayCollection
+     * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="UserWhitelist",mappedBy="classroom")
-     * @JMS\Groups({"classroom_whitelists"})
+     * @Groups({"admin:get"})
      */
     protected $emailWhitelist;
 
     /**
-     * @var ArrayCollection
-     * Many Users have Many Groups.
+     * @var persistentCollection
+     *                           Many Users have Many Groups
      * @ORM\ManyToMany(targetEntity="User", inversedBy="classes")
      * @ORM\JoinTable(name="classroom_user")
-     * @JMS\Groups({"classroom_registered"})
+     * @Groups({"classroom:admin:get"})
      */
     protected $users;
 
     /**
-     * @var ArrayCollection
-     * One Product has One Shipment.
+     * @var arrayCollection
+     *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizAccess",mappedBy="classroom")
-     * @JMS\Groups({"classroom_access"})
+     * @Groups({"classroom:get"})
      */
     protected $quizAccess;
 
     /**
-     * @var ArrayCollection
-     * One Product has One Shipment.
+     * @var arrayCollection
+     *                      One Product has One Shipment
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="classroom")
-     * @JMS\Groups({"classroom_quiz_sessions"})
+     * @Groups({"classroom:admin:get"})
      */
     protected $quizSessions;
 
     /**
-     * @JMS\VirtualProperty
-     * @return string
+     * @Groups({"classroom:admin:get"})
      */
-    public function getNumberOfStudents(){
+    public function getNumberOfStudents()
+    {
         return $this->users->count();
     }
-
 
     /**
      * @return int
@@ -108,7 +136,7 @@ class Classroom
     }
 
     /**
-     * @return ArrayCollection
+     * @return PersistentCollection
      */
     public function getUsers()
     {
@@ -116,9 +144,9 @@ class Classroom
     }
 
     /**
-     * @return ArrayCollection
+     * @return PersistentCollection
      */
-    public function getEmailWhitelist(): ArrayCollection
+    public function getEmailWhitelist(): PersistentCollection
     {
         return $this->emailWhitelist;
     }
@@ -155,26 +183,28 @@ class Classroom
         $this->courseNumber = $courseNumber;
     }
 
-
-    public function isUserRegistered(User $user){
-        return $this->getUsers()->matching(Criteria::create()->where(Criteria::expr()->eq('id',$user->getId())))->count() > 0;
+    public function isUserRegistered(User $user)
+    {
+        return $this->getUsers()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $user->getId())))->count() > 0;
     }
 
     /**
      * @return mixed
      */
-    public function getQuizAccess() : PersistentCollection
+    public function getQuizAccess(): PersistentCollection
     {
         return $this->quizAccess;
     }
 
     /**
      * @param string $name
+     *
      * @return Classroom
      */
     public function setName(string $name): Classroom
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -184,6 +214,5 @@ class Classroom
     public function getName(): string
     {
         return $this->name;
-
     }
 }

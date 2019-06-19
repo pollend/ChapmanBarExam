@@ -1,43 +1,39 @@
 <?php
 
-
 namespace App\Event;
 
-
 use App\Entity\QuizSession;
-use JMS\Serializer\Annotation As JMS;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Contracts\EventDispatcher\Event;
-
 
 class QuestionResultsEvent extends Event
 {
     const QUESTION_RESULTS = 'app.question.result';
 
     /**
-     * @JMS\Groups({"detail"})
+     * @Groups({"question_result:score"})
      */
     protected $score;
     /**
-     * @JMS\Groups({"detail"})
+     * @Groups({"question_result:score"})
      */
     protected $maxScore;
 
     /**
-     * @JMS\Groups({"result_set_questions"})
+     * @Groups({"question_result:question"})
      */
     protected $questions;
 
     /**
-     * @JMS\Groups({"result_set_session"})
+     * @Groups({"question_result:session"})
      */
     protected $session;
 
-    public function __construct(QuizSession $session,$questions = null)
+    public function __construct(QuizSession $session, $questions = null)
     {
         $this->questions = $questions;
         $this->session = $session;
     }
-
 
     /**
      * @return QuizSession
@@ -46,6 +42,7 @@ class QuestionResultsEvent extends Event
     {
         return $this->session;
     }
+
     /**
      * @return mixed
      */
@@ -77,7 +74,6 @@ class QuestionResultsEvent extends Event
     {
         return $this->maxScore;
     }
-
 
     /**
      * @param mixed $maxScore

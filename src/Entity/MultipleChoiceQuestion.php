@@ -1,36 +1,33 @@
 <?php
 
-
 namespace App\Entity;
 
-use App\Entity\Traits\TimestampTrait;
-use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Support\Collection;
-
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Class Quiz
- * @package App
+ * Class Quiz.
  *
  * @ORM\Entity(repositoryClass="App\Repository\MultipleChoiceQuestionRepository")
  * @ORM\Table(name="multiple_choice_question")
  * @ORM\HasLifecycleCallbacks
- *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  */
 class MultipleChoiceQuestion extends QuizQuestion
 {
-
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @JMS\Groups({"detail"})
+     * @Groups({"quiz_question:get"})
      */
     protected $content;
-
 
     /**
      * @var MultipleChoiceEntry
@@ -38,27 +35,21 @@ class MultipleChoiceQuestion extends QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="correct_entry_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"question_correct_answer"})
      */
     protected $correctEntry;
-
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceResponse",mappedBy="question")
-     * @JMS\Groups({"responses"})
      */
     protected $responses;
-
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceEntry",mappedBy="question")
-     * @JMS\Groups({"detail"})
+     * @Groups({"quiz_question:get"})
      */
     protected $entries;
-
-
 
     /**
      * @return MultipleChoiceEntry
@@ -68,22 +59,26 @@ class MultipleChoiceQuestion extends QuizQuestion
         return $this->correctEntry;
     }
 
-    public function toCharacter(MultipleChoiceEntry $entry){
-        $ar = ['A','B','C','D','E','F','G','H','I','K'];
-       foreach (Collection::make($this->entries->matching(Criteria::create()->orderBy(['order' => 'ASC'])))->values() as $key => $value){
-           if($entry == $value){
-               return $ar[$key];
-           }
-       }
-       return 'N';
+    public function toCharacter(MultipleChoiceEntry $entry)
+    {
+        $ar = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K'];
+        foreach (Collection::make($this->entries->matching(Criteria::create()->orderBy(['order' => 'ASC'])))->values() as $key => $value) {
+            if ($entry == $value) {
+                return $ar[$key];
+            }
+        }
+
+        return 'N';
     }
 
-    public function answers(){
+    public function answers()
+    {
         return $this->responses;
     }
 
-    public function answersBySession($session){
-        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session',$session)));
+    public function answersBySession($session)
+    {
+        return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
     }
 
     /**
@@ -102,7 +97,6 @@ class MultipleChoiceQuestion extends QuizQuestion
         return $this->id;
     }
 
-
     /**
      * @param string $content
      */
@@ -119,8 +113,8 @@ class MultipleChoiceQuestion extends QuizQuestion
         return $this->content;
     }
 
-    public function setCorrectAnswer($entry){
+    public function setCorrectAnswer($entry)
+    {
         $this->correctEntry = $entry;
     }
-
 }

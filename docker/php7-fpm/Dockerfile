@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
     openssl \
     git \
     unzip \
-    libpq-dev
+    libpq-dev \
+    libzip-dev \
+    zip
 
 
 # Install Composer
@@ -21,7 +23,8 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} >
 && "date"
 
 # Type docker-php-ext-install to see available extensions
-RUN docker-php-ext-install pdo pdo_pgsql
+RUN docker-php-ext-configure zip --with-libzip
+RUN docker-php-ext-install pdo pdo_pgsql zip
 
 
 # install xdebug

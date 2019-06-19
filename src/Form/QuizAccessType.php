@@ -1,10 +1,7 @@
 <?php
 
-
 namespace App\Form;
 
-
-use App\Entity\Classroom;
 use App\Entity\Quiz;
 use App\Entity\QuizAccess;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -17,16 +14,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuizAccessType extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('is_hidden',CheckboxType::class);
-        $builder->add('open_date',DateTimeType::class,['widget' => 'single_text']);
-        $builder->add('close_date',DateTimeType::class,['widget' => 'single_text']);
-        $builder->add('num_attempts',IntegerType::class);
-        $builder->add('quiz',EntityType::class,[
+        $builder->add('is_hidden', CheckboxType::class);
+        $builder->add('open_date', DateTimeType::class, ['widget' => 'single_text']);
+        $builder->add('close_date', DateTimeType::class, ['widget' => 'single_text']);
+        $builder->add('num_attempts', IntegerType::class);
+        $builder->add('quiz', EntityType::class, [
             'class' => Quiz::class,
-            'choice_label' => 'id'
+            'choice_label' => 'id',
         ]);
     }
 
@@ -34,7 +30,7 @@ class QuizAccessType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => QuizAccess::class,
-            'csrf_protection' => false
+            'csrf_protection' => false,
         ]);
     }
 

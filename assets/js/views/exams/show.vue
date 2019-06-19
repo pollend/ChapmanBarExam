@@ -1,26 +1,25 @@
 <template>
     <div class="section">
-        <div class="container">
-            <div v-for="(q,index) in questions" v-bind:key="q.id">
-                <template v-if="q.type === 'multiple_choice'">
+        <div class="container" v-if="questions">
+            <div v-for="(q,index) in questions['hydra:member']" v-bind:key="q.id">
+                <template v-if="q['@type'] === 'MultipleChoiceQuestion'">
                     <p class="question_statement">
                         {{index}}. {{q.content}}
                     </p>
                     <template>
                         <el-radio-group v-model="q.value">
-                            <div v-for="e in q.entries"  :key="e.id" >
-                                <el-radio :label="e.id">{{ e.content }}</el-radio>
+                            <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
+                                <el-radio :label="e.id">({{mapCharacterIndex(index)}}) {{ e.content }}</el-radio>
                             </div>
                         </el-radio-group>
                     </template>
-
                 </template>
-                <template v-else-if="q.type === 'text_block'">
+                <template v-else-if="q['@type'] === 'TextBlockQuestion'">
                     <p>
                         {{q.content}}
                     </p>
                 </template>
-                <template v-else-if="q.type === 'short_answer'">
+                <template v-else-if="q['@type']=== 'short_answer'">
 
                 </template>
                 <el-divider></el-divider>
@@ -30,73 +29,92 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapGetters } from 'vuex';
-import {getQuestions, getResponses, postResponse} from '@/api/quiz-session'
 import NProgress from 'nprogress';
-export default {
-  name: 'Home',
-  computed: {
-      ...mapGetters({
-         'session_id' : 'quiz-session/session_id',
-          'quiz_id' : 'quiz-session/session_quiz_id'
-      }),
-  },
-  components: { },
-  data() {
-    return {
-        questions: null
-    };
-  },
-  created() {
-      //this.$route.params.page
-      this.query(this.session_id,this.quiz_id,this.$route.params.page);
-  },
-  watch: {
-      session_id: function () {
-          this.query(this.session_id,this.quiz_id,this.$route.params.page);
-      }
-  },
-  methods: {
-      query(session_id,quiz_id,page) {
-          let _this = this;
-          getQuestions(quiz_id,page).then((response) => {
-              const {questions} = response.data;
-              _this.questions = questions;
-              getResponses(session_id,page).then((response)=>{
-                  const {responses} = response.data;
-                  console.log(responses);
-                  let value_map = {};
-                  responses.forEach(function (resp) {
-                      if(resp.type === 'multiple_choice') {
-                          value_map[resp.question.id] = resp.choice.id;
-                      }
-                  });
-                  _this.questions.forEach(function (q) {
-                      if(q.id in value_map)
-                        q.value = value_map[q.id];
-                  });
-                  _this.$forceUpdate();
-              });
-          });
-      },
-      getValues(){
-          let target = {};
-          this.questions.forEach(function (q) {
-              if(q.value) {
-                  target[q.id] = q.value;
-              }
-          });
-          return target;
-      },
-      submitResults() {
-          let result = this.getValues();
-          postResponse(this.session_id,this.$route.params.page,{'responses':result}).then((response) => {
-              this.$router.go();
-          });
-      }
-  },
-};
+import {Component, Provide, Vue} from "vue-property-decorator";
+import {namespace} from "vuex-class";
+import User from "../../entity/user";
+import QuizSession from "../../entity/quiz-session";
+import service from "../../utils/request";
+import {HydraCollection} from "../../entity/hydra";
+import {MultipleChoiceEntry, MultipleChoiceQuestion, TextBlockQuestion} from "../../entity/quiz-question";
+import _ from 'lodash';
+
+const authModule = namespace('auth');
+const quizSessionModel = namespace('app/user-quiz-session');
+
+@Component
+export default class ShowQuizPage extends Vue {
+    @authModule.Getter("user") user: User;
+    @quizSessionModel.Getter("session") session: QuizSession;
+    @quizSessionModel.Action("submit") submit: ({}) => Promise<QuizSession>;
+    @Provide() questions: HydraCollection<MultipleChoiceQuestion | TextBlockQuestion> = null;
+
+    created() {
+       this.query();
+    }
+
+    query(){
+        NProgress.start();
+        service({
+            url: '/_api/questions/sessions/' + this.session.id + '/page/' + this.$router.currentRoute.params['page'] + '/',
+            method: 'GET'
+        }).then((response) => {
+            this.questions = response.data;
+            NProgress.done();
+        }).catch((err) => {
+            console.log(err);
+
+        });
+    }
+
+    getValues() {
+        let target: any = {};
+        this.questions["hydra:member"].forEach(function (q: any) {
+            if (q.value) {
+                target[q.id] = q.value;
+            }
+        });
+        return target;
+    }
+
+    orderEntries(entries: MultipleChoiceEntry[]) {
+        return _.orderBy(entries, function (o) {
+            return o.order;
+        })
+    }
+
+
+    mapCharacterIndex(index: number) {
+        const lookup = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+        return lookup[index];
+    }
+
+
+    submitResults() {
+        let result = this.getValues();
+        NProgress.start();
+        this.submit({session: this.session , page:  +this.$router.currentRoute.params['page'], payload: result})
+            .then((session:QuizSession) => {
+                if(session.submittedAt){
+                    this.$router.push({name:'app.home'});
+                }
+                else {
+                    this.$router.push({
+                        name: 'app.session.page',
+                        params: {['page']: session.currentPage + ''}
+                    }, () => {
+                        this.query();
+                    });
+                }
+                NProgress.done();
+            }).catch((err) => {
+
+        });
+    }
+}
+
 </script>
 
 <style>

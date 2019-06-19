@@ -16,7 +16,6 @@
 </template>
 
 <script>
-    import {getClass, patchClass} from "@/api/classes";
 
     export default {
         data() {
@@ -39,11 +38,11 @@
         methods: {
             async onSubmit() {
                 this.loading = true;
-                const response = await patchClass(this.$router.currentRoute.params.class_id,  {
-                    name: this.form.name,
-                    description: this.form.description,
-                    course_number: this.form.course_number
-                });
+                // const response = await patchClass(this.$router.currentRoute.params.class_id,  {
+                //     name: this.form.name,
+                //     description: this.form.description,
+                //     course_number: this.form.course_number
+                // });
                 const {data} = response;
                 this.handle(data);
                 this.loading = false;

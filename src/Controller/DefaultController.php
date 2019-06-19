@@ -1,26 +1,19 @@
 <?php
 
-
 namespace App\Controller;
 
-
-use App\Entity\Classroom;
-use App\Form\ClassroomType;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController extends AbstractFOSRestController
+class DefaultController extends AbstractController
 {
     /**
-     * @Rest\Get("/", name="index")
+     * @Route("/", name="index")
      */
     public function indexAction(Request $request)
     {
-        return $this->handleView($this->view()
-            ->setTemplate('default/index.html.twig')
-            ->setTemplateData(['base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR]));
-
+        return $this->render("default/index.html.twig");
+//            ->setTemplateData(['base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR]));
     }
-
 }

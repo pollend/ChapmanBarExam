@@ -10,27 +10,26 @@
   </div>
 </template>
 
-<script>
-  import {mapGetters, mapState} from 'vuex';
-import { Navbar, LeftSidebar } from './components';
+<script lang="ts">
+import {Component, Vue} from "vue-property-decorator";
+import  Navbar  from './components/Navbar';
+import  LeftSidebar  from './components/LeftSidebar';
+import {namespace} from "vuex-class";
 
-export default {
-  name: 'Layout',
-  components: {
-    Navbar,
-    LeftSidebar
-  },
-  computed: {
-    ...mapGetters({
-      'sidebarState': 'dashboard-setting/toggle_sidebar',
-    }),
-    classObj() {
-      return {
-        hideSidebar: this.sidebarState
-      };
-    },
-  },
-};
+const dashboardSettingsModule = namespace('dashboard/settings');
+
+@Component({
+  components: {Navbar,LeftSidebar}
+})
+export default class Layout extends Vue {
+  @dashboardSettingsModule.Getter("toggleLeftPanel") sidebarState: boolean;
+
+  get classObj() {
+    return {
+      hideSidebar: this.sidebarState
+    }
+  }
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

@@ -2,54 +2,89 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping AS ORM;
-use JMS\Serializer\Annotation As JMS;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
+use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+//TODO: need to work out the rules for deleting a question
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuestionRepository")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\Table(name="quiz_question")
  *
- * @JMS\Discriminator(field = "type", map = {
- *    "multiple_choice": "App\Entity\MultipleChoiceQuestion",
- *    "short_answer": "App\Entity\ShortAnswerQuestion",
- *    "text_block": "App\Entity\TextBlockQuestion"
- * },groups={"detail","list"})
- *
+ * @DiscriminatorMap(typeProperty = "type", mapping = {
+ *    "multipleChoice": "App\Entity\MultipleChoiceQuestion",
+ *    "shortAnswer": "App\Entity\ShortAnswerQuestion",
+ *    "textBlock": "App\Entity\TextBlockQuestion"
+ * })
+ * @ApiResource(
+ *     itemOperations={
+ *        "put" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *         },
+ *         "get" = {
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *         }
+ *     },
+ *     collectionOperations={
+ *          "get_questions_by_session" = {
+ *              "method"="GET",
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "controller"=App\Controller\GetQuizQuestionBySession::class,
+ *              "path" = "/questions/sessions/{session_id}",
+ *              "normalization_context"={"groups"={"quiz_question:get"}}
+ *          },
+ *          "get_questions_by_session_and_page" = {
+ *              "method"="GET",
+ *              "access_control"="is_granted('ROLE_USER')",
+ *              "controller"=App\Controller\GetQuizQuestionBySessionAndPage::class,
+ *              "path" = "/questions/sessions/{session_id}/page/{page}",
+ *              "normalization_context"={"groups"={"quiz_question:get"}}
+ *          },
+ *          "get" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "post" = {
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          }
+ *     }
+ * )
  */
 abstract class QuizQuestion
 {
     use TimestampTrait;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"quiz_question:get"})
      */
     protected $id;
 
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(name="`order`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"quiz_question:get"})
      */
     protected $order;
 
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(name="`group`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @JMS\Groups({"detail","list"})
+     * @Groups({"quiz_question:get"})
      */
     protected $group;
 
@@ -59,31 +94,28 @@ abstract class QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
-     * @JMS\Groups({"quiz"})
      */
     protected $quiz;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="question")
-     * @JMS\Groups({"responses"})
      */
     protected $responses;
 
     /**
      * Many Groups have Many Users.
+     *
      * @ORM\ManyToMany(targetEntity="QuestionTag", inversedBy="questions")
+     *
      * @var PersistentCollection
-     * @JMS\Groups({"question_tags"})
      */
     private $tags;
-
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
     }
-
 
     /**
      * @return int
@@ -93,7 +125,7 @@ abstract class QuizQuestion
         return $this->id;
     }
 
-    function getOrder()
+    public function getOrder()
     {
         return $this->order;
     }
@@ -108,7 +140,6 @@ abstract class QuizQuestion
         return $this->responses->matching(Criteria::create()->where(Criteria::expr()->eq('session', $session)));
     }
 
-
     /**
      * @return Collection
      */
@@ -119,31 +150,45 @@ abstract class QuizQuestion
 
     /**
      * @param $order
+     *
      * @return $this
      */
     public function setOrder($order)
     {
         $this->order = $order;
+
         return $this;
     }
 
     /**
      * @param Quiz $quiz
+     *
      * @return QuizQuestion
      */
     public function setQuiz(Quiz $quiz): QuizQuestion
     {
         $this->quiz = $quiz;
+
         return $this;
     }
 
     /**
+     * @return Quiz
+     */
+    public function getQuiz(): Quiz
+    {
+        return $this->quiz;
+    }
+
+    /**
      * @param $group
+     *
      * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
+
         return $this;
     }
 
@@ -151,5 +196,4 @@ abstract class QuizQuestion
     {
         return $this->group;
     }
-
 }

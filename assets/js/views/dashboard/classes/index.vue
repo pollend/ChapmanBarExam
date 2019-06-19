@@ -18,60 +18,91 @@
     </div>
 </template>
 
-<script>
-import {getReports} from "@/api/report";
-import {mapGetters} from "vuex";
-import {getClassesDatatable} from "@/api/classes";
-import MixinDatatable from "@/mixxins/data-table"
-export default {
-  name: 'ClassesList',
-  components: { },
-  computed: {
-      currentSort() {
-          let props = [];
-          console.log(this.column_sort);
-          for (const [key,value] of Object.entries(this.column_sort)){
-              result.push({'prop': key,'order': value})
-          }
-          return result;
-      }
-  },
-  data() {
-    return {
-        column_sort: {},
-        classes: null,
-        count: 0,
-        per_page: 0,
-        page: 0,
-        loading:false
-    };
-  },
-  mixins:[MixinDatatable],
-  methods: {
-      handleView(row){
-          this.$router.push({'name':'dashboard.class', 'params': {'class_id':row.id}})
-      },
-      handleArchive(row){
-      },
-      async loadData(queryInfo){
-          this.loading = true;
-          let sort = {};
-          if(queryInfo.sort.prop && queryInfo.sort.order)
-              sort[queryInfo.sort.prop] = this.order(queryInfo.sort.order);
-
-          const response = await getClassesDatatable({'pageSize':queryInfo.pageSize,'sort' : sort,'page': queryInfo.page - 1});
-          const {classes} = response.data;
-          const {column_sort,payload} = classes;
-          const { count, page, per_page, result } = payload;
-          this.classes = result;
-          this.page = page;
-          this.count = count;
-          this.per_page = per_page;
-          this.column_sort = column_sort;
-          this.loading = false;
-      },
-  },
-};
+<script lang="ts">
+// import {getReports} from "@/api/report";
+// import {mapGetters} from "vuex";
+// import {getClassesDatatable} from "@/api/classes";
+// import MixinDatatable from "@/mixxins/data-table"
+// import {Component, Provide, Vue} from "vue-property-decorator";
+// // import from 'VueD'
+//
+// @Component
+// export default class ClassList extends Vue{
+//     @Provide() columnSort: [] = [];
+//     @Provide() classes: [] = [];
+//     @Provide() count: [] = [];
+//     @Provide() columnSort: [] = [];
+//
+//
+//
+//     async loadData(query: {}){
+//           this.loading = true;
+//           let sort = {};
+//           if(queryInfo.sort.prop && queryInfo.sort.order)
+//               sort[queryInfo.sort.prop] = this.order(queryInfo.sort.order);
+//
+//           const response = await getClassesDatatable({'pageSize':queryInfo.pageSize,'sort' : sort,'page': queryInfo.page - 1});
+//           const {classes} = response.data;
+//           const {column_sort,payload} = classes;
+//           const { count, page, per_page, result } = payload;
+//           this.classes = result;
+//           this.page = page;
+//           this.count = count;
+//           this.per_page = per_page;
+//           this.column_sort = column_sort;
+//           this.loading = false;
+//     }
+//
+// }
+// export default {
+//   name: 'ClassesList',
+//   components: { },
+//   computed: {
+//       currentSort() {
+//           let props = [];
+//           console.log(this.column_sort);
+//           for (const [key,value] of Object.entries(this.column_sort)){
+//               result.push({'prop': key,'order': value})
+//           }
+//           return result;
+//       }
+//   },
+//   data() {
+//     return {
+//         column_sort: {},
+//         classes: null,
+//         count: 0,
+//         per_page: 0,
+//         page: 0,
+//         loading:false
+//     };
+//   },
+//   mixins:[MixinDatatable],
+//   methods: {
+//       handleView(row){
+//           this.$router.push({'name':'dashboard.class', 'params': {'class_id':row.id}})
+//       },
+//       handleArchive(row){
+//       },
+//       async loadData(queryInfo){
+//           this.loading = true;
+//           let sort = {};
+//           if(queryInfo.sort.prop && queryInfo.sort.order)
+//               sort[queryInfo.sort.prop] = this.order(queryInfo.sort.order);
+//
+//           const response = await getClassesDatatable({'pageSize':queryInfo.pageSize,'sort' : sort,'page': queryInfo.page - 1});
+//           const {classes} = response.data;
+//           const {column_sort,payload} = classes;
+//           const { count, page, per_page, result } = payload;
+//           this.classes = result;
+//           this.page = page;
+//           this.count = count;
+//           this.per_page = per_page;
+//           this.column_sort = column_sort;
+//           this.loading = false;
+//       },
+//   },
+// };
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
