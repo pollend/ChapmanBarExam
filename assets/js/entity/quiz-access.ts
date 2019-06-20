@@ -1,4 +1,5 @@
 import {Hydra} from "./hydra";
+import Classroom from "./classroom";
 
 export default interface QuizAccess  extends Hydra{
     id: number;
@@ -6,6 +7,6 @@ export default interface QuizAccess  extends Hydra{
     openDate: string;
     closeDate: string;
     isHidden: boolean;
-    isOpen: boolean;
+    classroom: string | Classroom;
     quiz: string | QuizAccess;
 }

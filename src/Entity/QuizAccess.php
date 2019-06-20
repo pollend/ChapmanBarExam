@@ -2,11 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 
 /**
  * @ORM\Entity()
@@ -36,6 +40,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact", "quiz":"exact"})
+ * @ApiFilter(ExistsFilter::class,properties={"deletedAt"})
+ * @ApiFilter(OrderFilter::class,properties= {"name","createdAt","updatedAt"},  arguments={"orderParameterName"="order"})
+ *
+ *
  */
 class QuizAccess
 {

@@ -110,7 +110,7 @@
 <script lang="ts">
 import {Vue, Component, Provide} from "vue-property-decorator";
 import service from "../../utils/request";
-import {HydraCollection, hydraGetID} from "../../entity/hydra";
+import {HydraCollection, hydraID} from "../../entity/hydra";
 import {MultipleChoiceEntry, MultipleChoiceQuestion, QuizQuestion} from "../../entity/quiz-question";
 import {MultipleChoiceResponse, QuizQuestionResponse} from "../../entity/quiz-response";
 import NProgress from 'nprogress';
@@ -169,7 +169,7 @@ export default class ReportShowOverview extends Vue {
     }
 
     choiceMatch(c1: MultipleChoiceEntry, c2: MultipleChoiceEntry): boolean {
-        return hydraGetID(c1) == hydraGetID(c2);
+        return hydraID(c1) == hydraID(c2);
     }
 
     responseCharacter(question: MultipleChoiceQuestion) {
@@ -180,7 +180,7 @@ export default class ReportShowOverview extends Vue {
                 return '-'
             } else {
                 for (const [index, e] of this.orderEntries(question.entries).entries()) {
-                    if (hydraGetID(e) == hydraGetID(choice.choice)) {
+                    if (hydraID(e) == hydraID(choice.choice)) {
                         return this.mapCharacterIndex(index);
                     }
                 }

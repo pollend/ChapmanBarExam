@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\SoftDeleteTrait;
 use App\Entity\Traits\TimestampTrait;
@@ -10,7 +11,8 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 //TODO: add Delete for quiz
 //TODO: work out access for user
 
@@ -32,13 +34,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     collectionOperations={
  *          "get" = {
  *               "access_control"="is_granted('ROLE_ADMIN')",
- *               "normalization_context"={"groups"={"quiz:get"}},
+ *               "normalization_context"={"groups"={"quiz:get","timestamp"}},
  *          },
  *          "post" = {
  *               "access_control"="is_granted('ROLE_ADMIN')"
  *          },
  *      }
  * )
+ *
+ * @ApiFilter(OrderFilter::class,properties={"createdAt", "updatedAt", "name"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact", "name":"partial", "description":"partial"})
  */
 class Quiz
 {

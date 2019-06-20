@@ -5,7 +5,6 @@ namespace App\Entity\Traits;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
 /**
  * Trait TimestampTrait

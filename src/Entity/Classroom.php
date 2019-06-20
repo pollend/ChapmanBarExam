@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Entity\Traits\SoftDeleteTrait;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClassroomRepository")
@@ -24,12 +26,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  * attributes={"pagination_items_per_page"=100},
  * itemOperations={
  *    "get" = {
- *       "normalization_context"={"groups"={"classroom:get"}}
+ *       "normalization_context"={"groups"={"classroom:get"}},
+ *      "access_control"="is_granted('ROLE_USER')"
+ *     },
+ *     "put" = {
+ *         "normalization_context"={"groups"={"classroom:put"}},
+ *         "access_control"="is_granted('ROLE_ADMIN')"
  *     }
  * },
  * collectionOperations={
  *     "get" = {
- *          "normalization_context"={"groups"={"classroom:get"}}
+ *          "normalization_context"={"groups"={"classroom:get", "timestamp"}}
  *     },
  *     "get_by_user" = {
  *          "method"="GET",
@@ -46,6 +53,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  * @ApiFilter(SearchFilter::class,properties={"id":"exact","users":"exact", "name":"partial", "description":"partial","courseNumber":"partial","users":"exact"})
  * @ApiFilter(DateFilter::class,properties={"createdAt","updatedAt"})
  * @ApiFilter(ExistsFilter::class,properties={"deletedAt"})
+ * @ApiFilter(OrderFilter::class,properties= {"name","createdAt","updatedAt"},  arguments={"orderParameterName"="order"})
  */
 class Classroom
 {
@@ -69,28 +77,28 @@ class Classroom
      * @Groups({"list","detail"})
      * @Assert\NotBlank(message="Classroom Name Required")
      * @Assert\NotNull()
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","classroom:put"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="string",length=50,nullable=true)
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","classroom:put"})
      */
     protected $description;
 
     /**
      * @var string
      * @ORM\Column(name="course_number",type="string",length=50,nullable=true)
-     * @Groups({"classroom:get"})
+     * @Groups({"classroom:get","classroom:put"})
      */
     protected $courseNumber;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="UserWhitelist",mappedBy="classroom")
-     * @Groups({"admin:get"})
+     * @Groups({"admin:get"}),
      */
     protected $emailWhitelist;
 

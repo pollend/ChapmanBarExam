@@ -1,9 +1,9 @@
 <template>
     <div class="section">
         <div class="container">
-            <data-tables-server :loading="loading" :data="exams" :total="count" @query-change="loadData" :pagination-props="{ pageSizes: [10, 50, 100, 200] }">
-                <el-table-column sortable="true" prop="created_at" label="Created At"></el-table-column>
-                <el-table-column sortable="true" prop="updated_at" label="Updated At"></el-table-column>
+            <data-tables-server :loading="loading" :data="exams" :total="count" @query-change="loadData" :pagination-props="{ pageSizes: [20, 50, 100, 200] }">
+                <el-table-column sortable="true" prop="createdAt" label="Created At"></el-table-column>
+                <el-table-column sortable="true" prop="updatedAt" label="Updated At"></el-table-column>
                 <el-table-column sortable="true" prop="name" label="Name"></el-table-column>
 <!--                <el-table-column label="Actions" min-width="100px">-->
 <!--                    <template slot-scope="scope">-->
@@ -23,18 +23,28 @@ import {Component, Provide, Vue} from "vue-property-decorator";
 import service from "../../../utils/request";
 import {HydraCollection} from "../../../entity/hydra";
 import {Quiz} from "../../../entity/quiz";
+import {buildSortQueryForVueDataTable} from "../../../utils/vue-data-table-util";
 @Component
 export default class ListExams extends Vue {
     @Provide() loading: boolean = false;
-    @Provide() exams: any = [];
+    @Provide() hydraCollection: HydraCollection<Quiz> = null;
+    get exams() {
+        return this.hydraCollection ? this.hydraCollection["hydra:member"] : [];
+    }
 
-    async loadData(queryInfo: any){
+    get count() {
+        return this.hydraCollection ? this.hydraCollection["hydra:totalItems"] : 0;
+    }
+
+    async loadData(queryInfo: any) {
+        this.loading = true;
+        console.log(queryInfo);
         const response = await service({
-            url:'/_api/quizzes',
+            url: '/_api/quizzes?' + buildSortQueryForVueDataTable(queryInfo).build(),
             method: 'GET'
         });
-        const exams : HydraCollection<Quiz>= response.data;
-
+        this.hydraCollection = response.data;
+        this.loading = false;
     }
 }
 //

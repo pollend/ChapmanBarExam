@@ -1,62 +1,49 @@
 <template>
-    <el-form ref="form" :model="form" :disabled="loading" >
+    <el-form v-if="classroom" ref="classroom" :model="classroom" :disabled="loading" >
+
         <el-form-item label="Class Name">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="classroom.name"></el-input>
         </el-form-item>
         <el-form-item label="Course Number">
-            <el-input v-model="form.course_number"></el-input>
+            <el-input v-model="classroom.courseNumber"></el-input>
         </el-form-item>
         <el-form-item label="Description">
-            <el-input type="textarea" v-model="form.description"></el-input>
+            <el-input type="textarea" v-model="classroom.description"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button type="primary"  :loading="loading" @click="onSubmit" >Save</el-button>
         </el-form-item>
     </el-form>
+
 </template>
 
-<script>
+<script lang="ts">
 
-    export default {
-        data() {
-            return {
-                form: {
-                    name: ''
-                },
-                loading: false
+import {Component, Prop, Provide, Vue} from "vue-property-decorator";
+import Classroom from "../../../../entity/classroom";
+import service from "../../../../utils/request";
+
+@Component
+export default class ClassForm extends Vue {
+    @Prop() readonly classroom: Classroom = null;
+    @Provide() loading: boolean = false;
+
+    async onSubmit() {
+        this.loading = true;
+
+        const response = await service({
+            url: '/_api/classrooms/' + this.classroom.id,
+            method: 'PUT',
+            data: {
+                description: this.classroom.description,
+                courseNumber: this.classroom.courseNumber,
+                name: this.classroom.name
             }
-        },
-        async created(){
-
-            this.loading = true;
-            const response = await getClass(this.$router.currentRoute.params.class_id);
-            const {data} = response;
-            this.handle(data);
-            this.loading = false;
-
-        },
-        methods: {
-            async onSubmit() {
-                this.loading = true;
-                // const response = await patchClass(this.$router.currentRoute.params.class_id,  {
-                //     name: this.form.name,
-                //     description: this.form.description,
-                //     course_number: this.form.course_number
-                // });
-                const {data} = response;
-                this.handle(data);
-                this.loading = false;
-                this.$message({
-                    message: 'Class Configuration Save.',
-                    type: 'success'
-                });
-            },
-            handle(payload){
-                const {classroom} = payload;
-                this.form = classroom;
-            }
-        }
+        });
+        Object.assign(this.classroom, response.data);
+        this.loading = false;
     }
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
