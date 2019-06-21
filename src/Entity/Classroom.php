@@ -26,7 +26,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * attributes={"pagination_items_per_page"=100},
  * itemOperations={
  *    "get" = {
- *       "normalization_context"={"groups"={"classroom:get"}},
+ *       "normalization_context"={"groups"={"classroom:get","item:classroom:get"}},
  *      "access_control"="is_granted('ROLE_USER')"
  *     },
  *     "put" = {
@@ -107,7 +107,7 @@ class Classroom
      *                           Many Users have Many Groups
      * @ORM\ManyToMany(targetEntity="User", inversedBy="classes")
      * @ORM\JoinTable(name="classroom_user")
-     * @Groups({"classroom:admin:get"})
+     * @Groups({"item:classroom:get:ROLE_ADMIN"}),
      */
     protected $users;
 

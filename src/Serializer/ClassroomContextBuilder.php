@@ -9,6 +9,7 @@ use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use App\Entity\Classroom;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 
 class ClassroomContextBuilder implements SerializerContextBuilderInterface
 {
@@ -32,9 +33,17 @@ class ClassroomContextBuilder implements SerializerContextBuilderInterface
         $context = $this->decorated->createFromRequest($request,$normalization,$extractedAttributes);
         $resourceClass = $context['resource_class'] ?? null;
 
-        if($resourceClass == Classroom::class && isset($context['groups']) && $this->authorizationChecker->isGranted("ROLE_ADMIN")){
-            $context['groups'][] = 'classroom:admin:get';
-            $context['groups'][] = 'item:classroom:admin:get';
+
+        if(isset($context['groups']) && $this->authorizationChecker->isGranted("ROLE_ADMIN")){
+
+            $role_permissions = [];
+            foreach ($context['groups'] as $group){
+                $converter = new CamelCaseToSnakeCaseNameConverter();
+                if(strpos($group, $converter->normalize($resourceClass)) !== false){
+                    $role_permissions[] = $group . ':' . 'ROLE_ADMIN';
+                }
+            }
+            $context['groups'] = array_merge($context['groups'],$role_permissions);
         }
         return $context;
     }

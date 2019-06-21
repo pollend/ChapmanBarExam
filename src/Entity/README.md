@@ -18,4 +18,6 @@ collection operations are a subset of item operations
 
 item:\<class\>:\<method\>:(?\<admin\>)
 
-item:\<class\>:\<method\>:(?\<admin\>)
+### item operations for subResource
+
+sub:\<class\>:\<method\>:(?\<admin\>)

@@ -36,28 +36,28 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "put" = {
  *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and previous_object == user",
- *              "normalization_context"={"groups" = {"put"}}
+ *              "normalization_context"={"groups" = {"user:put"}}
  *          },
  *          "get" = {
  *              "access_control"="is_granted('ROLE_ADMIN') |  is_granted('ROLE_USER') and object == user",
- *              "normalization_context"={"groups" = {"get"}}
+ *              "normalization_context"={"groups" = {"user:get"}}
  *          }
  *     },
  *     collectionOperations={
  *     "post" = {
  *          "access_control"="is_granted('ROLE_ADMIN')",
- *          "normalization_context"={"groups" = {"post"}}
+ *          "normalization_context"={"groups" = {"user:post"}}
  *     },
  *     "get" = {
  *          "access_control"="is_granted('ROLE_ADMIN')",
- *          "normalization_context"={"groups" = {"get"}}
+ *          "normalization_context"={"groups" = {"user:get"}}
  *     },
  *     "get_me" = {
  *         "method" = "GET",
  *         "path"= "/users/me",
  *         "controller"=App\Controller\AuthMe::class,
  *         "access_control"="is_granted('ROLE_USER')",
- *         "normalization_context"={"groups" = {"get"}}
+ *         "normalization_context"={"groups" = {"user:get"}}
  *     }
  * })
  */
@@ -74,13 +74,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"get"})
+     * @Groups({"user:get"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"get"})
+     * @Groups({"user:get"})
      */
     private $roles = [User::ROLE_USER];
 
@@ -97,14 +97,14 @@ class User implements UserInterface
      * @var \DateTime
      *
      * @ORM\Column(name="last_login", type="datetime", nullable=true)
-     * @Groups({"get"})
+     * @Groups({"user:get"})
      */
     private $lastLogin;
 
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=100,nullable=false)
-     * @Groups({"get"})
+     * @Groups({"user:get"})
      * @Assert\Email()
      */
     protected $email;
@@ -137,14 +137,14 @@ class User implements UserInterface
      * Many Groups have Many Users.
      *
      * @ORM\ManyToMany(targetEntity="Classroom", mappedBy="users")
-     * @Groups({"get"})
+     * @Groups({"user:get"})
      */
     protected $classes;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="owner")
-     * @Groups({"get"})
+     * @Groups({"user:get"})
      */
     protected $quizSessions;
 

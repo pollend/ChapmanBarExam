@@ -91,7 +91,7 @@ class QuizAccess
      *
      * @ORM\ManyToOne(targetEntity="Quiz",inversedBy="access")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
-     * @Groups({"classroom:get","quiz-access:get","quiz-access:post"})
+     * @Groups({"classroom:get","quiz-access:get","quiz-access:post","quiz-access:put"})
      */
     protected $quiz;
 
