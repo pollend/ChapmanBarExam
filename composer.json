@@ -3,12 +3,14 @@
     "license": "proprietary",
     "require": {
         "php": "^7.1.3",
+        "ext-json": "*",
         "api-platform/api-pack": "^1.2",
-        "doctrine/doctrine-bundle": "^1.11",
         "doctrine/annotations": "^1.6",
+        "doctrine/doctrine-bundle": "^1.11",
         "doctrine/orm": "^2.6",
         "fzaninotto/faker": "^1.8",
         "gesdinet/jwt-refresh-token-bundle": "^0.6.2",
+        "hybridauth/hybridauth": "^3.0",
         "illuminate/support": "^5.8",
         "jms/serializer-bundle": "^3.3",
         "lexik/jwt-authentication-bundle": "^2.6",
@@ -33,8 +35,7 @@
         "symfony/validator": "4.3.*",
         "symfony/web-link": "4.3.*",
         "symfony/webpack-encore-bundle": "^1.6",
-        "symfony/yaml": "4.3.*",
-        "ext-json": "*"
+        "symfony/yaml": "4.3.*"
     },
     "require-dev": {
         "codeception/codeception": "^3.0",
