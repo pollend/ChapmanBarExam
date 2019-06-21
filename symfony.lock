@@ -248,6 +248,9 @@
     "hoa/zformat": {
         "version": "1.17.01.10"
     },
+    "hybridauth/hybridauth": {
+        "version": "v3.0.0"
+    },
     "illuminate/contracts": {
         "version": "v5.8.19"
     },

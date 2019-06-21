@@ -12,7 +12,11 @@
 
     @Component
     export default class ReportContainer extends Vue{
-        @Provide() tab: string = this.$router.currentRoute.name;
+        @Provide() tab: string = '';
+
+        created(){
+            this.tab = this.$router.currentRoute.name;
+        }
 
         handleReportTabs(tab: any, event: string) {
             this.$router.push({name: tab.name, params: {report_id: this.$route.params.report_id}})

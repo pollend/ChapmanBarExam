@@ -1,6 +1,6 @@
 <template>
     <div class="section">
-        <div class="container">
+        <div class="container" v-if="reports">
             <el-table :data="reports['hydra:member']">
                 <el-table-column
                         prop="createdAt"

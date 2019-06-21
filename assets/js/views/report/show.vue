@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="questions === null" class="overview-container">
+    <div v-if="questions !== null" class="overview-container">
         <div class="columns is-mobile">
             <div class="column is-5 is-pulled-left">
                 <p>
@@ -145,13 +145,13 @@ export default class ReportShowOverview extends Vue {
         NProgress.done();
     }
 
-    get chunkedRespones() {
+    get chunkedRespones() : any {
         return _.chunk(_.chunk(_.filter(this.questions["hydra:member"], function (q) {
             return q['@type'] === 'MultipleChoiceQuestion';
         }), 5), 10)
     }
 
-    get questionResponse() {
+    get questionResponse() : any {
         return _.keyBy(this.responses["hydra:member"], (response) => {
             return response.question;
         });
