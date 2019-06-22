@@ -57,17 +57,20 @@ import service from "../../../../utils/request";
 import {buildSortQueryForVueDataTable} from "../../../../utils/vue-data-table-util";
 import {SearchFilter} from "../../../../utils/filter";
 import ExamSearch from './ExamSearch';
+import {namespace} from "vuex-class";
 
 interface QuizAccessTag extends QuizAccess {
     isMarked: boolean;
     range: [string,string]
 }
 
+const classroomShowModule = namespace('dashboard/classroom/show');
+
 @Component({
     components: {ExamSearch}
 })
 export default class QuizAccessForm extends Vue {
-    @Prop() readonly classroom: Classroom = null;
+    @classroomShowModule.Getter('classroom') classroom: Classroom;
     @Provide() hydraCollection: HydraCollection<QuizAccess> = null;
     @Provide() loading: boolean = false;
     @Provide() hasMarked: boolean = false;

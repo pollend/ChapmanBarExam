@@ -22,10 +22,13 @@
 import {Component, Prop, Provide, Vue} from "vue-property-decorator";
 import Classroom from "../../../../entity/classroom";
 import service from "../../../../utils/request";
+import {namespace} from "vuex-class";
+const classroomShowModule = namespace('dashboard/classroom/show');
 
 @Component
 export default class ClassForm extends Vue {
-    @Prop() readonly classroom: Classroom = null;
+
+    @classroomShowModule.Getter('classroom') classroom: Classroom;
     @Provide() loading: boolean = false;
 
     async onSubmit() {

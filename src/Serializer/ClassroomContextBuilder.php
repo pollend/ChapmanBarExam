@@ -7,6 +7,8 @@ namespace App\Serializer;
 use ApiPlatform\Core\Exception\RuntimeException;
 use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use App\Entity\Classroom;
+use PhpParser\Builder\Namespace_;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
@@ -20,7 +22,6 @@ class ClassroomContextBuilder implements SerializerContextBuilderInterface
     {
         $this->decorated = $decorated;
         $this->authorizationChecker = $authorizationChecker;
-
     }
 
     /**
@@ -32,18 +33,17 @@ class ClassroomContextBuilder implements SerializerContextBuilderInterface
     {
         $context = $this->decorated->createFromRequest($request,$normalization,$extractedAttributes);
         $resourceClass = $context['resource_class'] ?? null;
-
-
         if(isset($context['groups']) && $this->authorizationChecker->isGranted("ROLE_ADMIN")){
-
+            $reflectionClass = new \ReflectionClass($resourceClass);
             $role_permissions = [];
             foreach ($context['groups'] as $group){
                 $converter = new CamelCaseToSnakeCaseNameConverter();
-                if(strpos($group, $converter->normalize($resourceClass)) !== false){
+                if(strpos($group, $converter->normalize($reflectionClass->getShortName())) !== false){
                     $role_permissions[] = $group . ':' . 'ROLE_ADMIN';
                 }
             }
             $context['groups'] = array_merge($context['groups'],$role_permissions);
+
         }
         return $context;
     }

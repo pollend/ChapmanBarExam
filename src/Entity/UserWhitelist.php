@@ -13,18 +13,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\Entity()
  * @ORM\Table(name="`user_whitelist`")
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *   collectionOperations={
- *      "get"= { "access_control"="is_granted('ROLE_ADMIN')"},
- *      "post" = { "access_control"="is_granted('ROLE_ADMIN')" }
- *   },
- *   itemOperations={
- *     "get" = { "access_control"="is_granted('ROLE_ADMIN')"},
- *     "put" = { "access_control"="is_granted('ROLE_ADMIN')"},
- *     "delete" = { "access_control"="is_granted('ROLE_ADMIN')"}
- *   }
- * )
- * @ApiFilter(SearchFilter::class,properties={"id":"exact","classroom":"exact","email": "partial"})
  */
 class UserWhitelist
 {

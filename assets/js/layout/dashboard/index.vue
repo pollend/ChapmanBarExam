@@ -16,7 +16,7 @@ import  Navbar  from './components/Navbar';
 import  LeftSidebar  from './components/LeftSidebar';
 import {namespace} from "vuex-class";
 
-const dashboardSettingsModule = namespace('dashboard/settings');
+const dashboardSettingsModule = namespace('dashboard');
 
 @Component({
   components: {Navbar,LeftSidebar}

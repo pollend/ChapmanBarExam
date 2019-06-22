@@ -26,10 +26,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     itemOperations={
  *          "get" = {
  *               "access_control"="is_granted('ROLE_ADMIN')",
+ *               "normalization_context"={"groups"={"quiz:get","timestamp"}},
  *          },
  *          "put" = {
  *               "access_control"="is_granted('ROLE_ADMIN')"
- *          },
+ *          }
  *     },
  *     collectionOperations={
  *          "get" = {
@@ -38,12 +39,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          },
  *          "post" = {
  *               "access_control"="is_granted('ROLE_ADMIN')"
- *          },
+ *          }
  *      }
  * )
  *
  * @ApiFilter(OrderFilter::class,properties={"createdAt", "updatedAt", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class,properties={"id":"exact", "name":"partial", "description":"partial"})
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact", "name":"partial", "description":"partial","quizSessions.classroom":"exact"})
  */
 class Quiz
 {

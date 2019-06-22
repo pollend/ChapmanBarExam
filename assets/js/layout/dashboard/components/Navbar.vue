@@ -20,7 +20,7 @@ import Hamburger from '../../../components/Hamburger';
 import {namespace} from "vuex-class";
 import User from "../../../entity/user";
 
-const dashboardSettingsModule = namespace('dashboard/settings');
+const dashboardSettingsModule = namespace('dashboard');
 const authModule = namespace('auth')
 
 @Component({

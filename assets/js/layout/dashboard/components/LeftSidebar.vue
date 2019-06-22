@@ -37,7 +37,7 @@
 import {Component, Vue} from "vue-property-decorator";
 import {namespace} from "vuex-class";
 
-const dashboardSettingsModule = namespace('dashboard/settings')
+const dashboardSettingsModule = namespace('dashboard')
 
 @Component
 export default class LeftSidebar extends Vue {

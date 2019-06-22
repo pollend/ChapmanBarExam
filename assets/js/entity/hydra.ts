@@ -4,7 +4,7 @@ export interface Hydra {
     "@type": string
 }
 
-export interface HydraCollection<T extends Hydra> extends Hydra{
+export interface HydraCollection<T extends Hydra | {}> extends Hydra{
     "hydra:member": T[]
     "hydra:totalItems" : number,
     "hydra:view": {

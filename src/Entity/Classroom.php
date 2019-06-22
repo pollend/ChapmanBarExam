@@ -27,11 +27,24 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * itemOperations={
  *    "get" = {
  *       "normalization_context"={"groups"={"classroom:get","item:classroom:get"}},
- *      "access_control"="is_granted('ROLE_USER')"
+ *       "access_control"="is_granted('ROLE_USER')"
  *     },
  *     "put" = {
  *         "normalization_context"={"groups"={"classroom:put"}},
  *         "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "get_whitelist" = {
+ *          "method"="GET",
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "controller"=App\Controller\GetWhitelistByClassroom::class,
+ *          "path"= "/classrooms/{id}/whitelist",
+ *
+ *     },
+ *     "put_whitelist" = {
+ *          "method"="PUT",
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "path"= "/classrooms/{id}/whitelist",
+ *          "controller"=App\Controller\PutWhitelistByClassroom::class,
  *     }
  * },
  * collectionOperations={
@@ -128,7 +141,7 @@ class Classroom
     protected $quizSessions;
 
     /**
-     * @Groups({"classroom:admin:get"})
+     * @Groups({"classroom:get:ROLE_ADMIN"})
      */
     public function getNumberOfStudents()
     {
