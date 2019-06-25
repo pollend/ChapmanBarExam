@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="Add Access" :visible.sync="visible" :before-close="handleClose">
+    <div>
         <el-form ref="form" :model="form">
             <el-form-item label="Open And Close">
                 <el-date-picker
@@ -12,30 +12,19 @@
             <el-form-item label="Hidden">
                 <el-checkbox  v-model="form.isHidden"></el-checkbox>
             </el-form-item>
-            <el-form-item>
+            <el-form-item label="Number Of Attempts">
                 <el-input-number v-model="form.numAttempts" :min="0" ></el-input-number>
             </el-form-item>
 
-            <el-form-item>
-                <el-select
-                        v-model="value"
-                        multiple
-                        filterable
-                        remote
-                        reserve-keyword
-                        placeholder="Please enter a keyword"
-                        :remote-method="queryQuizzes"
-                        :loading="loading">
-                    <el-option
-                            v-for="item in quizzes"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item['@id']">
-                    </el-option>
-                </el-select>
+            <el-form-item label="Exam">
+                <exam-search v-model="form.quiz"></exam-search>
             </el-form-item>
         </el-form>
-    </el-dialog>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="handleCancel">Cancel</el-button>
+            <el-button type="primary" @click="handleSubmit">Confirm</el-button>
+        </span>
+    </div>
 </template>
 
 <script lang="ts">
@@ -43,6 +32,7 @@
     import Classroom from "../../../../entity/classroom";
     import {Quiz} from "../../../../entity/quiz";
     import service from "../../../../utils/request";
+    import ExamSearch from './ExamSearch';
 
     interface QuizAccessForm {
         closeDate: string,
@@ -50,10 +40,12 @@
         numAttempts: number,
         classroom: Classroom;
         openDate: string,
-        quiz: Quiz
+        quiz: Quiz | string
     }
 
-    @Component
+    @Component({
+        components: {ExamSearch}
+    })
     export default class CreateQuizAccessForm extends Vue{
         @Prop() readonly classroom: Classroom;
         @Prop() visible: boolean;
@@ -61,6 +53,10 @@
 
         @Provide() quizzes: [];
         @Provide() quizLoading: boolean;
+
+        @Provide() createExam: () => Promise<boolean> = async function(){
+          return false;
+        };
 
         @Provide() form: QuizAccessForm = {
             closeDate: "",
@@ -75,13 +71,17 @@
             this.quizLoading = true;
             service({
                 url: ''
-            })
+            });
             this.quizLoading = false;
         }
 
-        handleClose(done : () => void) {
-
+        handleCancel() {
+            this.$emit('cancel');
         }
+        handleSubmit(){
+            this.$emit('submit',this.createExam);
+        }
+
 
 
     }

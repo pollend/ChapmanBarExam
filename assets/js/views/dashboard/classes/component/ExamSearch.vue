@@ -1,6 +1,6 @@
 <template>
     <el-select
-            :value="value.name"
+            :value="value ? value.name : ''"
             @input="update"
             filterable
             remote
@@ -27,7 +27,7 @@ import {Quiz} from "../../../../entity/quiz";
 
 @Component
 export default class ExamSearch extends Vue {
-    @Prop() readonly value: Quiz;
+    @Prop() readonly value: Quiz | null;
 
     @Provide() loading: boolean = false;
     @Provide() quizzes: HydraCollection<Quiz> = null;

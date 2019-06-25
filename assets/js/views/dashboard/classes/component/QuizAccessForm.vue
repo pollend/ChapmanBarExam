@@ -41,9 +41,16 @@
                 </data-tables-server>
             </el-form-item>
             <el-form-item>
-                <el-button style="float:right" :disabled="!hasMarked" @click="onSubmit">Save</el-button>
+                <el-button-group style="float:right" >
+                    <el-button @click="showCreate = !showCreate">Add</el-button>
+                    <el-button :disabled="!hasMarked" @click="onSubmit">Save</el-button>
+                </el-button-group>
             </el-form-item>
         </el-form>
+
+        <el-dialog :visible.sync="showCreate">
+            <create-quiz-access-form></create-quiz-access-form>
+        </el-dialog>
     </div>
 </template>
 
@@ -58,6 +65,7 @@ import {buildSortQueryForVueDataTable} from "../../../../utils/vue-data-table-ut
 import {SearchFilter} from "../../../../utils/filter";
 import ExamSearch from './ExamSearch';
 import {namespace} from "vuex-class";
+import CreateQuizAccessForm from './CreateQuizAccessForm';
 
 interface QuizAccessTag extends QuizAccess {
     isMarked: boolean;
@@ -67,13 +75,14 @@ interface QuizAccessTag extends QuizAccess {
 const classroomShowModule = namespace('dashboard/classroom/show');
 
 @Component({
-    components: {ExamSearch}
+    components: {ExamSearch,CreateQuizAccessForm}
 })
 export default class QuizAccessForm extends Vue {
     @classroomShowModule.Getter('classroom') classroom: Classroom;
     @Provide() hydraCollection: HydraCollection<QuizAccess> = null;
     @Provide() loading: boolean = false;
     @Provide() hasMarked: boolean = false;
+    @Provide() showCreate:boolean = false;
 
     @Provide() tableProps: any = {
         rowClassName(provies:{row:any,rowIndex: number}) {
@@ -83,6 +92,7 @@ export default class QuizAccessForm extends Vue {
             return '';
         }
     };
+
 
     get quizAccess() {
         return this.hydraCollection ? this.hydraCollection["hydra:member"] : [];
