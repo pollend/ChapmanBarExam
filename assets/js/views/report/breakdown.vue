@@ -4,25 +4,25 @@
                 :data="breakdown"
                 style="width: 100%">
             <el-table-column
-                    prop="tag.name"
+                    prop="tag"
                     label="Subtest Name"
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="result.maxScore"
+                    prop="maxScore"
                     label="Possible Points"
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="required_to_pass"
+                    prop="requiredToPass"
                     label=" % Required To Pass">
             </el-table-column>
             <el-table-column
-                    prop="result.score"
+                    prop="score"
                     label="Points Scored">
             </el-table-column>
             <el-table-column
-                    prop="percent_score"
+                    prop="percentScore"
                     label="% Score">
             </el-table-column>
         </el-table>
@@ -48,8 +48,8 @@
                 NProgress.done();
                 this.breakdown = response.data;
                 this.breakdown.forEach((e) => {
-                    e.required_to_pass = '67.00%';
-                    e.percent_score = parseFloat(((+e['result']['score'] / +e['result']['maxScore']) * 100.0) + '').toFixed(2) + "%";
+                    e.requiredToPass = '67.00%';
+                    e.percentScore = parseFloat(((+e['score'] / +e['maxScore']) * 100.0) + '').toFixed(2) + "%";
                 });
             }).catch((err) => {
 

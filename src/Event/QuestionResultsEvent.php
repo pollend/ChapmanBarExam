@@ -10,23 +10,13 @@ class QuestionResultsEvent extends Event
 {
     const QUESTION_RESULTS = 'app.question.result';
 
-    /**
-     * @Groups({"question_result:score"})
-     */
     protected $score;
-    /**
-     * @Groups({"question_result:score"})
-     */
+
     protected $maxScore;
 
-    /**
-     * @Groups({"question_result:question"})
-     */
     protected $questions;
 
-    /**
-     * @Groups({"question_result:session"})
-     */
+
     protected $session;
 
     public function __construct(QuizSession $session, $questions = null)

@@ -2,6 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Classroom;
+use App\Entity\Quiz;
+use App\Entity\QuizQuestion;
 use App\Entity\QuizSession;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
@@ -51,6 +54,17 @@ class QuizResponseRepository extends EntityRepository
             ->getResult();
     }
 
+    public function filterByClassQuizAndQuestion(Classroom $classroom, Quiz $quiz,QuizQuestion $question){
+        $qb = $this->createQueryBuilder('r');
+        return $qb->where($qb->expr()->eq('r.question',':question'))
+            ->join('r.session','s')
+            ->andWhere($qb->expr()->eq('s.quiz',':quiz'))
+            ->andWhere($qb->expr()->eq('s.classroom',':classroom'))
+            ->setParameters(['question' => $question,'quiz' => $quiz,'classroom' => $classroom])
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @param QuizSession $session
      * @param $questions
@@ -69,10 +83,20 @@ class QuizResponseRepository extends EntityRepository
             ->getResult();
     }
 
-    public function filterResponseBySessionAndQuestion(QuizSession $session, $question)
+    public function filterByQuestionAndSessions(QuizQuestion $question,$sessions){
+
+        $qb = $this->createQueryBuilder('r');
+        return $qb->where($qb->expr()->in('r.session', ':sessions'))
+            ->andWhere($qb->expr()->eq('r.question', ':questions'))
+            ->setParameter('sessions', $sessions)
+            ->setParameter('questions', $question)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function filterResponseBySessionAndQuestion(QuizSession $session, QuizQuestion $question)
     {
         $qb = $this->createQueryBuilder('r');
-
         return $qb->where($qb->expr()->eq('r.session', ':session'))
             ->andWhere($qb->expr()->eq('r.question', ':questions'))
             ->setParameter('session', $session)

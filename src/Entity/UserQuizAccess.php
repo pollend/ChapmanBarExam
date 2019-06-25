@@ -56,7 +56,6 @@ class UserQuizAccess
      */
     protected $numAttempts;
 
-
     /**
      * @var \DateTime
      * @ORM\Column(name="open_date",type="datetime",nullable=true)

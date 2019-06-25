@@ -49,8 +49,12 @@ export const routes = [
       // classes ---------------------------------------------------------------------------------------------------------------------------------------
       {path: '/class', meta: {roles: [ROLE_ADMIN]}, component: () => import('./../views/dashboard/classes'), name: 'dashboard.classes'},
       {path: '/class/:class_id/', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/container'), children: [
+          {path: 'report',name: 'dashboard.class.report', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/index')},
+          {path: 'report/:report_id/', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/container'), children: [
+              {path: 'distribution',name: 'dashboard.class.report.score_distribution', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/score-distribution')},
+              {path: 'standard',name: 'dashboard.class.report.item_analysis', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/standard-item')},
+          ]},
           {path: '',name: 'dashboard.class', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/general')},
-          {path: 'exams',name: 'dashboard.class.exams', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exams')},
           {path: 'users',name: 'dashboard.class.user', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/user')},
           {path: 'whitelist',name: 'dashboard.class.whitelist', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/whitelist')}
       ]},

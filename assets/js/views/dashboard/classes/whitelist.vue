@@ -111,11 +111,7 @@ export default class ClassroomWhitelist extends Vue {
         this.hasChanged = true;
     }
 
-    @Watch('classroom')
-    async onClassroomSet(val: Classroom, oldVal: Classroom) {
-        this.hasChanged = false;
-        this.loadCollection()
-    }
+
 }
 </script>
 

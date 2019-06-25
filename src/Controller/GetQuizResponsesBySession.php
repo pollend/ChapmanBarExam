@@ -31,11 +31,11 @@ class GetQuizResponsesBySession
         /** @var QuizResponseRepository $quizResponseRepository */
         $quizResponseRepository = $this->entityManager->getRepository(QuizResponse::class);
 
-        /** @var QuizSessionRepository $quizSessionRepository*/
+        /** @var QuizSessionRepository $quizSessionRepository */
         $quizSessionRepository = $this->entityManager->getRepository(QuizSession::class);
 
-        if($session = $quizSessionRepository->find($session_id)){
-            if($this->security->isGranted(QuizSessionVoter::VIEW,$session)) {
+        if ($session = $quizSessionRepository->find($session_id)) {
+            if ($this->security->isGranted(QuizSessionVoter::VIEW, $session)) {
                 $responses = $quizResponseRepository->bySession($session);
                 $this->context->setParameter('session_id', $session_id);
                 return $responses;

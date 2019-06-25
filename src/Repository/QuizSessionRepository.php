@@ -2,32 +2,13 @@
 
 namespace App\Repository;
 
+use App\Entity\Classroom;
+use App\Entity\Quiz;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 class QuizSessionRepository extends EntityRepository
 {
-    /**
-     * @deprecated
-     * @param User $user
-     * @return mixed|null
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function getActiveSession(User $user)
-    {
-        $qb = $this->createQueryBuilder('q');
-
-        if ($sessions = $qb->where($qb->expr()->eq('q.owner', ':owner'))
-            ->andWhere($qb->expr()->isNull('q.submittedAt'))
-            ->setParameter('owner', $user)
-            ->getQuery()
-            ->getSingleResult()) {
-            return $sessions;
-        }
-
-        return null;
-    }
 
     public function getActiveSessions(User $user)
     {
@@ -56,4 +37,15 @@ class QuizSessionRepository extends EntityRepository
 
         return null;
     }
+
+    public function getSessionsByClassAndQuiz(Quiz $quiz, Classroom $classroom){
+        $qb = $this->createQueryBuilder('q');
+        return $qb->where($qb->expr()->eq('q.classroom',':classroom'))
+            ->andWhere($qb->expr()->eq('q.quiz',':quiz'))
+            ->setParameters(['classroom' => $classroom, 'quiz' => $quiz])
+            ->getQuery()
+            ->getResult();
+
+    }
+
 }

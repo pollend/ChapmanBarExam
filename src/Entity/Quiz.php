@@ -98,6 +98,28 @@ class Quiz
     protected $access;
 
     /**
+     * @var
+     * @ORM\Column(name="max_score",type="integer",nullable=true)
+     */
+    protected $maxScore;
+
+    /**
+     * @return mixed
+     */
+    public function getMaxScore()
+    {
+        return $this->maxScore;
+    }
+
+    /**
+     * @param mixed $maxScore
+     */
+    public function setMaxScore($maxScore): void
+    {
+        $this->maxScore = $maxScore;
+    }
+
+    /**
      * @Groups({"list","detail"})
      **/
     public function getNumQuestions()

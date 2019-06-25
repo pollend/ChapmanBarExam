@@ -93,7 +93,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  * )
  *
  * @ApiFilter(ExistsFilter::class, properties={"submittedAt"})
- * @ApiFilter(SearchFilter::class, properties={"id":"exact","owner":"exact"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact","owner":"exact","classroom":"exact","quiz":"exact"})
  */
 class QuizSession
 {
@@ -105,7 +105,7 @@ class QuizSession
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @Groups({"quiz_session:get"})
+     * @Groups({"quiz_session:get","quiz_session:get:report"})
      */
     protected $id;
 
@@ -114,18 +114,9 @@ class QuizSession
      *
      * @ORM\Column(name="score", type="integer", nullable=true)
      *
-     * @Groups({"quiz_session:get"})
+     * @Groups({"quiz_session:get","quiz_session:get:report"})
      */
     protected $score;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="max_score", type="integer", nullable=true)
-     *
-     * @Groups({"quiz_session:get"})
-     */
-    protected $maxScore;
 
     /**
      * @ORM\ManyToOne(targetEntity="QuizAccess", inversedBy="quizSessions")
@@ -188,6 +179,7 @@ class QuizSession
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
      * })
+     * @Groups({"quiz_session:get:report"})
      */
     protected $owner;
 
@@ -272,13 +264,6 @@ class QuizSession
         return $this->responses;
     }
 
-    /**
-     * @return int
-     */
-    public function getMaxScore(): ?int
-    {
-        return $this->maxScore;
-    }
 
     /**
      * @param array $meta
@@ -310,14 +295,6 @@ class QuizSession
     public function setScore(int $score): void
     {
         $this->score = $score;
-    }
-
-    /**
-     * @param int $maxScore
-     */
-    public function setMaxScore(int $maxScore): void
-    {
-        $this->maxScore = $maxScore;
     }
 
     /**

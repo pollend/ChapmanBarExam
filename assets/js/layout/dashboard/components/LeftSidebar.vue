@@ -13,7 +13,13 @@
             <i class="el-icon-s-home"></i>
             <span>Home</span>
       </el-menu-item>
-      <el-submenu index="1">
+        <el-submenu index="1">
+            <template slot="title">
+                <i class="el-icon-tickets"></i>
+                <span slot="title">Users</span>
+            </template>
+        </el-submenu>
+      <el-submenu index="2">
         <template slot="title">
           <i class="el-icon-notebook-2"></i>
           <span slot="title">Classes</span>
@@ -21,13 +27,12 @@
         <el-menu-item index="dashboard.classes">All Classes</el-menu-item>
         <el-menu-item index="dashboard.classes.add">Add Class</el-menu-item>
       </el-submenu>
-      <el-submenu index="2">
+      <el-submenu index="3">
         <template slot="title">
             <i class="el-icon-tickets"></i>
             <span slot="title">Exams</span>
         </template>
         <el-menu-item index="dashboard.exam">All Exams</el-menu-item>
-<!--        <el-menu-item index="dashboard.classes.add">Create Exam</el-menu-item>-->
       </el-submenu>
     </el-menu>
 

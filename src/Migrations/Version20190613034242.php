@@ -27,7 +27,7 @@ final class Version20190613034242 extends AbstractMigration
         $this->addSql('CREATE INDEX idx_9a8efb783101e51f ON quiz_question_question_tag (quiz_question_id)');
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE TABLE quiz (id BIGSERIAL NOT NULL, name VARCHAR(50) NOT NULL, description TEXT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, deleted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE quiz (id BIGSERIAL NOT NULL, name VARCHAR(50) NOT NULL, description TEXT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, max_score INT DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, deleted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE TABLE quiz_access (id BIGSERIAL NOT NULL, quiz_id BIGINT DEFAULT NULL, classroom_id BIGINT DEFAULT NULL, is_hidden BOOLEAN DEFAULT NULL, num_attempts INT DEFAULT NULL, open_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, close_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
@@ -87,7 +87,7 @@ final class Version20190613034242 extends AbstractMigration
         $this->addSql('CREATE TABLE classroom (id BIGSERIAL NOT NULL, name VARCHAR(50) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, deleted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, description VARCHAR(50) DEFAULT NULL, course_number VARCHAR(50) DEFAULT NULL, PRIMARY KEY(id))');
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE TABLE quiz_session (id BIGSERIAL NOT NULL, quiz_id BIGINT DEFAULT NULL, classroom_id BIGINT DEFAULT NULL, owner_id BIGINT DEFAULT NULL, quiz_access_id BIGINT DEFAULT NULL, score INT DEFAULT NULL, max_score INT DEFAULT NULL, meta JSON DEFAULT NULL, submitted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, current_page INT DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE quiz_session (id BIGSERIAL NOT NULL, quiz_id BIGINT DEFAULT NULL, classroom_id BIGINT DEFAULT NULL, owner_id BIGINT DEFAULT NULL, quiz_access_id BIGINT DEFAULT NULL, score INT DEFAULT NULL, meta JSON DEFAULT NULL, submitted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, current_page INT DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX idx_c21e78746278d5a8 ON quiz_session (classroom_id)');
         $this->addSql('CREATE INDEX idx_c21e78747e3c61f9 ON quiz_session (owner_id)');
         $this->addSql('CREATE INDEX idx_c21e7874498a1629 ON quiz_session (quiz_access_id)');

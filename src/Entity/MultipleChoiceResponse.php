@@ -30,7 +30,7 @@ class MultipleChoiceResponse extends QuizResponse
     protected $choice;
 
     /**
-     * @return Quiz
+     * @return MultipleChoiceEntry
      */
     public function getChoice(): MultipleChoiceEntry
     {

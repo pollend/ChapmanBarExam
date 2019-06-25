@@ -1,3 +1,5 @@
+import {Component, Vue} from "vue-property-decorator";
+
 export interface Hydra {
     "@context": string
     "@id": string
@@ -13,6 +15,22 @@ export interface HydraCollection<T extends Hydra | {}> extends Hydra{
         "hydra:first"?: string,
         "hydra:last"?: string,
         "hydra:next"?: string,
+    }
+}
+
+@Component
+export class HydraMixxin extends Vue {
+    hydraID(target: Hydra | string): string {
+        if (target instanceof String) {
+            return <string>target;
+        } else {
+            const hy: Hydra = <Hydra>target;
+            return hy["@id"];
+        }
+    }
+
+    checkHydraMatch(c1: any, c2: any): boolean {
+        return this.hydraID(c1) == this.hydraID(c2);
     }
 }
 

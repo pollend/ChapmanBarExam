@@ -4,8 +4,12 @@ namespace App\EventListener;
 
 use App\Entity\MultipleChoiceQuestion;
 use App\Entity\MultipleChoiceResponse;
+use App\Entity\QuizQuestion;
 use App\Entity\QuizResponse;
+use App\Event\MaxScoreEvent;
+use App\Event\QuestionEvent;
 use App\Event\QuestionResultsEvent;
+use App\Event\QuizResultEvent;
 use App\Repository\QuizResponseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Support\Arr;
@@ -41,10 +45,24 @@ class QuizSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [QuestionResultsEvent::QUESTION_RESULTS => 'onCalculate'];
+        return [
+            QuestionResultsEvent::QUESTION_RESULTS => 'calculateResultsSet',
+            MaxScoreEvent::MAX_SCORE => 'calculateMaxScore'
+        ];
     }
 
-    public function onCalculate(QuestionResultsEvent $event)
+    public function calculateMaxScore(MaxScoreEvent $event){
+        $score = 0;
+        foreach ($event->getQuestions() as $question){
+            if ($question instanceof MultipleChoiceQuestion) {
+                $score++;
+            }
+        }
+        $event->setMaxScore($score);
+    }
+
+
+    public function calculateResultsSet(QuestionResultsEvent $event)
     {
         /** @var QuizResponseRepository $responseRepo */
         $responseRepo = $this->em->getRepository(QuizResponse::class);
@@ -53,11 +71,16 @@ class QuizSubscriber implements EventSubscriberInterface
             ->keyBy(function ($item) {
                 return $item->getQuestion()->getId();
             });
-        $maxScore = 0;
         $score = 0;
-        foreach ($event->getQuestions() as $question) {
+        $questions = $event->getQuestions();
+
+
+        $maxScoreEvent = new MaxScoreEvent($questions);
+        $this->calculateMaxScore($maxScoreEvent);
+        $event->setMaxScore($maxScoreEvent->getMaxScore());
+
+        foreach ($questions as $question) {
             if ($question instanceof MultipleChoiceQuestion) {
-                ++$maxScore;
                 if (Arr::exists($responses, $question->getId())) {
                     /** @var MultipleChoiceResponse $response */
                     $response = $responses[$question->getId()];
@@ -67,8 +90,7 @@ class QuizSubscriber implements EventSubscriberInterface
                 }
             }
         }
-
         $event->setScore($score);
-        $event->setMaxScore($maxScore);
+
     }
 }

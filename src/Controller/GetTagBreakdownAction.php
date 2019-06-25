@@ -51,11 +51,14 @@ class GetTagBreakdownAction
             $questionsByTag = $questionRepository->filterByTag($session->getQuiz(), $tag);
             $event = new QuestionResultsEvent($session, $questionsByTag);
             $this->dispatcher->dispatch($event, QuestionResultsEvent::QUESTION_RESULTS);
-            $breakdown->put($tag->getId(), new TagPayload($event, $tag));
+            $breakdown->put($tag->getId(), [
+                'maxScore' => $event->getMaxScore(),
+                'score' => $event->getScore(),
+                'tag' => $tag->getName()
+            ]);
         }
 
         return new JsonResponse($this->serializer->normalize($breakdown->values(), null, ['groups' => ['tag_payload', 'question_result:score', 'tag:get']]));
-
     }
 }
 
