@@ -11,7 +11,7 @@ This project was developed with Symfony. [here](https://symfony.com/)
 
 ### Docker
 
-This project uses docker through with a docker-compose configuration in the root of the project
+This project uses docker through a docker-compose configuration in the root of the project
 
 
 #### Starting Docker Instance
