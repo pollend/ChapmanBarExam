@@ -3,7 +3,7 @@
         <el-form ref="form" :model="form">
             <el-form-item label="Open And Close">
                 <el-date-picker
-                        v-model="range"
+                        v-model="form.range"
                         type="datetimerange"
                         start-placeholder="Start Date"
                         end-placeholder="End Date">
@@ -34,13 +34,14 @@
     import service from "../../../../utils/request";
     import ExamSearch from './ExamSearch';
 
-    interface QuizAccessForm {
+    export interface QuizCreateAccessForm {
         closeDate: string,
         isHidden: boolean,
         numAttempts: number,
         classroom: Classroom;
         openDate: string,
-        quiz: Quiz | string
+        quiz: Quiz | string,
+        range: ["",""]
     }
 
     @Component({
@@ -49,22 +50,18 @@
     export default class CreateQuizAccessForm extends Vue{
         @Prop() readonly classroom: Classroom;
         @Prop() visible: boolean;
-        @Provide() range: [string,string] = ["",""]
 
         @Provide() quizzes: [];
         @Provide() quizLoading: boolean;
 
-        @Provide() createExam: () => Promise<boolean> = async function(){
-          return false;
-        };
-
-        @Provide() form: QuizAccessForm = {
+        @Provide() form: QuizCreateAccessForm = {
             closeDate: "",
             isHidden: false,
             numAttempts: 0,
             openDate: "",
             quiz: null,
-            classroom: this.classroom
+            classroom: this.classroom,
+            range: ['','']
         };
 
         async queryQuizzes(query: string) {
@@ -79,7 +76,7 @@
             this.$emit('cancel');
         }
         handleSubmit(){
-            this.$emit('submit',this.createExam);
+            this.$emit('submit',this.form);
         }
 
 

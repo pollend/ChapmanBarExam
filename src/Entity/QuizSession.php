@@ -120,7 +120,7 @@ class QuizSession
 
     /**
      * @ORM\ManyToOne(targetEntity="QuizAccess", inversedBy="quizSessions")
-     * @ORM\JoinColumn(name="quiz_access_id", referencedColumnName="id",nullable=true)
+     * @ORM\JoinColumn(name="quiz_access_id", referencedColumnName="id",nullable=true, onDelete="SET NULL")
      */
     protected $quizAccess;
 

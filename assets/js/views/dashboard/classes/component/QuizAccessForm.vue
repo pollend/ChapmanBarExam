@@ -2,7 +2,7 @@
     <div>
         <el-form ref="form" v-if="classroom">
             <el-form-item>
-                <data-tables-server class="quiz-access-table" :table-props="tableProps"  :loading="loading" :data="hydraCollection ? hydraCollection['hydra:member'] : []" @query-change="loadData">
+                <data-tables-server class="quiz-access-table" :total="totalItems"  :table-props="tableProps"  :loading="loading" :data="items" @query-change="loadData">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
                     <el-table-column label="Open" width="60">
@@ -48,8 +48,8 @@
             </el-form-item>
         </el-form>
 
-        <el-dialog :visible.sync="showCreate">
-            <create-quiz-access-form></create-quiz-access-form>
+        <el-dialog :visible.sync="showCreate" title="Create Quiz Access">
+            <create-quiz-access-form @submit="handleSubmitCreate"></create-quiz-access-form>
         </el-dialog>
     </div>
 </template>
@@ -57,8 +57,8 @@
 <script lang="ts">
 
 import Classroom from "../../../../entity/classroom";
-import {Component, Prop, Provide, Vue} from "vue-property-decorator";
-import {HydraCollection, hydraID} from "../../../../entity/hydra";
+import {Component, Prop, Provide, Vue, Watch} from "vue-property-decorator";
+import {HydraCollection, hydraID, HydraMixxin} from "../../../../entity/hydra";
 import QuizAccess from "../../../../entity/quiz-access";
 import service from "../../../../utils/request";
 import {buildSortQueryForVueDataTable} from "../../../../utils/vue-data-table-util";
@@ -66,6 +66,8 @@ import {SearchFilter} from "../../../../utils/filter";
 import ExamSearch from './ExamSearch';
 import {namespace} from "vuex-class";
 import CreateQuizAccessForm from './CreateQuizAccessForm';
+import {QuizCreateAccessForm} from "./CreateQuizAccessForm.vue";
+import {mixins} from "vue-class-component";
 
 interface QuizAccessTag extends QuizAccess {
     isMarked: boolean;
@@ -77,7 +79,7 @@ const classroomShowModule = namespace('dashboard/classroom/show');
 @Component({
     components: {ExamSearch,CreateQuizAccessForm}
 })
-export default class QuizAccessForm extends Vue {
+export default class QuizAccessForm extends mixins(HydraMixxin) {
     @classroomShowModule.Getter('classroom') classroom: Classroom;
     @Provide() hydraCollection: HydraCollection<QuizAccess> = null;
     @Provide() loading: boolean = false;
@@ -85,14 +87,38 @@ export default class QuizAccessForm extends Vue {
     @Provide() showCreate:boolean = false;
 
     @Provide() tableProps: any = {
-        rowClassName(provies:{row:any,rowIndex: number}) {
-            if (provies.row.isMarked) {
+        rowClassName(provides:{row:any,rowIndex: number}) {
+            if (provides.row.isMarked) {
                 return 'marked-change';
             }
             return '';
         }
     };
 
+    get totalItems() {
+        return this.hydraCollection ? this.hydraCollection["hydra:totalItems"] : 0;
+    }
+
+    get items(){
+        return this.hydraCollection ? this.hydraCollection["hydra:member"] : [];
+    }
+
+    async handleSubmitCreate(form: QuizCreateAccessForm ){
+        const response = await service({
+            url: '/_api/quiz_accesses',
+            method: 'POST',
+            data: {
+                classroom : this.hydraID(this.classroom),
+                openDate: form.range[0],
+                closeDate: form.range[1],
+                isHidden: form.isHidden,
+                quiz: this.hydraID(form.quiz),
+                numAttempts: form.numAttempts
+            }
+        });
+        this.showCreate = false;
+        await this.load(this.hydraCollection["hydra:view"]["@id"])
+    }
 
     get quizAccess() {
         return this.hydraCollection ? this.hydraCollection["hydra:member"] : [];

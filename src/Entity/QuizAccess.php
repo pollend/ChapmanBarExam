@@ -40,7 +40,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  *          }
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"id":"exact", "quiz":"exact"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact", "quiz":"exact", "classroom":"exact"})
  * @ApiFilter(ExistsFilter::class,properties={"deletedAt"})
  * @ApiFilter(OrderFilter::class,properties= {"name","createdAt","updatedAt"},  arguments={"orderParameterName"="order"})
  *
