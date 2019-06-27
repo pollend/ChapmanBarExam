@@ -108,7 +108,7 @@ class Classroom
 
     /**
      * @var string
-     * @ORM\Column(name="description",type="string",length=50,nullable=true)
+     * @ORM\Column(name="description",type="string",length=500,nullable=true)
      * @Groups({"classroom:get","quiz-access:get","classroom:put"})
      */
     protected $description;
@@ -151,6 +151,11 @@ class Classroom
      * @Groups({"classroom:admin:get"})
      */
     protected $quizSessions;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     /**
      * @Groups({"classroom:get:ROLE_ADMIN"})

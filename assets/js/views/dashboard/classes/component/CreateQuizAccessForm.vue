@@ -28,59 +28,86 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Provide, Vue} from "vue-property-decorator";
-    import Classroom from "../../../../entity/classroom";
-    import {Quiz} from "../../../../entity/quiz";
-    import service from "../../../../utils/request";
-    import ExamSearch from './ExamSearch';
 
-    export interface QuizCreateAccessForm {
-        closeDate: string,
-        isHidden: boolean,
-        numAttempts: number,
-        classroom: Classroom;
-        openDate: string,
-        quiz: Quiz | string,
-        range: ["",""]
+import {Component, Prop, Provide, Vue} from "vue-property-decorator";
+import Classroom from "../../../../entity/classroom";
+import {Quiz} from "../../../../entity/quiz";
+import service from "../../../../utils/request";
+import ExamSearch from './ExamSearch';
+import {mixins} from "vue-class-component";
+import {HydraMixxin} from "../../../../entity/hydra";
+
+export interface QuizCreateAccessForm {
+    closeDate: string,
+    isHidden: boolean,
+    numAttempts: number,
+    classroom: Classroom;
+    openDate: string,
+    quiz: Quiz | string,
+    range: ["",""]
+}
+
+@Component({
+    components: {ExamSearch}
+})
+export default class CreateQuizAccessForm extends mixins(HydraMixxin) {
+    @Prop() readonly classroom: Classroom;
+    @Prop() visible: boolean;
+
+    @Provide() quizzes: [];
+    @Provide() quizLoading: boolean;
+
+    @Provide() form: QuizCreateAccessForm = {
+        closeDate: "",
+        isHidden: false,
+        numAttempts: 0,
+        openDate: "",
+        quiz: null,
+        classroom: this.classroom,
+        range: ['', '']
+    };
+
+    async queryQuizzes(query: string) {
+        this.quizLoading = true;
+        service({
+            url: ''
+        });
+        this.quizLoading = false;
     }
 
-    @Component({
-        components: {ExamSearch}
-    })
-    export default class CreateQuizAccessForm extends Vue{
-        @Prop() readonly classroom: Classroom;
-        @Prop() visible: boolean;
-
-        @Provide() quizzes: [];
-        @Provide() quizLoading: boolean;
-
-        @Provide() form: QuizCreateAccessForm = {
+    clearForm() {
+        this.form = {
+            numAttempts: 0,
             closeDate: "",
             isHidden: false,
-            numAttempts: 0,
             openDate: "",
             quiz: null,
             classroom: this.classroom,
-            range: ['','']
+            range: ['', '']
         };
-
-        async queryQuizzes(query: string) {
-            this.quizLoading = true;
-            service({
-                url: ''
-            });
-            this.quizLoading = false;
-        }
-
-        handleCancel() {
-            this.$emit('cancel');
-        }
-        handleSubmit(){
-            this.$emit('submit',this.form);
-        }
-
-
-
     }
 
+    handleCancel() {
+        this.$emit('cancel');
+        this.clearForm();
+    }
+
+    async handleSubmit() {
+        const response = await service({
+            url: '/_api/quiz_accesses',
+            method: 'POST',
+            data: {
+                classroom: this.hydraID(this.classroom),
+                openDate: this.form.range[0],
+                closeDate: this.form.range[1],
+                isHidden: this.form.isHidden,
+                quiz: this.hydraID(this.form.quiz),
+                numAttempts: this.form.numAttempts
+            }
+        });
+        console.log(response.data);
+        this.clearForm();
+        this.$emit('submit', response.data);
+    }
+}
 </script>

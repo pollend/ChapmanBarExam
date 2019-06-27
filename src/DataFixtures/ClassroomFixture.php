@@ -46,7 +46,7 @@ class ClassroomFixture extends Fixture implements DependentFixtureInterface
         $users = $userRepository->findAll();
         $quizzes = $quizRepository->findAll();
 
-        Collection::times(100, function ($index) use ($faker,$quizzes,$users,$manager) {
+        Collection::times(20, function ($index) use ($faker, $quizzes, $users, $manager) {
             $classroom = new Classroom();
             $classroom->setName($faker->name);
             $classroom->setDescription($faker->sentence($nbWords = 6, $variableNbWords = true));
@@ -54,11 +54,17 @@ class ClassroomFixture extends Fixture implements DependentFixtureInterface
             $manager->persist($classroom);
 
             /** @var User $user */
-            foreach (Collection::make($users)->random(100) as $user) {
+            foreach (Collection::make($users)->random(50) as $user) {
                 $whitelist = new UserWhitelist();
                 $whitelist->setEmail($user->getEmail())
                     ->setClassroom($classroom);
                 $manager->persist($whitelist);
+            }
+
+            /** @var User $user */
+            foreach (Collection::make($users)->random(50) as $user) {
+
+                $classroom->getUsers()->add($user);
             }
 
             /** @var Quiz $quiz */

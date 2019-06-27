@@ -19,7 +19,7 @@ This project uses docker through a docker-compose configuration in the root of t
 docker-compose up
 docker-compose exec php bash
 composer install
-php ./bin/console doctrine:migrations:migrat
+php ./bin/console doctrine:migrations:migrate
 ```
 
 #### workspace

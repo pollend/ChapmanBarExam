@@ -33,9 +33,14 @@
                             <exam-search @change="rowChange(scope.row)" v-model="scope.row.quiz"></exam-search>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="numAttempts" label="Attempt Count">
+                    <el-table-column prop="numAttempts" label="Attempt Count" >
                         <template slot-scope="scope">
                             <el-input-number v-model="scope.row.numAttempts" @change="rowChange(scope.row)"  :min="0" ></el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template slot-scope="scope">
+                            <el-button type="primary" icon="el-icon-delete" @click="handleDeleteAccess(scope.row)"></el-button>
                         </template>
                     </el-table-column>
                 </data-tables-server>
@@ -49,7 +54,7 @@
         </el-form>
 
         <el-dialog :visible.sync="showCreate" title="Create Quiz Access">
-            <create-quiz-access-form @submit="handleSubmitCreate"></create-quiz-access-form>
+            <create-quiz-access-form :classroom="classroom" @submit="handleSubmitCreate" @cancel="showCreate = false"></create-quiz-access-form>
         </el-dialog>
     </div>
 </template>
@@ -95,6 +100,14 @@ export default class QuizAccessForm extends mixins(HydraMixxin) {
         }
     };
 
+    async handleDeleteAccess(access:QuizAccess) {
+        const response = await service({
+            url: '/_api/quiz_accesses/' + access.id,
+            method: 'DELETE'
+        })
+        await this.load(this.hydraCollection["hydra:view"]["@id"])
+    }
+
     get totalItems() {
         return this.hydraCollection ? this.hydraCollection["hydra:totalItems"] : 0;
     }
@@ -103,19 +116,7 @@ export default class QuizAccessForm extends mixins(HydraMixxin) {
         return this.hydraCollection ? this.hydraCollection["hydra:member"] : [];
     }
 
-    async handleSubmitCreate(form: QuizCreateAccessForm ){
-        const response = await service({
-            url: '/_api/quiz_accesses',
-            method: 'POST',
-            data: {
-                classroom : this.hydraID(this.classroom),
-                openDate: form.range[0],
-                closeDate: form.range[1],
-                isHidden: form.isHidden,
-                quiz: this.hydraID(form.quiz),
-                numAttempts: form.numAttempts
-            }
-        });
+    async handleSubmitCreate(result: HydraCollection<QuizAccess> ){
         this.showCreate = false;
         await this.load(this.hydraCollection["hydra:view"]["@id"])
     }
@@ -133,9 +134,9 @@ export default class QuizAccessForm extends mixins(HydraMixxin) {
             url: url,
             method: 'GET'
         });
-        const payload: HydraCollection<QuizAccess> = response.data ;
+        const payload: HydraCollection<QuizAccess> = response.data;
         payload["hydra:member"].forEach(function (e) {
-            const temp =  <QuizAccessTag> e;
+            const temp = <QuizAccessTag>e;
             temp.range = [e.openDate, e.closeDate];
             temp.isMarked = false;
         });

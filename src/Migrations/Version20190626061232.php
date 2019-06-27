@@ -14,7 +14,7 @@ final class Version20190626061232 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Create Initial Tables';
     }
 
     public function up(Schema $schema) : void
@@ -53,7 +53,7 @@ final class Version20190626061232 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_24557253CFB79C36 ON multiple_choice_question (correct_entry_id)');
         $this->addSql('CREATE TABLE "user_whitelist" (id BIGSERIAL NOT NULL, classroom_id BIGINT DEFAULT NULL, email VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_CBE615806278D5A8 ON "user_whitelist" (classroom_id)');
-        $this->addSql('CREATE TABLE classroom (id BIGSERIAL NOT NULL, name VARCHAR(50) NOT NULL, description VARCHAR(50) DEFAULT NULL, course_number VARCHAR(50) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, deleted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE classroom (id BIGSERIAL NOT NULL, name VARCHAR(50) NOT NULL, description VARCHAR(500) DEFAULT NULL, course_number VARCHAR(50) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, deleted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE classroom_user (classroom_id BIGINT NOT NULL, user_id BIGINT NOT NULL, PRIMARY KEY(classroom_id, user_id))');
         $this->addSql('CREATE INDEX IDX_7499B21D6278D5A8 ON classroom_user (classroom_id)');
         $this->addSql('CREATE INDEX IDX_7499B21DA76ED395 ON classroom_user (user_id)');

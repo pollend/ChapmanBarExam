@@ -54,15 +54,15 @@ class LoginListener implements EventSubscriberInterface
      */
     public function onUpdateClassroomList(JWTAuthenticatedEvent $event)
     {
-        /** @var ClassroomRepository $classRepo */
-        $classRepo = $this->em->getRepository(Classroom::class);
+        /** @var ClassroomRepository $classRepository */
+        $classRepository = $this->em->getRepository(Classroom::class);
 
         /** @var User $user */
         $user = $event->getToken()->getUser();
 
-        $inClasses = Collection::make($classRepo->byUser($user));
+        $inClasses = Collection::make($classRepository->byUser($user));
         /** @var Classroom $class */
-        foreach ($classRepo->byEmail($user->getEmail()) as $class) {
+        foreach ($classRepository->byEmail($user->getEmail()) as $class) {
             // if user is not in class add to class
             if (!$inClasses->contains($class)) {
                 $class->getUsers()->add($user);
