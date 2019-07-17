@@ -22,6 +22,7 @@ steps:
       npm install
       npm run build
     displayName: 'npm install and build'
+
   - script: |
       sudo update-alternatives --set php /usr/bin/php$(phpVersion)
       sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
@@ -30,5 +31,6 @@ steps:
       sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
       php -version
     displayName: 'Use PHP version $(phpVersion)'
+
   - script: composer install --no-interaction --prefer-dist
     displayName: 'composer install'
