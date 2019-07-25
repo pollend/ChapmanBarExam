@@ -30,9 +30,17 @@ steps:
   - script: composer install --no-interaction --prefer-dist
     displayName: 'composer install'
     # PHP
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: './'
+      includeRootFolder: true
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+      replaceExistingArchive: true
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: './'
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
       ArtifactName: 'drop'
       publishLocation: 'Container'
 # Test and package your PHP project.
