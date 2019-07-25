@@ -32,7 +32,7 @@ steps:
     # PHP
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      PathtoPublish: './'
       ArtifactName: 'drop'
       publishLocation: 'Container'
 # Test and package your PHP project.
