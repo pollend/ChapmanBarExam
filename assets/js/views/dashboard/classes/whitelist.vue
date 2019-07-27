@@ -1,13 +1,13 @@
 <template>
     <div class="whitelist-container" v-if="classroom">
-        <el-table  v-loading="loading" ref="emailTable" :data="emails" height="400"  @selection-change="handleSelectionChange">
+        <el-table  v-loading="loading" ref="emailTable"  :data="emails" height="400"  @selection-change="handleSelectionChange">
             <el-table-column
                     type="selection"
                     width="55">
             </el-table-column>
             <el-table-column label="Email">
                 <template slot-scope="scope">
-                    {{scope.row}}
+                    <span :class="{'email-marked': mark.includes(scope.row)}">{{scope.row}}</span>
                 </template>
             </el-table-column>
             <el-table-column width="120">
@@ -34,6 +34,22 @@
 <!--            <el-button>Instructions</el-button>-->
 <!--        </div>-->
 
+        <el-form label-width="120px">
+            <h2>Bulk Insert</h2>
+            <el-form-item label="Instructions">
+                Bulk Insert allows adding more then one whitelisted email. emails either have to be comma or separated by a carriage return.
+            </el-form-item>
+            <el-form-item label="Emails">
+                <el-input
+                        type="textarea"
+                        :rows="2"
+                        placeholder="Please input"
+                        v-model="bulkEmails">
+                </el-input>
+            </el-form-item>
+            <el-button  @click="addBulkEmails()" >Add Emails</el-button>
+        </el-form>
+
     </div>
 </template>
 
@@ -55,7 +71,9 @@ export default class ClassroomWhitelist extends Vue {
     @Provide() selectedEmails: string[] = [];
     @Provide() hasChanged: boolean = false;
     @Provide() loading: boolean = false;
-    @Provide() bulkImport: boolean = false;
+    @Provide() bulkEmails: string = '';
+    @Provide() mark: string[] = [];
+
 
     @classroomShowModule.Getter('classroom') classroom: Classroom;
     async loadCollection() {
@@ -74,6 +92,15 @@ export default class ClassroomWhitelist extends Vue {
 
     handleSelectionChange(val: string[]) {
         this.selectedEmails = val;
+    }
+
+    async addBulkEmails(){
+        for(let e of this.bulkEmails.split('\n')){
+            this.mark.push(e);
+            this.collection["hydra:member"].push(e);
+            this.bulkEmails = ''
+        }
+
     }
 
     async save() {
@@ -106,6 +133,7 @@ export default class ClassroomWhitelist extends Vue {
     }
 
     add(email: string) {
+        this.mark.push(email);
         this.collection["hydra:member"].push(email);
         this.email = "";
         this.hasChanged = true;
@@ -119,6 +147,10 @@ export default class ClassroomWhitelist extends Vue {
     .whitelist-container {
         .bottom-add{
             margin: .3rem .2rem;
+        }
+
+        .email-marked{
+            color: green;
         }
     }
 </style>
