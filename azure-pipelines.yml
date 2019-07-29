@@ -8,6 +8,22 @@ variables:
   phpVersion: 7.2
 
 steps:
+  - task: DownloadSecureFile@1
+    name: jwt_private
+    inputs:
+      secureFile: 'jwt_private.pem'
+      
+  - task: DownloadSecureFile@1
+    name: jwt_public
+    inputs:
+      secureFile: 'jwt_public.pem'
+
+  - script: |
+      mkdir -p config/jwt
+      mv $(jwt_private.secureFilePath)/* ./config/jwt
+      mv $(jwt_public.secureFilePath)/* ./config/jwt
+    displayName: 'Adding JWT Secure tokens'
+
   - task: NodeTool@0
     inputs:
       versionSpec: '10.x'
