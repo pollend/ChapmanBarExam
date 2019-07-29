@@ -130,7 +130,6 @@ export class FilterBuilder {
             return e.key;
         }), (value, key) => {
             if (value.length == 1) {
-
                 let o: op = value[0];
                 payload.push(key + '=' + o.value);
             } else {

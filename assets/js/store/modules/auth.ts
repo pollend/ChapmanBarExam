@@ -2,6 +2,7 @@ import {ActionTree, GetterTree, Module, MutationTree} from "vuex";
 import {RootState} from '../index';
 import service, {OLD_API} from '../../utils/request'
 import User from "../../entity/user";
+import * as Cookies from "js-cookie";
 
 export interface AuthState {
     user: User | null,
@@ -142,10 +143,20 @@ const actions: ActionTree<AuthState,RootState> = {
     }
 };
 
+function getToken() {
+    let token = localStorage.getItem(AUTH_TOKEN)
+    if(token)
+        return token;
+    token = Cookies.get(AUTH_TOKEN);
+    if(token)
+        return token;
+    return  null;
+}
+
 export const auth: Module<AuthState,RootState> = {
     namespaced:true,
     state:{
-        token: localStorage.getItem(AUTH_TOKEN),
+        token: getToken(),
         refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),
         ttl: Date.now(),
         isLoading: false,

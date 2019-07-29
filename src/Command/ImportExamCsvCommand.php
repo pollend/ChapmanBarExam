@@ -4,8 +4,10 @@ namespace App\Command;
 
 use App\Entity\MultipleChoiceEntry;
 use App\Entity\MultipleChoiceQuestion;
+use App\Entity\QuestionTag;
 use App\Entity\Quiz;
 use App\Entity\TextBlockQuestion;
+use App\Repository\QuestionTagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -52,6 +54,8 @@ class ImportExamCsvCommand extends Command
 
         $payload = $this->serializer->decode(file_get_contents($file), 'csv');
 
+        $tags = [];
+
         $quiz = new Quiz();
 
         $quiz->setDescription($description ? $description : '');
@@ -83,13 +87,33 @@ class ImportExamCsvCommand extends Command
                 $entries[$key] = $q;
                 $this->entityManager->persist($q);
             }
+            /** @var QuestionTagRepository $questionTagRepository */
+            $questionTagRepository = $this->entityManager->getRepository(QuestionTag::class);
+
             $multipleChoiceQuestion->setCorrectAnswer($entries[$row['answer']]);
             $multipleChoiceQuestion->setGroup($group);
             $multipleChoiceQuestion->setOrder($count);
             $multipleChoiceQuestion->setQuiz($quiz);
             $multipleChoiceQuestion->setContent($row['question']);
-            $this->entityManager->persist($multipleChoiceQuestion);
+            foreach (explode(',',$row['tags']) as $name){
+                $name = trim($name);
+                if($name != '')
+                    continue;
 
+                /** @var QuestionTag $tag */
+                $tag = array_key_exists($name,$tags) ? $tags[$name] : null;
+                if(!$tag) {
+                    $tag = $questionTagRepository->byName($name);
+                    if (!$tag) {
+                        $tag = new QuestionTag();
+                        $tag->setName($name);
+                    }
+                    $this->entityManager->persist($tag);
+                }
+                $tags[$name] = $tag;
+                $multipleChoiceQuestion->getTags()->add($tag);
+            }
+            $this->entityManager->persist($multipleChoiceQuestion);
         }
         $this->entityManager->flush();
     }

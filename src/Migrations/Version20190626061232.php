@@ -28,7 +28,7 @@ final class Version20190626061232 extends AbstractMigration
         $this->addSql('CREATE TABLE quiz (id BIGSERIAL NOT NULL, name VARCHAR(50) NOT NULL, description TEXT NOT NULL, max_score INT DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, deleted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE quiz_question (id BIGSERIAL NOT NULL, quiz_id BIGINT DEFAULT NULL, "order" INT NOT NULL, "group" INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, type VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_6033B00B853CD175 ON quiz_question (quiz_id)');
-        $this->addSql('CREATE TABLE quiz_question_question_tag (quiz_question_id BIGINT NOT NULL, question_tag_id BIGINT NOT NULL, PRIMARY KEY(quiz_question_id, question_tag_id))');
+        $this->addSql('CREATE TABLE quiz_question_question_tag (quiz_question_id BIGINT NOT NULL, question_tag_id BIGINT NOT NULL)');
         $this->addSql('CREATE INDEX IDX_9A8EFB783101E51F ON quiz_question_question_tag (quiz_question_id)');
         $this->addSql('CREATE INDEX IDX_9A8EFB78BD8F4C19 ON quiz_question_question_tag (question_tag_id)');
         $this->addSql('CREATE TABLE text_block_question (id BIGINT NOT NULL, content TEXT NOT NULL, PRIMARY KEY(id))');

@@ -10,7 +10,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * Class UserWhitelist.
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repository\UserWhitelistRepository")
  * @ORM\Table(name="`user_whitelist`")
  * @ORM\HasLifecycleCallbacks
  */

@@ -7,7 +7,6 @@ use App\Entity\Quiz;
 use App\Entity\QuizAccess;
 use App\Entity\User;
 use App\Entity\UserWhitelist;
-use App\Repository\ClassroomRepository;
 use App\Repository\QuizRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;

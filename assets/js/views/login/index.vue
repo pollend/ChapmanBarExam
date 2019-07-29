@@ -29,6 +29,10 @@
           Sign in
         </el-button>
       </el-form-item>
+      <el-form-item>
+        <el-button @click="handleFederatedLogin">Chapman Federated</el-button>
+
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -95,6 +99,10 @@ export default class Login extends Vue {
     } else {
       this.pwdType = 'password';
     }
+  }
+
+  handleFederatedLogin() {
+    window.open('/saml/login');
   }
 
   handleLogin() {

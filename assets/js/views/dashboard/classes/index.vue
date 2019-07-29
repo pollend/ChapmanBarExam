@@ -44,7 +44,6 @@ export default class ClassLists extends Vue {
     }
 
     async loadData(query: {}){
-        console.log(query);
         this.loading = true;
         const response = await service({
             url: '/_api/classrooms?' + buildSortQueryForVueDataTable(query).build(),

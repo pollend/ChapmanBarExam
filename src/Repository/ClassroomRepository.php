@@ -32,6 +32,7 @@ class ClassroomRepository extends EntityRepository
             ->getResult();
     }
 
+
     private function _filter(Request $request)
     {
         $qb = $this->createQueryBuilder('c');

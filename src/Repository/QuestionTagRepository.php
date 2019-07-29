@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\QuestionTag;
 use App\Entity\Quiz;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 
 class QuestionTagRepository extends EntityRepository
 {
@@ -19,6 +21,20 @@ class QuestionTagRepository extends EntityRepository
             ->getResult();
     }
 
+    public function byName($name)
+    {
+        $qb = $this->createQueryBuilder('t');
+        try {
+            $result = $qb->where($qb->expr()->like('t.name', ':name'))
+                ->setParameter('name', $name)
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException $exception) {
+            return null;
+        }
+        return $result;
+    }
+
     /**
      * @param $text
      * @param int $limit
@@ -31,7 +47,7 @@ class QuestionTagRepository extends EntityRepository
 
         return $qb->where($qb->expr()->like('t.name', ':name'))
             ->setMaxResults($limit)
-            ->setParameter('name', '%'.$text.'%')
+            ->setParameter('name', '%' . $text . '%')
             ->getQuery()
             ->getResult();
     }

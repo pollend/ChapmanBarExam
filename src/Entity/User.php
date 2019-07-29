@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,6 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * Class User.
@@ -60,6 +62,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         "normalization_context"={"groups" = {"user:get"}}
  *     }
  * })
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","classes":"exact"})
  */
 class User implements UserInterface
 {

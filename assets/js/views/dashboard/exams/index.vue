@@ -1,6 +1,7 @@
 <template>
     <div class="section">
         <div class="container">
+<!--            <el-button>Create Exam</el-button>-->
             <data-tables-server :loading="loading" :data="exams" :total="count" @query-change="loadData" :pagination-props="{ pageSizes: [20, 50, 100, 200] }">
                 <el-table-column sortable="true" prop="createdAt" label="Created At"></el-table-column>
                 <el-table-column sortable="true" prop="updatedAt" label="Updated At"></el-table-column>
@@ -17,7 +18,6 @@
 </template>
 
 <script lang="ts">
-// import {getQuizDatatable} from "@/api/quiz";
 
 import {Component, Provide, Vue} from "vue-property-decorator";
 import service from "../../../utils/request";

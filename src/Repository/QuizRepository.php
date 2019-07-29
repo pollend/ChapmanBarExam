@@ -4,12 +4,26 @@ namespace App\Repository;
 
 use App\Datatable;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 
 class QuizRepository extends EntityRepository
 {
+    public function byName($name){
+        $qb = $this->createQueryBuilder('q');
+        try {
+            $result = $qb->where($qb->expr()->like('q.name', ':name'))
+                ->setParameter('name', $name)
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException $exception) {
+            return null;
+        }
+        return $result;
+    }
+
     private function _filter(Request $request)
     {
         $qb = $this->createQueryBuilder('q');

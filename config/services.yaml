@@ -24,6 +24,9 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    App\Controller\SamlAuthController:
+        arguments: ["@onelogin_auth"]
+
     App\Security\:
         public: false
         resource: '../src/Security/*'

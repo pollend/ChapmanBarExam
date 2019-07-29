@@ -38,7 +38,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "access_control"="is_granted('ROLE_ADMIN')",
  *          "controller"=App\Controller\GetWhitelistByClassroom::class,
  *          "path"= "/classrooms/{id}/whitelist",
- *
  *     },
  *     "put_whitelist" = {
  *          "method"="PUT",
@@ -57,6 +56,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "access_control"="is_granted('ROLE_ADMIN')",
  *          "path"= "/classrooms/{id}/report/{report_id}/item",
  *          "controller"= App\Controller\GetStandardQuestionReport::class,
+ *     },
+ *     "delete_user" = {
+ *          "method"="DELETE",
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "path"= "/classrooms/{id}/user/{user_id}",
+ *          "controller"= App\Controller\RemoveUserFromClassroom::class,
  *     }
  * },
  * collectionOperations={

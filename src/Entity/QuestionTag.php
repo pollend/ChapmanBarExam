@@ -43,7 +43,7 @@ class QuestionTag
     /**
      * Many Users have Many Groups.
      *
-     * @ORM\ManyToMany(targetEntity="QuizQuestion", mappedBy="tags" )
+     * @ORM\ManyToMany(targetEntity="QuizQuestion", mappedBy="tags")
      * @ORM\JoinTable(name="quiz_question_question_tag")
      */
     protected $questions;
