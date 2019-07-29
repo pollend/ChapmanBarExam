@@ -20,8 +20,8 @@ steps:
 
   - script: |
       mkdir -p config/jwt
-      mv $(jwt_private.secureFilePath)/* ./config/jwt
-      mv $(jwt_public.secureFilePath)/* ./config/jwt
+      mv $(jwt_private.secureFilePath) ./config/jwt
+      mv $(jwt_public.secureFilePath) ./config/jwt
     displayName: 'Adding JWT Secure tokens'
 
   - task: NodeTool@0
