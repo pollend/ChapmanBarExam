@@ -147,15 +147,7 @@ class User implements UserInterface
      * @var string
      */
     private $plainTextPassword;
-
-    /**
-     * @param string $rememberToken
-     */
-    public function setRememberToken(string $rememberToken): void
-    {
-        $this->rememberToken = $rememberToken;
-    }
-
+    
     public function setEmailVerifiedAt(\DateTime $emailVerifiedAt): void
     {
         $this->emailVerifiedAt = $emailVerifiedAt;
