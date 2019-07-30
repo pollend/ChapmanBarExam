@@ -73,8 +73,8 @@ export default class Login extends Vue {
     password: [{required: true, trigger: 'blur', validator: validatePass}]
   };
   @Provide() loginForm = {
-    email: 'roob.nicholaus@yahoo.com',
-    password: 'password'
+    email: '',
+    password: ''
   };
 
   @Provide() pwdType = 'password';
