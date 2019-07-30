@@ -38,14 +38,22 @@ const mutations: MutationTree<AuthState> = {
         state.user = user;
     },
     [AUTH_SET_TOKEN]: (state, token: string) => {
-        state.token = token;
-        state.ttl = Date.now();
-        localStorage.setItem(AUTH_TOKEN,token);
+        if(token) {
+            state.token = token;
+            state.ttl = Date.now();
+            localStorage.setItem(AUTH_TOKEN, token);
+            return true;
+        }
+        return  false;
     },
     [AUTH_SET_REFRESH_TOKEN]: (state, token: string) => {
-        state.refreshToken = token;
-        state.ttl = Date.now();
-        localStorage.setItem(AUTH_REFRESH_TOKEN,token);
+        if(token) {
+            state.refreshToken = token;
+            state.ttl = Date.now();
+            localStorage.setItem(AUTH_REFRESH_TOKEN, token);
+            return  true;
+        }
+        return false;
     },
     [AUTH_CLEAR]: (state) => {
         state.refreshToken = null;
@@ -145,21 +153,28 @@ const actions: ActionTree<AuthState,RootState> = {
 
 function getToken() {
     let token = localStorage.getItem(AUTH_TOKEN)
-    if(token)
+    if(token) {
         return token;
+    }
     token = Cookies.get(AUTH_TOKEN);
-    if(token)
+    Cookies.remove(AUTH_TOKEN);
+    localStorage.setItem(AUTH_TOKEN,token);
+    if(token) {
         return token;
+    }
     return  null;
 }
 
 function getRefreshToken() {
-    let token = localStorage.getItem(AUTH_REFRESH_TOKEN)
+    let token = localStorage.getItem(AUTH_REFRESH_TOKEN);
     if(token)
         return token;
     token = Cookies.get(AUTH_REFRESH_TOKEN);
-    if(token)
+    Cookies.remove(AUTH_REFRESH_TOKEN);
+    localStorage.setItem(AUTH_REFRESH_TOKEN,token);
+    if(token) {
         return token;
+    }
     return  null;
 }
 

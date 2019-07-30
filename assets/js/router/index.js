@@ -58,7 +58,7 @@ export const routes = [
           {path: 'users',name: 'dashboard.class.user', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/user')},
           {path: 'whitelist',name: 'dashboard.class.whitelist', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/whitelist')}
       ]},
-      {path: '/class/:class_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.report', component: () => import('../views/report/show')},
+      // {path: '/class/:class_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.report', component: () => import('../views/report/show')},
       {path: '/class/:class_id/quiz/:quiz_id', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz', component: () => import('../views/report/show')},
       {path: '/class/:class_id/quiz/:quiz_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz.report', component: () => import('@/views/report/show')},
       {path: '/class/add', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/home'), name: 'dashboard.class.add'},

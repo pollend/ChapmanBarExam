@@ -100,14 +100,13 @@ class SamlAuthController extends  AbstractController
         }
 
         $token = $this->jwtManager->create($user);
-
         $jwtSuccessEvent = new AuthenticationSuccessEvent(array(), $user, new Response());
         $this->attachRefreshTokenOnSuccessListener->attachRefreshToken($jwtSuccessEvent);
         $refreshToken = $this->refreshTokenManager->getLastFromUsername($user->getEmail());
 
         $response = $this->redirect('/');
-        $response->headers->setCookie(new Cookie('AUTH_REFRESH_TOKEN', $refreshToken, strtotime('now + 10 minutes')));
-        $response->headers->setCookie(new Cookie('AUTH_TOKEN', $token, strtotime('now + 10 minutes')));
+        $response->headers->setCookie(new Cookie('AUTH_REFRESH_TOKEN', $refreshToken, strtotime('now + 10 minutes'),'/',null,false,false));
+        $response->headers->setCookie(new Cookie('AUTH_TOKEN', $token, strtotime('now + 10 minutes'),'/',null,false,false));
         return $response;
     }
 
