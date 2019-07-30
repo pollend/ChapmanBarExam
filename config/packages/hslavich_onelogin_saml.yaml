@@ -1,19 +1,18 @@
 hslavich_onelogin_saml:
   idp:
-    entityId: 'http://id.example.com/saml2/idp/metadata.php'
+    entityId: 'https://sts.windows.net/809929af-2d25-45bf-9837-089eb9cfbd01/'
     singleSignOnService:
-      url: 'http://id.example.com/saml2/idp/SSOService.php'
+      url: 'https://login.microsoftonline.com/809929af-2d25-45bf-9837-089eb9cfbd01/saml2'
       binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
     singleLogoutService:
-      url: 'http://id.example.com/saml2/idp/SingleLogoutService.php'
+      url: 'https://login.microsoftonline.com/common/wsfederation?wa=wsignout1.0'
       binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
-    x509cert: ''
+    x509cert: '%env(resolve:SAML_CERT)%'
   sp:
-    entityId: 'http://myapp.com/app_dev.php/saml/metadata'
+    entityId: '%env(resolve:BASE_URL)%/saml/metadata'
     assertionConsumerService:
-      url: 'http://myapp.com/app_dev.php/saml/acs'
+      url: '%env(resolve:BASE_URL)%/saml/acs'
       binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
     singleLogoutService:
-      url: 'http://myapp.com/app_dev.php/saml/logout'
+      url: '%env(resolve:BASE_URL)%/saml/logout'
       binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
-    privateKey: ''

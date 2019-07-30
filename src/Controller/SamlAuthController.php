@@ -5,8 +5,13 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\EventListener\AttachRefreshTokenOnSuccessListener;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManager;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use OneLogin\Saml2\Auth;
+use Prophecy\Argument\Token\TokenInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,11 +24,15 @@ class SamlAuthController extends  AbstractController {
     protected $entityManager;
     protected $jwtManager;
     protected $oneLoginAuth;
-    public function __construct(Auth $oneLoginAuth,EntityManagerInterface $entityManager,JWTTokenManagerInterface $JWTTokenManager)
+    protected $refreshTokenManager;
+    protected $attachRefreshTokenOnSuccessListener;
+    public function __construct(Auth $oneLoginAuth,AttachRefreshTokenOnSuccessListener $attachRefreshTokenOnSuccessListener,RefreshTokenManager $refreshTokenManager,EntityManagerInterface $entityManager,JWTTokenManagerInterface $JWTTokenManager)
     {
         $this->entityManager = $entityManager;
         $this->jwtManager = $JWTTokenManager;
         $this->oneLoginAuth = $oneLoginAuth;
+        $this->refreshTokenManager = $refreshTokenManager;
+        $this->attachRefreshTokenOnSuccessListener = $attachRefreshTokenOnSuccessListener;
     }
 
     /**
@@ -47,7 +56,7 @@ class SamlAuthController extends  AbstractController {
     }
 
     /**
-     * @Route("/saml/auth", name="saml_authenticate")
+     * @Route("/saml/acs", name="saml_authenticate")
      */
     public function attemptAuthentication(Request $request){
         /** @var UserRepository $userRepository */
@@ -72,8 +81,22 @@ class SamlAuthController extends  AbstractController {
         }
 
         $token = $this->jwtManager->create($user);
+
+        $jwtSuccessEvent = new AuthenticationSuccessEvent(array(), $user, new Response());
+        $this->attachRefreshTokenOnSuccessListener->attachRefreshToken($jwtSuccessEvent);
+        $refreshToken    = $this->refreshTokenManager->getLastFromUsername($user->getEmail());
+
         $response = $this->redirect('/');
+        $response->headers->setCookie(new Cookie('AUTH_REFRESH_TOKEN',$refreshToken,strtotime('now + 10 minutes')));
         $response->headers->setCookie(new Cookie('AUTH_TOKEN',$token,strtotime('now + 10 minutes')));
         return $response;
+    }
+
+    /**
+     * @Route("/saml/logout", name="saml_logout")
+     */
+    public function attemptLogout(Request $request){
+
+        $this->oneLoginAuth->logout();
     }
 }

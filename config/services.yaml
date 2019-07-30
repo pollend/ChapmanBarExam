@@ -25,7 +25,7 @@ services:
         tags: ['controller.service_arguments']
 
     App\Controller\SamlAuthController:
-        arguments: ["@onelogin_auth"]
+        arguments: ["@onelogin_auth",'@gesdinet.jwtrefreshtoken.send_token','@gesdinet.jwtrefreshtoken.refresh_token_manager']
 
     App\Security\:
         public: false

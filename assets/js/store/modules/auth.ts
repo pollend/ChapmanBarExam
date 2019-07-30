@@ -153,11 +153,21 @@ function getToken() {
     return  null;
 }
 
+function getRefreshToken() {
+    let token = localStorage.getItem(AUTH_REFRESH_TOKEN)
+    if(token)
+        return token;
+    token = Cookies.get(AUTH_REFRESH_TOKEN);
+    if(token)
+        return token;
+    return  null;
+}
+
 export const auth: Module<AuthState,RootState> = {
     namespaced:true,
     state:{
         token: getToken(),
-        refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),
+        refreshToken: getRefreshToken(),
         ttl: Date.now(),
         isLoading: false,
         loginError:null,
