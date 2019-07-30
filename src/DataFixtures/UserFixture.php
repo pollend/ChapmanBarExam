@@ -37,8 +37,6 @@ class UserFixture extends Fixture
             $user->setUsername($faker->unique()->name);
             $user->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
             $user->setEmailVerifiedAt($faker->dateTime());
-            $user->setRememberToken(Str::random(10));
-            $user->setAzureId('--');
             $manager->persist($user);
 
             return $user;
@@ -53,8 +51,6 @@ class UserFixture extends Fixture
             $password = $this->passwordEncoder->encodePassword($user, 'password');
             $user->setPassword($password);
             $user->setEmailVerifiedAt($faker->dateTime());
-            $user->setRememberToken(Str::random(10));
-            $user->setAzureId('--');
             $manager->persist($user);
         });
 

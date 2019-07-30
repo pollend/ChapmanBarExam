@@ -124,17 +124,6 @@ class User implements UserInterface
      */
     protected $password;
 
-    /**
-     * @var string
-     * @ORM\Column(name="azure_id",type="string",length=50,nullable=false)
-     */
-    protected $azureId;
-
-    /**
-     * @var string
-     * @ORM\Column(name="remember_token",type="string",length=100,nullable=false)
-     */
-    protected $rememberToken;
 
     /**
      * Many Groups have Many Users.
@@ -165,14 +154,6 @@ class User implements UserInterface
     public function setRememberToken(string $rememberToken): void
     {
         $this->rememberToken = $rememberToken;
-    }
-
-    /**
-     * @param string $azureId
-     */
-    public function setAzureId(string $azureId): void
-    {
-        $this->azureId = $azureId;
     }
 
     public function setEmailVerifiedAt(\DateTime $emailVerifiedAt): void

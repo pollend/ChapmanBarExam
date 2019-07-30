@@ -94,8 +94,7 @@ class SamlAuthController extends  AbstractController
             $user->setEmail(Str::lower($attributes[SamlAuthController::$EMAIL_ADDRESS][0]));
             $user->setRoles([User::ROLE_USER]);
             $user->setUsername($attributes[SamlAuthController::$GIVEN_NAME][0] . ' ' . $attributes[SamlAuthController::$SURNAME][0]);
-            // TODO: not using remember token
-            $user->setRememberToken('asfnaiw3am3o');
+            $user->setEmailVerifiedAt(new \DateTime('now'));
             $this->entityManager->persist($user);
             $this->entityManager->flush();
         }
