@@ -102,7 +102,7 @@ export default class Login extends Vue {
   }
 
   handleFederatedLogin() {
-    window.open('/saml/login');
+    window.location.replace('/saml/login');
   }
 
   handleLogin() {

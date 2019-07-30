@@ -159,9 +159,9 @@ function getToken() {
         return token;
     }
     token = Cookies.get(AUTH_TOKEN);
-    Cookies.remove(AUTH_TOKEN);
-    localStorage.setItem(AUTH_TOKEN,token);
     if(token) {
+        Cookies.remove(AUTH_TOKEN);
+        localStorage.setItem(AUTH_TOKEN,token);
         return token;
     }
     return  null;
@@ -172,9 +172,9 @@ function getRefreshToken() {
     if(token)
         return token;
     token = Cookies.get(AUTH_REFRESH_TOKEN);
-    Cookies.remove(AUTH_REFRESH_TOKEN);
-    localStorage.setItem(AUTH_REFRESH_TOKEN,token);
     if(token) {
+        Cookies.remove(AUTH_REFRESH_TOKEN);
+        localStorage.setItem(AUTH_REFRESH_TOKEN,token);
         return token;
     }
     return  null;
