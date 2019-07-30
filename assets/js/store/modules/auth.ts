@@ -44,6 +44,7 @@ const mutations: MutationTree<AuthState> = {
             localStorage.setItem(AUTH_TOKEN, token);
             return true;
         }
+        localStorage.removeItem(AUTH_TOKEN);
         return  false;
     },
     [AUTH_SET_REFRESH_TOKEN]: (state, token: string) => {
@@ -53,6 +54,7 @@ const mutations: MutationTree<AuthState> = {
             localStorage.setItem(AUTH_REFRESH_TOKEN, token);
             return  true;
         }
+        localStorage.removeItem(AUTH_REFRESH_TOKEN);
         return false;
     },
     [AUTH_CLEAR]: (state) => {
