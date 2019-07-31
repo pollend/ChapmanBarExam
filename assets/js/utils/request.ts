@@ -31,7 +31,7 @@ service.interceptors.request.use(
 
       const token = store.getters['auth/token'];
       if (token) {
-          config.headers['Authorization'] = 'Bearer ' + token; // Set JWT token
+          config.headers['X-Authorization'] = 'Bearer ' + token; // Set JWT token
       }
 
       return config;

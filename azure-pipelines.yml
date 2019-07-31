@@ -11,12 +11,12 @@ steps:
   - task: DownloadSecureFile@1
     name: jwt_private
     inputs:
-      secureFile: 'jwt_private.pem'
+      secureFile: 'private.pem'
       
   - task: DownloadSecureFile@1
     name: jwt_public
     inputs:
-      secureFile: 'jwt_public.pem'
+      secureFile: 'public.pem'
 
   - script: |
       mkdir -p config/jwt
