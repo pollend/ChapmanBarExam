@@ -30,8 +30,7 @@
         </el-button>
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleFederatedLogin">Chapman Federated</el-button>
-
+        <el-button @click="handleFederatedLogin" class="federated-login">Chapman Login</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -173,6 +172,13 @@ $light_gray:#eee;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
     margin: 120px auto;
+  }
+  .federated-login{
+    border-color: #ca003a;
+    color: white;
+    background: #A50034;
+    font-size: 1.5rem;
+    width: 100%;
   }
   .svg-container {
     padding: 6px 5px 6px 15px;

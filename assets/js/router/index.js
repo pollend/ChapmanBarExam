@@ -47,6 +47,7 @@ export const routes = [
   { path: '/dashboard', component: DashboardLayout, children: [
       {path: '', meta: {roles: [ROLE_ADMIN]}, component: () => import('./../views/home'), name: 'dashboard.home'},
       // classes ---------------------------------------------------------------------------------------------------------------------------------------
+      {path: '/class/create', meta: {roles: [ROLE_ADMIN]}, component: () => import('./../views/dashboard/classes/create'), name: 'dashboard.classes.create'},
       {path: '/class', meta: {roles: [ROLE_ADMIN]}, component: () => import('./../views/dashboard/classes'), name: 'dashboard.classes'},
       {path: '/class/:class_id/', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/container'), children: [
           {path: 'report',name: 'dashboard.class.report', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/index')},
@@ -54,11 +55,10 @@ export const routes = [
               {path: 'distribution',name: 'dashboard.class.report.score_distribution', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/score-distribution')},
               {path: 'standard',name: 'dashboard.class.report.item_analysis', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/standard-item')},
           ]},
-          {path: '',name: 'dashboard.class', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/general')},
+          {path: '',name: 'dashboard.class', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/show')},
           {path: 'users',name: 'dashboard.class.user', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/user')},
           {path: 'whitelist',name: 'dashboard.class.whitelist', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/whitelist')}
       ]},
-      // {path: '/class/:class_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.report', component: () => import('../views/report/show')},
       {path: '/class/:class_id/quiz/:quiz_id', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz', component: () => import('../views/report/show')},
       {path: '/class/:class_id/quiz/:quiz_id/report', meta: {roles: [ROLE_ADMIN]}, name: 'dashboard.class.quiz.report', component: () => import('@/views/report/show')},
       {path: '/class/add', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/home'), name: 'dashboard.class.add'},

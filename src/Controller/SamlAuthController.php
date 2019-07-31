@@ -110,25 +110,6 @@ class SamlAuthController extends  AbstractController
         return $response;
     }
 
-    public function testAuth(Request $request)
-    {
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findByEmail('schmitt.immanuel@oreilly.net');
-
-        // create a jwt token
-        $token = $this->jwtManager->create($user);
-        // create a refresh token
-        $jwtSuccessEvent = new AuthenticationSuccessEvent(array(), $user, new Response());
-        $this->attachRefreshTokenOnSuccessListener->attachRefreshToken($jwtSuccessEvent);
-        $refreshToken = $this->refreshTokenManager->getLastFromUsername($user->getEmail());
-
-        $response = $this->redirect('/');
-        $response->headers->setCookie(new Cookie('AUTH_REFRESH_TOKEN', $refreshToken, strtotime('now + 10 minutes'),'/',null,false,false));
-        $response->headers->setCookie(new Cookie('AUTH_TOKEN', $token, strtotime('now + 10 minutes'),'/',null,false,false));
-        return $response;
-    }
-
 //    /**
 //     * @Route("/saml/logout", name="saml_logout")
 //     */

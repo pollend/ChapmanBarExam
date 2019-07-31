@@ -25,7 +25,7 @@
           <span slot="title">Classes</span>
         </template>
         <el-menu-item index="dashboard.classes">All Classes</el-menu-item>
-        <el-menu-item index="dashboard.classes.add">Add Class</el-menu-item>
+        <el-menu-item index="dashboard.classes.create">Add Class</el-menu-item>
       </el-submenu>
       <el-submenu index="3">
         <template slot="title">

@@ -26,7 +26,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * attributes={"pagination_items_per_page"=100},
  * itemOperations={
  *    "get" = {
- *       "normalization_context"={"groups"={"classroom:get","item:classroom:get"}},
+ *       "normalization_context"={"groups"={"classroom:get","item:classroom:get","timestamp"}},
  *       "access_control"="is_granted('ROLE_USER')"
  *     },
  *     "put" = {
@@ -68,6 +68,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *     "get" = {
  *          "normalization_context"={"groups"={"classroom:get", "timestamp"}}
  *     },
+ *     "post" = {
+ *        "access_control"="is_granted('ROLE_ADMIN')",
+ *         "validation_groups"={"classroom:post"}
+ *     },
  *     "get_by_user" = {
  *          "method"="GET",
  *          "access_control"="is_granted('ROLE_USER')",
@@ -107,21 +111,21 @@ class Classroom
      * @Groups({"list","detail"})
      * @Assert\NotBlank(message="Classroom Name Required")
      * @Assert\NotNull()
-     * @Groups({"classroom:get","quiz-access:get","classroom:put"})
+     * @Groups({"classroom:get","quiz-access:get","classroom:put","classroom:post"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="string",length=500,nullable=true)
-     * @Groups({"classroom:get","quiz-access:get","classroom:put"})
+     * @Groups({"classroom:get","quiz-access:get","classroom:put","classroom:post"})
      */
     protected $description;
 
     /**
      * @var string
      * @ORM\Column(name="course_number",type="string",length=50,nullable=true)
-     * @Groups({"classroom:get","classroom:put"})
+     * @Groups({"classroom:get","classroom:put","classroom:post"})
      */
     protected $courseNumber;
 

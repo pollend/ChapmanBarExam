@@ -1,9 +1,9 @@
 import {Component, Vue} from "vue-property-decorator";
 
 export interface Hydra {
-    "@context": string
-    "@id": string
-    "@type": string
+    "@context"?: string
+    "@id"?: string
+    "@type"?: string
 }
 
 export interface HydraCollection<T extends Hydra | {}> extends Hydra{
