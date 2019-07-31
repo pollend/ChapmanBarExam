@@ -154,29 +154,29 @@ const actions: ActionTree<AuthState,RootState> = {
 };
 
 function getToken() {
-    let token = localStorage.getItem(AUTH_TOKEN)
-    if(token) {
-        return token;
-    }
-    token = Cookies.get(AUTH_TOKEN);
+    let token = Cookies.get(AUTH_TOKEN);
     if(token) {
         Cookies.remove(AUTH_TOKEN);
         localStorage.setItem(AUTH_TOKEN,token);
+        return token;
+    }
+    token = localStorage.getItem(AUTH_TOKEN)
+    if(token) {
         return token;
     }
     return  null;
 }
 
 function getRefreshToken() {
-    let token = localStorage.getItem(AUTH_REFRESH_TOKEN);
-    if(token)
-        return token;
-    token = Cookies.get(AUTH_REFRESH_TOKEN);
+    let token = Cookies.get(AUTH_REFRESH_TOKEN);
     if(token) {
         Cookies.remove(AUTH_REFRESH_TOKEN);
         localStorage.setItem(AUTH_REFRESH_TOKEN,token);
         return token;
     }
+    token = localStorage.getItem(AUTH_REFRESH_TOKEN);
+    if(token)
+        return token;
     return  null;
 }
 
