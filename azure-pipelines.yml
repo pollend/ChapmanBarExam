@@ -24,41 +24,47 @@ steps:
       mv $(jwt_public.secureFilePath) ./config/jwt
     displayName: 'Adding JWT Secure tokens'
 
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '10.x'
-    displayName: 'Install Node.js'
-
   - script: |
-      npm install
-      npm run build
-    displayName: 'npm install and build'
-
-  - script: |
-      sudo update-alternatives --set php /usr/bin/php$(phpVersion)
-      sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
-      sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
-      sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
-      sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
-      php -version
-    displayName: 'Use PHP version $(phpVersion)'
-
-  - script: composer install --no-interaction --prefer-dist
-    displayName: 'composer install'
-    # PHP
-
-  - task: ArchiveFiles@2
-    inputs:
-      rootFolderOrFile: './'
-      includeRootFolder: false
-      archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-      replaceExistingArchive: true
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-      ArtifactName: 'drop'
-      publishLocation: 'Container'
+      docker build -t chapmanbar.azurecr.io/chapmanbar .
+      docker login -u chapmanbar -p $(pswd) chapmanbar.azurecr.io
+      docker push chapmanbar.azurecr.io/chapmanbar
+    env:
+      pswd: $(dockerPassword)
+#  - task: NodeTool@0
+#    inputs:
+#      versionSpec: '10.x'
+#    displayName: 'Install Node.js'
+#
+#  - script: |
+#      npm install
+#      npm run build
+#    displayName: 'npm install and build'
+#
+#  - script: |
+#      sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+#      sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+#      sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+#      sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+#      sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+#      php -version
+#    displayName: 'Use PHP version $(phpVersion)'
+#
+#  - script: composer install --no-interaction --prefer-dist
+#    displayName: 'composer install'
+#    # PHP
+#
+#  - task: ArchiveFiles@2
+#    inputs:
+#      rootFolderOrFile: './'
+#      includeRootFolder: false
+#      archiveType: 'zip'
+#      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+#      replaceExistingArchive: true
+#  - task: PublishBuildArtifacts@1
+#    inputs:
+#      PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+#      ArtifactName: 'drop'
+#      publishLocation: 'Container'
 # Test and package your PHP project.
 # Add steps that run tests, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/php
