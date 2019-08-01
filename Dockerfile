@@ -68,3 +68,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord"]
 EXPOSE 80
 EXPOSE 443
+EXPOSE 2222
