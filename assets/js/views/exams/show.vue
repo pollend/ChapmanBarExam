@@ -58,7 +58,7 @@ export default class ShowQuizPage extends Vue {
     query(){
         NProgress.start();
         service({
-            url: '/_api/questions/sessions/' + this.session.id + '/page/' + this.$router.currentRoute.params['page'] + '/',
+            url: '/_api/questions/sessions/' + this.session.id + '/page/' + this.$router.currentRoute.params['page'],
             method: 'GET'
         }).then((response) => {
             this.questions = response.data;
