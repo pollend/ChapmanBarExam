@@ -26,10 +26,10 @@ steps:
 
   - script: |
       docker build -t chapmanbar.azurecr.io/chapmanbar .
-      docker login -u chapmanbar -p $(pswd) chapmanbar.azurecr.io
+      docker login -u chapmanbar -p $(dockerPassword) chapmanbar.azurecr.io
       docker push chapmanbar.azurecr.io/chapmanbar
-    env:
-      pswd: $(dockerPassword)
+    displayName: 'Build Release Image'
+      
 #  - task: NodeTool@0
 #    inputs:
 #      versionSpec: '10.x'
