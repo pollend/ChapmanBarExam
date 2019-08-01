@@ -49,10 +49,22 @@ RUN docker-php-ext-configure opcache --enable-opcache \
 COPY --from=0  --chown=www-data:www-data /var/www/symfony /var/www/symfony
 WORKDIR /var/www/symfony
 
+# ssh #########################################################
+ENV SSH_PASSWD "root:Docker!"
+RUN apt-get update \
+        && apt-get install -y --no-install-recommends dialog \
+        && apt-get update \
+	&& apt-get install -y --no-install-recommends openssh-server \
+	&& echo "$SSH_PASSWD" | chpasswd
+
+COPY sshd_config /etc/ssh/
+#########################################################
+
 RUN composer install
 #RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/usr/bin/supervisord"]
-EXPOSE 80 443
+EXPOSE 80
+EXPOSE 443
