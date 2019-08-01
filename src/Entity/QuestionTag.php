@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -47,6 +49,20 @@ class QuestionTag
      * @ORM\JoinTable(name="quiz_question_question_tag")
      */
     protected $questions;
+
+
+    public function __construct()
+    {
+        $this->questions = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getQuestions()
+    {
+        return $this->questions;
+    }
 
     /**
      * @return int

@@ -97,7 +97,7 @@ class ImportExamCsvCommand extends Command
             $multipleChoiceQuestion->setContent($row['question']);
             foreach (explode(',',$row['tags']) as $name){
                 $name = trim($name);
-                if($name != '')
+                if(empty($name))
                     continue;
 
                 /** @var QuestionTag $tag */
