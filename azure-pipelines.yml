@@ -18,10 +18,17 @@ steps:
     inputs:
       secureFile: 'public.pem'
 
+  - task: DownloadSecureFile@1
+    name: env
+    inputs:
+      secureFile: '.env'
+
   - script: |
       mkdir -p config/jwt
       mv $(jwt_private.secureFilePath) ./config/jwt
       mv $(jwt_public.secureFilePath) ./config/jwt
+      rm -rf .env
+      mv $(env.secureFilePath) ./
     displayName: 'Adding JWT Secure tokens'
 
   - script: |
