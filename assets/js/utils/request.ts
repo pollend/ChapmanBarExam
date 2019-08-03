@@ -10,9 +10,13 @@ export const _API = '/_api/';
 // Create axios instance
 const service = axios.create({
   baseURL: process.env.MIX_BASE_API,
-  timeout: 10000, // Request timeout
+  timeout: 0, // Request timeout
 });
 
+
+const MAX_REQUESTS_COUNT = 5
+const INTERVAL_MS = 10
+let PENDING_REQUESTS = 0
 // Request intercepter
 service.interceptors.request.use(
   async config => {

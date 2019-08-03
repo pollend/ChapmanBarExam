@@ -10,7 +10,6 @@
                 <el-table-column label="Actions" min-width="100px">
                     <template slot-scope="scope">
                         <el-button @click="handleView(scope.row)">View</el-button>
-<!--                        <el-button @click="handleArchive(scope.row)" type="danger">Archive</el-button>-->
                     </template>
                 </el-table-column>
             </data-tables-server>

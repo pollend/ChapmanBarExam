@@ -76,7 +76,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`order`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @Groups({"quiz_question:get"})
+     * @Groups({"quiz_question:get","quiz:get"})
      */
     protected $order;
 
@@ -84,7 +84,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`group`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @Groups({"quiz_question:get"})
+     * @Groups({"quiz_question:get","quiz:get"})
      */
     protected $group;
 

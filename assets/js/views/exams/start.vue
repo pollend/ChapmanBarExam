@@ -36,7 +36,7 @@ export default class StartQuiz extends Vue {
         this.access = response.data;
     }
 
-    startQuiz() {
+    async startQuiz() {
         this.start({
             user: this.user,
             access: this.access

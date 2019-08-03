@@ -30,7 +30,7 @@
         </el-button>
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleFederatedLogin" class="federated-login">Chapman Login</el-button>
+        <el-button :disabled="isLoading" @click="handleFederatedLogin" class="federated-login">Chapman Login</el-button>
       </el-form-item>
     </el-form>
   </div>

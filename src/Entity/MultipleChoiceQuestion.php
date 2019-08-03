@@ -25,7 +25,7 @@ class MultipleChoiceQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @Groups({"quiz_question:get"})
+     * @Groups({"quiz_question:get","quiz:get"})
      */
     protected $content;
 
@@ -40,6 +40,7 @@ class MultipleChoiceQuestion extends QuizQuestion
 
     /**
      * @var PersistentCollection
+     * @Groups({"quiz:get"})
      * @ORM\OneToMany(targetEntity="MultipleChoiceResponse",mappedBy="question")
      */
     protected $responses;
@@ -47,7 +48,7 @@ class MultipleChoiceQuestion extends QuizQuestion
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="MultipleChoiceEntry",mappedBy="question")
-     * @Groups({"quiz_question:get"})
+     * @Groups({"quiz_question:get","quiz:get"})
      */
     protected $entries;
 

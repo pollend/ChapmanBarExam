@@ -29,6 +29,15 @@ export class HydraMixxin extends Vue {
         }
     }
 
+    hydraType(target: Hydra | string) : string{
+        if (target instanceof String) {
+            return <string>target;
+        } else {
+            const hy: Hydra = <Hydra>target;
+            return hy["@type"];
+        }
+    }
+
     checkHydraMatch(c1: any, c2: any): boolean {
         return this.hydraID(c1) == this.hydraID(c2);
     }

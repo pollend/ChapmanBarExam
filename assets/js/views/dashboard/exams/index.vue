@@ -6,12 +6,11 @@
                 <el-table-column sortable="true" prop="createdAt" label="Created At"></el-table-column>
                 <el-table-column sortable="true" prop="updatedAt" label="Updated At"></el-table-column>
                 <el-table-column sortable="true" prop="name" label="Name"></el-table-column>
-<!--                <el-table-column label="Actions" min-width="100px">-->
-<!--                    <template slot-scope="scope">-->
+                <el-table-column label="Actions" min-width="100px">
+                    <template slot-scope="scope">
 <!--                        <el-button @click="handleView(scope.row)">View</el-button>-->
-<!--                        <el-button @click="handleArchive(scope.row)" type="danger">Archive</el-button>&ndash;&gt;-->
-<!--                    </template>-->
-<!--                </el-table-column>-->
+                    </template>
+                </el-table-column>
             </data-tables-server>
         </div>
     </div>
@@ -24,6 +23,7 @@ import service from "../../../utils/request";
 import {HydraCollection} from "../../../entity/hydra";
 import {Quiz} from "../../../entity/quiz";
 import {buildSortQueryForVueDataTable} from "../../../utils/vue-data-table-util";
+
 @Component
 export default class ListExams extends Vue {
     @Provide() loading: boolean = false;
@@ -37,9 +37,13 @@ export default class ListExams extends Vue {
         return this.hydraCollection ? this.hydraCollection["hydra:totalItems"] : 0;
     }
 
+    handleView(row: Quiz){
+        this.$router.push({'name':'dashboard.exam.show','params':{'quiz_id' : row.id+''}})
+    }
+
+
     async loadData(queryInfo: any) {
         this.loading = true;
-        console.log(queryInfo);
         const response = await service({
             url: '/_api/quizzes?' + buildSortQueryForVueDataTable(queryInfo).build(),
             method: 'GET'

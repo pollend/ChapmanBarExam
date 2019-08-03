@@ -33,14 +33,14 @@ class MultipleChoiceEntry
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"quiz_question:get","quiz_response:get","tag:get"})
+     * @Groups({"quiz_question:get","quiz_response:get","tag:get","quiz:get"})
      */
     protected $id;
 
     /**
      * @var int
      * @ORM\Column(name="`order`",type="smallint",nullable=false)
-     * @Groups({"quiz_question:get","quiz_response:get","tag:get"})
+     * @Groups({"quiz_question:get","quiz_response:get","tag:get","quiz:get"})
      * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $order;
@@ -48,7 +48,7 @@ class MultipleChoiceEntry
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @Groups({"quiz_question:get","quiz_response:get","tag:get"})
+     * @Groups({"quiz_question:get","quiz_response:get","tag:get","quiz:get"})
      */
     protected $content;
 

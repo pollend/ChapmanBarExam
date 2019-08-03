@@ -35,7 +35,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     collectionOperations={
  *          "get" = {
  *               "access_control"="is_granted('ROLE_ADMIN')",
- *               "normalization_context"={"groups"={"quiz:get","timestamp"}},
+ *               "normalization_context"={"groups"={"quizes:get","timestamp"}},
  *          },
  *          "post" = {
  *               "access_control"="is_granted('ROLE_ADMIN')"
@@ -57,36 +57,35 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get","quizes:get"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get","quizes:get"})
      */
     protected $name;
 
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
-     * @Groups({"classroom:get","quiz-access:get","quiz:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz:get","quiz:get","quizes:get"})
      */
     protected $description;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quiz")
-     * @Groups({"quiz_sessions","quiz:get"})
+     * @Groups({"quiz_sessions"})
      */
     protected $quizSessions;
 
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizQuestion",mappedBy="quiz")
-     * @Groups({"detail"})
-     * @Groups({"quiz_questions"})
+     * @Groups({"quiz_questions","quiz:get"})
      */
     protected $questions;
 

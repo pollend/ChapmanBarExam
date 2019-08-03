@@ -67,7 +67,7 @@ export const routes = [
       {path: '/class/add', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/home'), name: 'dashboard.class.add'},
       // exams  ---------------------------------------------------------------------------------------------------------------------------------------
       {path: '/exam', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/exams'), name: 'dashboard.exam'},
-      {path: '/exam', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/exams'), name: 'dashboard.exam.show'},
+      {path: '/exam/:quiz_id/show', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/exams/show'), name: 'dashboard.exam.show'},
 
 
       ],

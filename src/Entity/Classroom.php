@@ -101,7 +101,6 @@ class Classroom
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     *
      * @Groups({"classroom:get","quiz-access:get","classroom:post"})
      */
     protected $id;
