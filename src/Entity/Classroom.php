@@ -70,7 +70,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *     },
  *     "post" = {
  *        "access_control"="is_granted('ROLE_ADMIN')",
- *         "validation_groups"={"classroom:post"}
+ *        "normalization_context"={"groups"={"classroom:post"}},
+ *        "validation_groups"={"classroom:post"}
  *     },
  *     "get_by_user" = {
  *          "method"="GET",
@@ -101,16 +102,15 @@ class Classroom
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @Groups({"classroom:get","quiz-access:get"})
+     * @Groups({"classroom:get","quiz-access:get","classroom:post"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"list","detail"})
-     * @Assert\NotBlank(message="Classroom Name Required")
-     * @Assert\NotNull()
+     * @Assert\NotBlank(message="Classroom Name Required", groups={"classroom:post"})
+     * @Assert\NotNull( groups={"classroom:post"})
      * @Groups({"classroom:get","quiz-access:get","classroom:put","classroom:post"})
      */
     protected $name;

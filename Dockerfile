@@ -2,7 +2,7 @@ FROM node:10
 
 ADD . /var/www/symfony
 WORKDIR /var/www/symfony
-RUN yarn install
+RUN yarn install --no-progress
 RUN yarn build
 RUN rm -rf node_modules && rm -rf assets
 
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     nginx \
     supervisor
 
-# Confiugre Ngnix ###############################
+# Configure Ngnix ###############################
 #ADD docker/nginx/nginx.conf /etc/nginx/
 ADD docker/nginx/symfony-prod.conf /etc/nginx/sites-available/
 
@@ -46,6 +46,15 @@ RUN docker-php-ext-configure opcache --enable-opcache \
 COPY --from=0  --chown=www-data:www-data /var/www/symfony /var/www/symfony
 WORKDIR /var/www/symfony
 
+# PHP configurations for production
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+COPY docker/php7-fpm/opcache-prod.ini $PHP_INI_DIR/conf.d/opcache.ini
+
+RUN sed -i '/realpath_cache_size/c \realpath_cache_size=4096K' "$PHP_INI_DIR/php.ini"
+RUN sed -i '/realpath_cache_ttl/c \realpath_cache_ttl=600' "$PHP_INI_DIR/php.ini"
+
+
 # ssh #############################################
 ENV SSH_PASSWD "root:Docker!"
 RUN apt-get update \
@@ -60,7 +69,7 @@ COPY sshd_config /etc/ssh/
 
 #
 RUN composer install
-#RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+RUN composer dump-autoload --optimize --classmap-authoritative
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 

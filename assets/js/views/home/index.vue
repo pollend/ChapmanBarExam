@@ -4,7 +4,15 @@
             <!-- $t is vue-i18n global function to translate lang -->
             <div class="app-container">
                 <template v-if="classes.length === 0">
-                    <el-card v-for="i in [1,2,3,4]" v-bind:key="i" class="box-card class-box empty-box"></el-card>
+                    <template v-if="isLoading">
+                        <el-card v-for="i in [1,2,3,4]" v-bind:key="i" class="box-card class-box empty-box"></el-card>
+                    </template>
+                    <template v-else>
+                        <el-card class="box-card" style="text-align: center">
+                            No Classes Found
+                        </el-card>
+<!--                        <div> No Classes Found </div>-->
+                    </template>
                 </template>
                 <template v-else>
                     <el-card v-for="_class in classes" v-bind:key="_class.id" class="box-card class-box">
@@ -69,18 +77,21 @@ import {HydraCollection} from "../../entity/hydra";
 import {FilterBuilder, SearchFilter} from "../../utils/filter";
 import UserQuizAccess from "../../entity/user-quiz-access";
 import QuizAccess from "../../entity/quiz-access";
-import { DateTime } from 'luxon';
 import * as moment from 'moment';
+import {HydraError} from "../../entity/hydra-error";
+import {mixins} from "vue-class-component";
+import {ValidateMix} from "../../mixxins/validate-mix";
 
 const authModule = namespace('auth')
 
 @Component
-export default class Home extends Vue {
+export default class Home extends mixins(ValidateMix) {
     @authModule.Getter("user") user: User;
     @Provide() classes: Classroom[] = [];
     @Provide() access: UserQuizAccess[] = [];
+    @Provide() isLoading: boolean = false;
 
-    getUserAccess(query:string){
+    async getUserAccess(query:string){
         service({
             url: query,
             method: 'GET'
@@ -92,7 +103,7 @@ export default class Home extends Vue {
             }
 
         }).catch((err) => {
-
+            this.hydraErrorWithNotify(err)
         });
     }
 
@@ -100,35 +111,47 @@ export default class Home extends Vue {
         return _.keyBy(this.access,(e) => e.quiz);
     }
 
-    created() {
+    async created() {
+        this.isLoading = true;
         NProgress.start();
-
-        service({
-            url: '_api/classrooms/user/' + this.user.id,
-            method: 'GET'
-        }).then((response) => {
-            const collection: HydraCollection<Classroom> =  response.data;
-            this.classes = this.classes.concat(collection["hydra:member"]);
-            this.classes.forEach((c : Classroom) => {
-                c.quizAccess = _.filter(<QuizAccess[]>c.quizAccess,(a:QuizAccess) => {
-                    return !a.isHidden;
+        {
+            try {
+                const response = await service({
+                    url: '_api/classrooms/user/' + this.user.id,
+                    method: 'GET'
                 });
+                const collection: HydraCollection<Classroom> = response.data;
+                this.classes = this.classes.concat(collection["hydra:member"]);
+                this.classes.forEach((c: Classroom) => {
+                    c.quizAccess = _.filter(<QuizAccess[]>c.quizAccess, (a: QuizAccess) => {
+                        return !a.isHidden;
+                    });
+                });
+            }catch (e) {
+                this.hydraErrorWithNotify(e);
+                NProgress.done();
+                this.isLoading = false;
+                return;
+            }
+        }
+        NProgress.done();
+        this.isLoading = false;
 
-            });
-
-            NProgress.done();
-        }).catch((err) => {
-            console.log(err);
-        });
         const accessBuilder = new FilterBuilder();
-        service({
-            url: '_api/user_quiz_accesses?' + (new FilterBuilder()).addFilter(new SearchFilter('owner',this.user.id+'')).build(),
-            method: 'GET'
-        }).then((response) => {
-            const collection: HydraCollection<UserQuizAccess> = response.data;
-            this.access = collection["hydra:member"];
-        }).catch((err) => {
-        });
+        {
+            try {
+                const response = await service({
+                    url: '_api/user_quiz_accesses?' + (new FilterBuilder()).addFilter(new SearchFilter('owner', this.user.id + '')).build(),
+                    method: 'GET'
+                });
+                const collection: HydraCollection<UserQuizAccess> = response.data;
+                this.access = collection["hydra:member"];
+            }
+            catch (e) {
+                this.hydraErrorWithNotify(e);
+            }
+        }
+
     }
 
     group(access: any) {

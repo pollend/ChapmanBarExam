@@ -1,3 +1,4 @@
+import NProgress from 'nprogress';
 import Vue from 'vue';
 import Router from 'vue-router';
 import {routePermissions} from './permission';
@@ -37,11 +38,13 @@ export const routes = [
       ]}
     ],
     beforeEnter: async (to, from, next) => {
+      NProgress.start()
       if(await routePermissions(to,from,next) === true){
         if(await routeQuizSession(to,from,next) === true){
           next();
         }
       }
+      NProgress.done();
     }
   },
   { path: '/dashboard', component: DashboardLayout, children: [

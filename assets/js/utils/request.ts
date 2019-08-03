@@ -7,7 +7,6 @@ import {AuthState} from "../store/modules/auth";
 export const OLD_API = '/api/';
 export const _API = '/_api/';
 
-
 // Create axios instance
 const service = axios.create({
   baseURL: process.env.MIX_BASE_API,

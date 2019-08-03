@@ -27,6 +27,11 @@ class GetClassesByUser
         $this->context = $context;
     }
 
+    /**
+     * @param $user_id
+     * @return mixed
+     * @throws \Exception
+     */
     public function __invoke($user_id)
     {
         /** @var ClassroomRepository $classroomRepository */
@@ -42,6 +47,6 @@ class GetClassesByUser
         if($targetUser === $user || $this->security->isGranted(User::ROLE_ADMIN)){
             return $classroomRepository->byUser($targetUser);
         }
-        throw new \Exception("User not found");
+        throw new \Exception("Failed To Load Classrooms");
     }
 }
