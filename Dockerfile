@@ -31,7 +31,6 @@ RUN echo "upstream php-upstream { server 127.0.0.1:9000; }" > /etc/nginx/conf.d/
 RUN usermod -u 1000 www-data
 ##################################################
 
-
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 && composer --version
@@ -41,6 +40,7 @@ RUN docker-php-ext-configure zip --with-libzip
 RUN docker-php-ext-install pdo pdo_pgsql zip
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
+RUN pecl install redis && docker-php-ext-enable redis
 
 # bring in the symfony configuration from the first stage
 COPY --from=0  --chown=www-data:www-data /var/www/symfony /var/www/symfony
@@ -61,13 +61,12 @@ RUN apt-get update \
         && apt-get install -y --no-install-recommends dialog \
         && apt-get update \
 	&& apt-get install -y --no-install-recommends openssh-server \
+	&& apt-get install -y --no-install-recommends redis-server \
 	&& echo "$SSH_PASSWD" | chpasswd
 
 COPY sshd_config /etc/ssh/
 ####################################################
 
-
-#
 RUN composer install
 RUN composer dump-autoload --optimize --classmap-authoritative
 

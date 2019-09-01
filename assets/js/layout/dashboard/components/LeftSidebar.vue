@@ -18,6 +18,7 @@
                 <i class="el-icon-tickets"></i>
                 <span slot="title">Users</span>
             </template>
+            <el-menu-item index="dashboard.users">Users</el-menu-item>
         </el-submenu>
       <el-submenu index="2">
         <template slot="title">

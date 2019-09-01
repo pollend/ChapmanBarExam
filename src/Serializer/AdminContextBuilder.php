@@ -6,14 +6,11 @@ namespace App\Serializer;
 
 use ApiPlatform\Core\Exception\RuntimeException;
 use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
-use App\Entity\Classroom;
-use PhpParser\Builder\Namespace_;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 
-class ClassroomContextBuilder implements SerializerContextBuilderInterface
+class AdminContextBuilder implements SerializerContextBuilderInterface
 {
     private $decorated;
     private $authorizationChecker;

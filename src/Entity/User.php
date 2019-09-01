@@ -52,7 +52,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     },
  *     "get" = {
  *          "access_control"="is_granted('ROLE_ADMIN')",
- *          "normalization_context"={"groups" = {"user:get"}}
+ *          "normalization_context"={"groups" = {"user:get","timestamp"}}
  *     },
  *     "get_me" = {
  *         "method" = "GET",
@@ -147,7 +147,7 @@ class User implements UserInterface
      * @var string
      */
     private $plainTextPassword;
-    
+
     public function setEmailVerifiedAt(\DateTime $emailVerifiedAt): void
     {
         $this->emailVerifiedAt = $emailVerifiedAt;

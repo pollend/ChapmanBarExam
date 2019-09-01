@@ -57,6 +57,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "path"= "/classrooms/{id}/report/{report_id}/item",
  *          "controller"= App\Controller\GetStandardQuestionReport::class,
  *     },
+ *     "get_report_job_status" = {
+ *          "method"="GET",
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "path"= "/classrooms/{id}/report/{report_id}/status/{type}",
+ *          "controller"= App\Controller\GetReportJobStatus::class,
+ *     },
  *     "delete_user" = {
  *          "method"="DELETE",
  *          "access_control"="is_granted('ROLE_ADMIN')",
