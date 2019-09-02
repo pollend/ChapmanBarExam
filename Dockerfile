@@ -128,10 +128,12 @@ RUN set -eux; \
 COPY sshd_config /etc/ssh/
 ####################################################
 
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+USER www-data
 RUN composer install
 RUN composer dump-autoload --optimize --classmap-authoritative
-
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+USER root
 
 CMD ["/usr/bin/supervisord"]
 EXPOSE 80
