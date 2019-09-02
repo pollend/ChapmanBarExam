@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 
-
 use ApiPlatform\Core\Api\ResourceClassResolverInterface;
 use ApiPlatform\Core\Bridge\Symfony\Routing\IriConverter;
 use App\Entity\Classroom;
@@ -12,6 +11,7 @@ use App\Entity\Quiz;
 use App\Entity\QuizQuestion;
 use App\Entity\QuizSession;
 use App\JobRunning;
+use App\Message\DistributionReport;
 use App\Message\StandardItemReport;
 use App\Repository\MultipleChoiceResponseRepository;
 use App\Repository\QuizRepository;
@@ -26,7 +26,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class GetStandardQuestionReport
+class GetClassroomReport
 {
     private $entityManager;
     protected $context;
@@ -44,22 +44,34 @@ class GetStandardQuestionReport
         $this->resourceClassResolver = $resourceClassResolver;
     }
 
-    public function __invoke(Classroom $classroom, Request $request, $report_id)
+    public function __invoke(Classroom $classroom, Request $request, $report_id,$type)
     {
         /** @var QuizRepository $quizSessionRepository */
         $quizRepository = $this->entityManager->getRepository(Quiz::class);
 
         $this->context->setParameter('report_id', $report_id);
+        $this->context->setParameter('type', $type);
 
         /** @var Quiz $quiz */
         if ($quiz = $quizRepository->find($report_id)) {
-            $report = new StandardItemReport($classroom->getId(), $quiz->getId());
-            if ($this->cache->hasItem(StandardItemReport::getKey($report))) {
-                return $this->cache->getItem(StandardItemReport::getKey($report))->get();
-            } else {
-                $this->bus->dispatch($report);
+            if($type == 'distribution') {
+                $report = new DistributionReport($classroom->getId(), $quiz->getId());
+                if ($this->cache->hasItem(DistributionReport::getKey($report))) {
+                    return $this->cache->getItem(DistributionReport::getKey($report))->get();
+                } else {
+                    $this->bus->dispatch($report);
+                }
+                return $report;
             }
-            return $report;
+            elseif ($type == 'item'){
+                $report = new StandardItemReport($classroom->getId(), $quiz->getId());
+                if ($this->cache->hasItem(StandardItemReport::getKey($report))) {
+                    return $this->cache->getItem(StandardItemReport::getKey($report))->get();
+                } else {
+                    $this->bus->dispatch($report);
+                }
+                return $report;
+            }
         }
         return [];
     }

@@ -47,3 +47,6 @@ services:
         decorates: 'api_platform.jsonld.normalizer.item'
         arguments: [ '@App\Serializer\QuizAccessNormalizer.inner' ]
 
+    'App\Serializer\QuizNormalizer':
+        decorates: 'api_platform.jsonld.normalizer.item'
+        arguments: [ '@App\Serializer\QuizNormalizer.inner' ]

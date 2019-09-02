@@ -14,7 +14,7 @@ final class Version20190730201445 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'removed unused columns from user';
     }
 
     public function up(Schema $schema) : void

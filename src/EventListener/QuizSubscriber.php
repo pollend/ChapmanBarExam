@@ -6,15 +6,19 @@ use App\Entity\MultipleChoiceQuestion;
 use App\Entity\MultipleChoiceResponse;
 use App\Entity\QuizQuestion;
 use App\Entity\QuizResponse;
+use App\Entity\QuizSession;
 use App\Event\MaxScoreEvent;
 use App\Event\QuestionEvent;
 use App\Event\QuestionResultsEvent;
 use App\Event\QuizResultEvent;
 use App\Repository\QuizResponseRepository;
+use App\Repository\QuizSessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class QuizSubscriber implements EventSubscriberInterface
 {
@@ -47,13 +51,19 @@ class QuizSubscriber implements EventSubscriberInterface
     {
         return [
             QuestionResultsEvent::QUESTION_RESULTS => 'calculateResultsSet',
-            MaxScoreEvent::MAX_SCORE => 'calculateMaxScore'
+            QuizResultEvent::QUIZ => 'calculateMaxScore'
         ];
     }
 
-    public function calculateMaxScore(MaxScoreEvent $event){
+    public function calculateMaxScore(QuizResultEvent $event)
+    {
+        if($event->getQuiz()->getMaxScore() != null){
+            $event->setMaxScore($event->getQuiz()->getMaxScore());
+            return;
+        }
+
         $score = 0;
-        foreach ($event->getQuestions() as $question){
+        foreach ($event->getQuiz()->getQuestions() as $question) {
             if ($question instanceof MultipleChoiceQuestion) {
                 $score++;
             }
@@ -67,6 +77,13 @@ class QuizSubscriber implements EventSubscriberInterface
         /** @var QuizResponseRepository $responseRepo */
         $responseRepo = $this->em->getRepository(QuizResponse::class);
 
+        if ($event->getSession()->getScore() != null && $event->getMaxScore() != null) {
+            $event->setScore($event->getSession()->getScore());
+            $event->setMaxScore($event->getSession()->getQuiz()->getMaxScore());
+            return;
+        }
+
+
         $responses = Collection::make($responseRepo->filterResponsesBySessionAndQuestions($event->getSession(), $event->getQuestions()))
             ->keyBy(function ($item) {
                 return $item->getQuestion()->getId();
@@ -74,10 +91,14 @@ class QuizSubscriber implements EventSubscriberInterface
         $score = 0;
         $questions = $event->getQuestions();
 
+        $maxScore = 0;
+        foreach ($event->getQuestions() as $question) {
+            if ($question instanceof MultipleChoiceQuestion) {
+                $maxScore++;
+            }
+        }
+        $event->setMaxScore($maxScore);
 
-        $maxScoreEvent = new MaxScoreEvent($questions);
-        $this->calculateMaxScore($maxScoreEvent);
-        $event->setMaxScore($maxScoreEvent->getMaxScore());
 
         foreach ($questions as $question) {
             if ($question instanceof MultipleChoiceQuestion) {
@@ -92,5 +113,9 @@ class QuizSubscriber implements EventSubscriberInterface
         }
         $event->setScore($score);
 
+        /** @var QuizSession $session */
+        $event->getSession()->setScore($event->getScore());
+        $event->getSession()->getQuiz()->setMaxScore($event->getMaxScore());
+        $this->em->flush();
     }
 }

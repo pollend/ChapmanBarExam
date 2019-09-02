@@ -9,19 +9,25 @@ use App\Entity\Classroom;
 use App\Entity\Quiz;
 use App\Entity\QuizSession;
 use App\Entity\User;
+use App\Event\MaxScoreEvent;
+use App\Event\QuestionResultsEvent;
+use App\Event\QuizResultEvent;
 use App\Repository\QuizRepository;
 use App\Repository\QuizSessionRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class GetStandardDistributionReport
 {
     private $entityManager;
     private $iriConverter;
-    public function __construct(EntityManagerInterface $entityManager,IriConverterInterface $iriConverter)
+    private $dispatcher;
+    public function __construct(EventDispatcherInterface $dispatcher,EntityManagerInterface $entityManager,IriConverterInterface $iriConverter)
     {
+        $this->dispatcher = $dispatcher;
         $this->entityManager = $entityManager;
         $this->iriConverter = $iriConverter;
     }
@@ -47,12 +53,20 @@ class GetStandardDistributionReport
                return $item->getOwner()->getId();
             });
 
+
             foreach ($sessionsByOwner as $userId => $sessions) {
+
                 $processed_scores[$userId]['max'] = $sessions->max(function ($session) {
-                    return $session->getScore();
+                    /** @var $session QuizSession */
+                    $scoreEvent = new QuestionResultsEvent($session,$session->getQuiz()->getQuestions());
+                    $this->dispatcher->dispatch($scoreEvent,QuestionResultsEvent::QUESTION_RESULTS);
+                    return $scoreEvent->getScore();
                 });
                 $processed_scores[$userId]['avg'] = $sessions->average(function ($session) {
-                    return $session->getScore();
+                    /** @var $session QuizSession */
+                    $scoreEvent = new QuestionResultsEvent($session,$session->getQuiz()->getQuestions());
+                    $this->dispatcher->dispatch($scoreEvent,QuestionResultsEvent::QUESTION_RESULTS);
+                    return $scoreEvent->getScore();
                 });
             }
 

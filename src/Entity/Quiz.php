@@ -71,7 +71,7 @@ class Quiz
     /**
      * @var string
      * @ORM\Column(name="description",type="text",nullable=false)
-     * @Groups({"classroom:get","quiz-access:get","quiz:get","quiz:get","quizes:get"})
+     * @Groups({"classroom:get","quiz-access:get","quiz:get","quizes:get"})
      */
     protected $description;
 
@@ -101,6 +101,7 @@ class Quiz
      * @ORM\Column(name="max_score",type="integer",nullable=true)
      */
     protected $maxScore;
+
 
     /**
      * @return mixed

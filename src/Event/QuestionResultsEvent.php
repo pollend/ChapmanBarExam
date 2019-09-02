@@ -16,7 +16,6 @@ class QuestionResultsEvent extends Event
 
     protected $questions;
 
-
     protected $session;
 
     public function __construct(QuizSession $session, $questions = null)

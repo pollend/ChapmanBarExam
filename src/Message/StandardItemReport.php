@@ -5,56 +5,38 @@ namespace App\Message;
 
 
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Classroom;
 use App\Entity\Quiz;
 
-/**
- * @ApiResource()
- */
 class StandardItemReport extends AbstractAsyncMessage
 {
 
-    private $quiz;
-    private $classroom;
+    private $quizId;
+    private $classroomId;
 
-    public function __construct(Classroom $classroom,Quiz $quiz)
+    public function __construct(int $classroom, int $quiz)
     {
-        $this->classroom = $classroom;
-        $this->quiz = $quiz;
+        $this->classroomId = $classroom;
+        $this->quizId = $quiz;
     }
 
-    /**
-     * @ApiProperty(identifier=true)
-     */
-    public function getId(){
-        return $this->quiz->getId();
-
-    }
-
-    /**
-     * @return Quiz
-     * @ApiProperty(readable=true)
-     */
-    public function getQuiz(): Quiz
+    public function getQuizId(): int
     {
-        return $this->quiz;
+        return $this->quizId;
     }
 
-    /**
-     * @return Classroom
-     * @ApiProperty(readable=true)
-     */
-    public function getClassroom(): Classroom
+    public function getClassroomId(): int
     {
-        return $this->classroom;
+        return $this->classroomId;
     }
 
-    public function getKey(){
-        return 'report_' . $this->quiz->getId() . '_' . $this->classroom->getId();
+    public static function getKey(StandardItemReport $report)
+    {
+        return 'report_' . $report->quizId . '_' . $report->classroomId . '_item';
     }
 
-
-
-
+    public static function getStatusKey(StandardItemReport $report)
+    {
+        return 'report_' . $report->quizId . '_' . $report->classroomId . '_item_status';
+    }
 }

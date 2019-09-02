@@ -45,23 +45,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "path"= "/classrooms/{id}/whitelist",
  *          "controller"=App\Controller\PutWhitelistByClassroom::class,
  *     },
- *     "get_score_distribution" = {
+ *     "get_report" = {
  *          "method"="GET",
  *          "access_control"="is_granted('ROLE_ADMIN')",
- *          "path"= "/classrooms/{id}/report/{report_id}/disribution",
- *          "controller"= App\Controller\GetStandardDistributionReport::class,
+ *          "path"= "/classrooms/{id}/report/{report_id}/{type}",
+ *          "controller"= App\Controller\GetClassroomReport::class,
  *     },
- *     "get_score_standard" = {
- *          "method"="GET",
- *          "access_control"="is_granted('ROLE_ADMIN')",
- *          "path"= "/classrooms/{id}/report/{report_id}/item",
- *          "controller"= App\Controller\GetStandardQuestionReport::class,
- *     },
- *     "get_report_job_status" = {
- *          "method"="GET",
- *          "access_control"="is_granted('ROLE_ADMIN')",
- *          "path"= "/classrooms/{id}/report/{report_id}/status/{type}",
- *          "controller"= App\Controller\GetReportJobStatus::class,
+ *     "get_report_status" = {
+ *         "method"="GET",
+ *         "access_control"="is_granted('ROLE_ADMIN')",
+ *        "path"= "/classrooms/{id}/report/{report_id}/{type}/status",
+ *         "controller"= App\Controller\GetClassroomReportStatus::class,
  *     },
  *     "delete_user" = {
  *          "method"="DELETE",

@@ -6,6 +6,7 @@ use App\Entity\Quiz;
 use App\Entity\QuizSession;
 use App\Event\MaxScoreEvent;
 use App\Event\QuestionResultsEvent;
+use App\Event\QuizResultEvent;
 use App\Repository\QuizRepository;
 use App\Repository\QuizSessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -52,8 +53,8 @@ class RecalculateScoresForQuizzes extends Command
         foreach ($quizQuery->getQuery()->iterate() as $row) {
             /** @var Quiz $quiz */
             $quiz = $row[0];
-            $event = new MaxScoreEvent($quiz->getQuestions());
-            $this->dispatcher->dispatch($event, MaxScoreEvent::MAX_SCORE);
+            $event = new QuizResultEvent($quiz);
+            $this->dispatcher->dispatch($event, QuizResultEvent::QUIZ);
             $quiz->setMaxScore($event->getMaxScore());
             $this->entityManager->persist($quiz);
             if (($i % $batchSize) === 0) {

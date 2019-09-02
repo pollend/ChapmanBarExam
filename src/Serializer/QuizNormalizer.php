@@ -1,31 +1,49 @@
 <?php
+
+
 namespace App\Serializer;
+
+
+use App\Entity\Quiz;
 use App\Entity\QuizAccess;
+use App\Event\MaxScoreEvent;
+use App\Event\QuizResultEvent;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Serializer\Exception\BadMethodCallException;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\LogicException;
+use Symfony\Component\Serializer\Exception\RuntimeException;
+use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-final class QuizAccessNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+
+final class QuizNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
     private $decorated;
     private $security;
-    public function __construct(NormalizerInterface $decorated, Security $security)
+    private $dispatcher;
+
+    public function __construct(NormalizerInterface $decorated,EventDispatcherInterface $dispatcher, Security $security)
     {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
         }
+        $this->dispatcher = $dispatcher;
         $this->security = $security;
         $this->decorated = $decorated;
     }
+
     public function supportsNormalization($data, $format = null)
     {
         return $this->decorated->supportsNormalization($data, $format);
     }
+
     /**
      * Normalizes an object into a set of arrays/scalars.
      *
@@ -44,21 +62,27 @@ final class QuizAccessNormalizer implements NormalizerInterface, DenormalizerInt
     public function normalize($object, $format = null, array $context = [])
     {
         $data = $this->decorated->normalize($object, $format, $context);
-        if($object instanceof QuizAccess){
+
+        if ($object instanceof Quiz) {
+            $event = new QuizResultEvent($object);
+            $this->dispatcher->dispatch($event, QuizResultEvent::QUIZ);
             if (is_array($data)) {
-                $data['isOpen'] =  $object->isOpen($this->security->getUser());
+                $data['max_score'] = $event->getMaxScore();
             }
         }
         return $data;
     }
+
     public function supportsDenormalization($data, $type, $format = null)
     {
         return $this->decorated->supportsDenormalization($data, $type, $format);
     }
+
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         return $this->decorated->denormalize($data, $class, $format, $context);
     }
+
     public function setSerializer(SerializerInterface $serializer)
     {
         if($this->decorated instanceof SerializerAwareInterface) {

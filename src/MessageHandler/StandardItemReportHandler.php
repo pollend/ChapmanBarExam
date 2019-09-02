@@ -12,6 +12,8 @@ use App\Entity\MultipleChoiceResponse;
 use App\Entity\Quiz;
 use App\Entity\QuizQuestion;
 use App\Entity\QuizSession;
+use App\JobStatus;
+use App\Message\DistributionReport;
 use App\Message\StandardItemReport;
 use App\Repository\ClassroomRepository;
 use App\Repository\MultipleChoiceResponseRepository;
@@ -23,6 +25,7 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use function foo\func;
 
 class StandardItemReportHandler implements MessageHandlerInterface
 {
@@ -30,12 +33,12 @@ class StandardItemReportHandler implements MessageHandlerInterface
     private $cache;
     /** @var QuizRepository */
     private $quizRepository;
-    /** @var ClassroomRepository  */
+    /** @var ClassroomRepository */
     private $classroomRepository;
     /** @var MultipleChoiceResponseRepository */
     private $multipleChoiceRepository;
     /** @var QuizSessionRepository */
-    private $quizSessionRepository ;
+    private $quizSessionRepository;
     private $objectNormalizer;
     private $iriConverter;
 
@@ -56,15 +59,20 @@ class StandardItemReportHandler implements MessageHandlerInterface
 
     public function __invoke(StandardItemReport $standardReport)
     {
-
         /** @var Quiz $quiz */
-        if ($quiz = $this->quizRepository->find($standardReport->getQuiz()->getId())) {
+        if ($quiz = $this->quizRepository->find($standardReport->getQuizId())) {
             /** @var Classroom $classroom */
-            if ($classroom = $this->classroomRepository->find($standardReport->getClassroom()->getId())) {
+            if ($classroom = $this->classroomRepository->find($standardReport->getClassroomId())) {
                 $sessions = Collection::make($this->quizSessionRepository->getSessionsByClassAndQuiz($quiz, $classroom));
-                $this->cache->get('report_' . $quiz->getId() . '_' . $classroom->getId(), function (ItemInterface $item) use ($sessions, $quiz, $classroom) {
+                $this->cache->get(StandardItemReport::getKey($standardReport), function (ItemInterface $item) use ($standardReport, $sessions, $quiz, $classroom) {
                     $item->expiresAfter(3600);
                     $targetSessions = Collection::make();
+
+                    $this->cache->get(StandardItemReport::getStatusKey($standardReport), function (ItemInterface $item1) {
+                        $item1->expiresAfter(500);
+                        return new JobStatus('Setting up',0,100);
+                    }, INF);
+
 
                     /**
                      * @var int $uid
@@ -82,9 +90,18 @@ class StandardItemReportHandler implements MessageHandlerInterface
                         return $session->getId();
                     });
 
+                    $numCount = $quiz->getQuestions()->count();
+
                     $result = [];
                     /** @var QuizQuestion $question */
-                    foreach ($quiz->getQuestions() as $question) {
+                    foreach ($quiz->getQuestions() as $index => $question) {
+                        if($index % 10) {
+                            $this->cache->get(StandardItemReport::getStatusKey($standardReport), function (ItemInterface $item1) use ($index, $numCount) {
+                                $item1->expiresAfter(500);
+                                return new JobStatus('processing question', $index, $numCount);
+                            }, INF);
+                        }
+
                         if ($question instanceof MultipleChoiceQuestion) {
                             $entries = Collection::make($question->getEntries())->keyBy(function ($item) {
                                 /** @var MultipleChoiceEntry $entry */
@@ -124,9 +141,9 @@ class StandardItemReportHandler implements MessageHandlerInterface
                     }
                     return $result;
                 });
-//                $this->cache->get()
-//                $this->cache->s
-//                $this->cache->get()
+                $this->cache->get(StandardItemReport::getStatusKey($standardReport), function (ItemInterface $item1) {
+                    return new JobStatus('processing question', 1, 1,true);
+                }, INF);
             }
         }
     }
