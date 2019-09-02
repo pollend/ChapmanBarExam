@@ -15,7 +15,6 @@
         "hslavich/oneloginsaml-bundle": "^1.4",
         "hybridauth/hybridauth": "^3.0",
         "illuminate/support": "^5.8",
-        "jms/serializer-bundle": "^3.3",
         "lexik/jwt-authentication-bundle": "^2.6",
         "sensio/framework-extra-bundle": "^5.3",
         "symfony/asset": "4.3.*",
