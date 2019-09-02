@@ -71,6 +71,14 @@ API platform is rest/graphql framework that is focused on defining an API. all t
 - /_api/docs - information about resources and routes
 
 
+## Azure All in One
+
+```
+docker build -t chapman_bar . 
+docker run -p 80:80 -it chapman_bar_test_1:latest
+
+```
+
 # Libraries
 
 ## Frontend
