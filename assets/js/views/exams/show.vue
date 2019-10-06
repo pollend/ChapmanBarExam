@@ -4,7 +4,7 @@
             <div v-for="(q,index) in questions['hydra:member']" v-bind:key="q.id">
                 <template v-if="q['@type'] === 'MultipleChoiceQuestion'">
                     <p class="question_statement">
-                        {{index}}. {{q.content}}
+                        {{(index + 1)}}. {{q.content}}
                     </p>
                     <template>
                         <el-radio-group v-model="q.value">
@@ -15,6 +15,9 @@
                     </template>
                 </template>
                 <template v-else-if="q['@type'] === 'TextBlockQuestion'">
+                    <p class="question_statement">
+                        {{(index + 1)}}. {{q.content}}
+                    </p>
                     <p>
                         {{q.content}}
                     </p>
