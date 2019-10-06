@@ -52,7 +52,6 @@ yarn install
 
 Note: when installing composer packages it's recommend to do this through the docker container since the system version of php might be diffrent then what is installed in the docker container. This can cause packages to break when viewing the site.
 
-
 ## Frontend
 The frontend is built using [Symfony Encore](https://symfony.com/doc/current/frontend.html)
 

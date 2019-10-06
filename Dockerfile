@@ -6,7 +6,7 @@ RUN yarn install --no-progress
 RUN yarn build
 RUN rm -rf node_modules && rm -rf assets
 
-FROM php:7.2-fpm
+FROM php:7.3-fpm
 
 MAINTAINER Michael Pollind <polli104@mail.chapman.edu>
 
