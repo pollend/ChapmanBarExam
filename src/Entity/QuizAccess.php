@@ -249,10 +249,10 @@ class QuizAccess
         if ($this->isHidden == true)
             return false;
 
-        if (Carbon::today() > $this->closeDate) {
+        if (Carbon::today() < $this->closeDate) {
             return false;
         }
-        if (Carbon::today() < $this->openDate) {
+        if (Carbon::today() > $this->openDate) {
             return false;
         }
         // number of user attempts exceeds the max attempts on a quiz
