@@ -196,4 +196,9 @@ class Quiz
     {
         return $this->quizSessions->matching(Criteria::create()->where(Criteria::expr()->eq('owner', $user)));
     }
+
+    public function getQuizSessionsByAccessAndUser($user,$access)
+    {
+        return $this->quizSessions->matching(Criteria::create()->where(Criteria::expr()->andX(Criteria::expr()->eq('owner', $user),Criteria::expr()->eq('quizAccess', $access))));
+    }
 }

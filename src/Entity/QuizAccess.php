@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -246,17 +247,21 @@ class QuizAccess
 
     public function isOpen($user)
     {
+        Log::info("isExamOpen:",[
+            'today' => Carbon::today(),
+            'closeDate' =>$this->closeDate,
+            'openDate' =>  $this->openDate]);
         if ($this->isHidden == true)
             return false;
 
-        if (Carbon::today() < $this->closeDate) {
+        if (Carbon::today() > $this->closeDate) {
             return false;
         }
-        if (Carbon::today() > $this->openDate) {
+        if (Carbon::today() < $this->openDate) {
             return false;
         }
         // number of user attempts exceeds the max attempts on a quiz
-        if ($this->getQuiz()->getQuizSessionsByUser($user)->count() >= $this->numAttempts) {
+        if ($this->getQuiz()->getQuizSessionsByAccessAndUser($user,$this)->count() >= $this->numAttempts) {
             return false;
         }
 
