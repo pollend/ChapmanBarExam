@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -109,6 +111,7 @@ class QuizAccess
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="quizAccess")
      */
     protected $quizSessions;
+
 
     /**
      * @return Classroom
@@ -247,10 +250,6 @@ class QuizAccess
 
     public function isOpen($user)
     {
-        Log::info("isExamOpen:",[
-            'today' => Carbon::today(),
-            'closeDate' =>$this->closeDate,
-            'openDate' =>  $this->openDate]);
         if ($this->isHidden == true)
             return false;
 

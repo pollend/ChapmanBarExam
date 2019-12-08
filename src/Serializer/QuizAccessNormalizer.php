@@ -1,6 +1,8 @@
 <?php
 namespace App\Serializer;
 use App\Entity\QuizAccess;
+use Carbon\Carbon;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -14,11 +16,13 @@ final class QuizAccessNormalizer implements NormalizerInterface, DenormalizerInt
 {
     private $decorated;
     private $security;
-    public function __construct(NormalizerInterface $decorated, Security $security)
+    private $logger;
+    public function __construct(NormalizerInterface $decorated, Security $security, LoggerInterface $logger)
     {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
         }
+        $this->logger = $logger;
         $this->security = $security;
         $this->decorated = $decorated;
     }
@@ -47,6 +51,7 @@ final class QuizAccessNormalizer implements NormalizerInterface, DenormalizerInt
         if($object instanceof QuizAccess){
             if (is_array($data)) {
                 $data['isOpen'] =  $object->isOpen($this->security->getUser());
+                $data['today'] = Carbon::today();
             }
         }
         return $data;
