@@ -42,7 +42,6 @@ export default class ClassesUser  extends mixins(HydraMixxin){
         return this.collection ? this.collection["hydra:totalItems"] : 0;
     }
 
-
     async loadCollection(query: {}) {
         this.query = query;
         const filter = buildSortQueryForVueDataTable(query);
@@ -55,7 +54,6 @@ export default class ClassesUser  extends mixins(HydraMixxin){
         this.collection = response.data;
         this.loading = false;
     }
-
 
     async removeUserFromClass(user: User){
         this.loading = true;
@@ -74,5 +72,5 @@ export default class ClassesUser  extends mixins(HydraMixxin){
     }
 
 }
-    
+
 </script>
