@@ -4,10 +4,6 @@
         style="width: 100%">
         <el-table-column type="expand">
             <template slot-scope="props">
-                <p>State: {{ props.row.state }}</p>
-                <p>City: {{ props.row.city }}</p>
-                <p>Address: {{ props.row.address }}</p>
-                <p>Zip: {{ props.row.zip }}</p>
                 <UserReportQuizSession :user="props.row" :report_id="$route.params.report_id" :class_id="$route.params.class_id"></UserReportQuizSession>
             </template>
         </el-table-column>
@@ -26,7 +22,8 @@ import {HydraCollection, HydraMixxin} from "../../../../entity/hydra";
 import service from "../../../../utils/request";
 import {ExistFilter, FilterBuilder, SearchFilter} from "../../../../utils/filter";
 import User from "../../../../entity/user";
-import UserReportQuizSession from "./component/UserReportQuizSession.vue";
+import UserReportQuizSession from "./component/UserReportQuizSession";
+
 @Component({
     components: {UserReportQuizSession}
 })

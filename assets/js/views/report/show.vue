@@ -80,7 +80,7 @@
             </div>
             <template v-if="q['@type']=== 'MultipleChoiceQuestion'">
                 <p class="question_statement"  v-bind:class="{'question-selected': question_mark ===  `question-${q.id}` }">
-                    {{index + 1}}. {{q.content}}
+                    {{index }}. {{q.content}}
                 </p>
                 <template>
                     <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
@@ -127,7 +127,7 @@ export default class ReportShowOverview extends Vue {
     async created() {
         NProgress.start();
         await Promise.all([service({
-            url: '/_api/quiz_responses/session/' + this.$router.currentRoute.params['report_id'],
+            url: '/_api/quiz_responses/session/' + this.$router.currentRoute.params['session_id'],
             method: 'GET'
         }).then((response) => {
             this.responses = response.data;
@@ -135,10 +135,11 @@ export default class ReportShowOverview extends Vue {
 
         }),
         service({
-            url: '/_api/questions/sessions/' + this.$router.currentRoute.params['report_id'],
+            url: '/_api/questions/sessions/' + this.$router.currentRoute.params['session_id'],
             method: 'GET'
         }).then((response) => {
             this.questions = response.data;
+            this.questions['hydra:member'] = _.orderBy(this.questions['hydra:member'],['order'])
         }).catch((err) => {
 
         })]);
@@ -146,7 +147,7 @@ export default class ReportShowOverview extends Vue {
     }
 
     get chunkedRespones() : any {
-        return _.chunk(_.chunk(_.filter(this.questions["hydra:member"], function (q) {
+        return _.chunk(_.chunk(_.filter( this.questions["hydra:member"], function (q) {
             return q['@type'] === 'MultipleChoiceQuestion';
         }), 5), 10)
     }

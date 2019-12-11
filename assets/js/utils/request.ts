@@ -25,7 +25,7 @@ service.interceptors.request.use(
        try {
            console.log("refreshed token");
            await store.dispatch('auth/refresh');
-           await new Promise(resolve => setTimeout(resolve, 2000));
+           // await new Promise(resolve => setTimeout(resolve, 2000));
        }
        catch (e) {
            console.log("failed to refresh token");

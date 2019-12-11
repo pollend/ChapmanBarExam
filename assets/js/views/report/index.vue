@@ -44,7 +44,7 @@ export default class ReportList extends Vue {
     @Provide() reports: HydraCollection<QuizSession> = null;
 
     handleView(row: any){
-        this.$router.push({'name':'app.report.show','params':{'report_id': row.id}})
+        this.$router.push({'name':'app.report.show','params':{'session_id': row.id}})
     }
     created() {
         service({

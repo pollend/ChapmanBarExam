@@ -17,7 +17,11 @@
         @Provide() tab: string = '';
 
         created() {
-            this.tab = this.$router.currentRoute.name;
+            if(this.$router.currentRoute.name == "dashboard.class.report.student_report"){
+                this.tab = "dashboard.class.report.student_reports"
+            } else {
+                this.tab = this.$router.currentRoute.name;
+            }
         }
 
         handleTab(tab: any, event: string) {

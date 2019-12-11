@@ -23,11 +23,21 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key]);
 });
 
-
-console.log(store);
-
-
 Vue.config.productionTip = false;
+
+// token refresh heartbeat
+async function tokenRefresh( )
+{
+    if(store.getters['auth/refreshToken'] !== null){
+        console.log("refreshed token");
+        await store.dispatch('auth/refresh');
+    }
+    setTimeout(tokenRefresh, 60000);
+
+}
+setTimeout(tokenRefresh, 60000);
+
+
 
 new Vue({
   el: '#app',
