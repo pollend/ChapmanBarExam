@@ -32,7 +32,7 @@ export const routes = [
       { path: '/access/:quiz_access_id', meta: { roles: [ROLE_USER] }, name: 'app.exam.start', component: () => import('../views/exams/start')},
       { path: '/quiz/page/:page', meta: { roles: [ROLE_USER] }, name: 'app.session.page', component: () => import('../views/exams/show')},
       { path: '/report', meta: {roles: [ROLE_USER]}, name: 'app.report', component: () => import('../views/report/index')},
-      { path: '/report/:report_id/', meta: {roles: [ROLE_USER]}, component:() => import('../views/report/container'), children:[
+      { path: '/report/:session_id/', meta: {roles: [ROLE_USER]}, component:() => import('../views/report/container'), children:[
           { path: '', meta: {roles: [ROLE_USER]}, name: 'app.report.show', component: () => import('../views/report/show')},
           { path: 'breakdown', meta: {roles: [ROLE_USER]}, name: 'app.report.breakdown', component: () => import('../views/report/breakdown')},
       ]}
@@ -59,6 +59,8 @@ export const routes = [
               { path: 'report/:report_id/', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/container'), children: [
                     { path: 'distribution',name: 'dashboard.class.report.score_distribution', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/score-distribution') },
                     { path: 'standard',name: 'dashboard.class.report.item_analysis', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/standard-item') },
+                    { path: 'students', name: 'dashboard.class.report.student_reports', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/user-reports') },
+                    { path: 'students/:user_id/:session_id/', name: 'dashboard.class.report.student_report', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/report/show') }
                  ]
               },
               { path: '',name: 'dashboard.class', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/show') },

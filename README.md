@@ -63,6 +63,14 @@ build static javascript.
 * `yarn run build` -- production build of the site
 
 
+## Worker
+
+Running background service after `docker-compose exec php bash`
+
+```
+./bin/console messenger:consume async -vv 
+```
+
 # API Platform
 API platform is rest/graphql framework that is focused on defining an API. all the information about the routes and resources are defined through `App\Entity\*`.
 

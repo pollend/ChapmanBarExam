@@ -15,7 +15,7 @@
       </el-menu-item>
         <el-submenu index="1">
             <template slot="title">
-                <i class="el-icon-tickets"></i>
+                <i class="el-icon-user"></i>
                 <span slot="title">Users</span>
             </template>
             <el-menu-item index="dashboard.users">Users</el-menu-item>

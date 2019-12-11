@@ -42,7 +42,7 @@
         async created() {
             NProgress.start();
             await service({
-                url: '/_api/quiz_sessions/' + this.$router.currentRoute.params['report_id'] + '/breakdown',
+                url: '/_api/quiz_sessions/' + this.$router.currentRoute.params['session_id'] + '/breakdown',
                 method: 'GET'
             }).then((response) => {
                 NProgress.done();
