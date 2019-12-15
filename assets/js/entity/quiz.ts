@@ -7,7 +7,7 @@ export interface Quiz extends Hydra, Timestamp{
     description: string;
     id: number;
     name: string;
-    numquestions: number,
+    max_score: number,
     quizSessions: string | QuizSession[],
     questions?:  QuizQuestion[]
 

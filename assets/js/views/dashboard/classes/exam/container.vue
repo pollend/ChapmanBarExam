@@ -1,11 +1,13 @@
 <template>
-    <div>
-        <el-tabs v-model="tab" tab-position="left" type="border-card" @tab-click="handleTab">
-            <el-tab-pane label="Distribution" name="dashboard.class.report.score_distribution"><router-view/></el-tab-pane>
-            <el-tab-pane label="Item Analysis" name="dashboard.class.report.item_analysis"><router-view/></el-tab-pane>
-            <el-tab-pane label="Student Reports" name="dashboard.class.report.student_reports"><router-view/></el-tab-pane>
-        </el-tabs>
-    </div>
+    <el-tabs v-model="tab" tab-position="left" type="border-card" @tab-click="handleTab">
+        <el-tab-pane label="Distribution" name="dashboard.class.report.score_distribution"/>
+        <el-tab-pane label="Item Analysis" name="dashboard.class.report.item_analysis"/>
+        <el-tab-pane label="Student Reports" name="dashboard.class.report.student_reports"/>
+        <template>
+            <router-view/>
+        </template>
+    </el-tabs>
+
 </template>
 
 <script lang="ts">

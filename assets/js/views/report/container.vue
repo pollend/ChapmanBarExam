@@ -1,9 +1,10 @@
 <template>
-    <div class="section">
-        <el-tabs v-model="tab" @tab-click="handleReportTabs"  tab-position="left" type="border-card">
-            <el-tab-pane label="Overview" name="app.report.show"><router-view/></el-tab-pane>
-            <el-tab-pane label="Breakdown" name="app.report.breakdown"><router-view/></el-tab-pane>
+    <div class="container">
+        <el-tabs v-model="tab" type="card" @tab-click="handleReportTabs" >
+            <el-tab-pane label="Overview" name="app.report.show"/>
+            <el-tab-pane label="Breakdown" name="app.report.breakdown"/>
         </el-tabs>
+        <router-view/>
     </div>
 </template>
 
@@ -25,4 +26,7 @@
 </script>
 
 <style>
+    .container {
+        margin-top: 2rem;
+    }
 </style>

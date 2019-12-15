@@ -60,7 +60,7 @@ export const routes = [
                     { path: 'distribution',name: 'dashboard.class.report.score_distribution', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/score-distribution') },
                     { path: 'standard',name: 'dashboard.class.report.item_analysis', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/standard-item') },
                     { path: 'students', name: 'dashboard.class.report.student_reports', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/user-reports') },
-                    { path: 'students/:user_id/:session_id/', name: 'dashboard.class.report.student_report', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/report/show') }
+                    { path: 'students/:user_id/:session_id/', name: 'dashboard.class.report.student_report', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/student-overview-report') }
                  ]
               },
               { path: '',name: 'dashboard.class', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/show') },

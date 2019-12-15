@@ -33,7 +33,6 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import NProgress from 'nprogress';
 import {Component, Provide, Vue} from "vue-property-decorator";
 import {namespace} from "vuex-class";

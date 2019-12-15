@@ -31,19 +31,20 @@
                        </template>
                    </el-table-column>
                </el-table-column>
-               <el-table-column label="Point Biserial"></el-table-column>
-               <el-table-column label="Correct Answer">
+<!--               <el-table-column label="Point Biserial"></el-table-column>-->
+               <el-table-column width="150" label="Correct Answer">
                    <template slot-scope="scope">
                         {{getCharacter(scope.row.choices,scope.row.correctChoice)}}
                    </template>
                </el-table-column>
                <el-table-column label="Response Frequencies - 0 indicates correct answer">
-                   <el-table-column width="40" label="0">
+                   <el-table-column width="100" label="Correct">
                        <template slot-scope="scope">
                            {{ scope.row.nonResponse.length }}
                        </template>
                    </el-table-column>
-                   <el-table-column v-for="key in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']" width="40" :label="key" :key="key">
+                    <!-- , 'E', 'F', 'G', 'H', 'I', 'J' removed extra entries-->
+                   <el-table-column v-for="key in ['A', 'B', 'C', 'D']" width="40" :label="key" :key="key">
                        <template slot-scope="scope">
                            <template v-if="getCharacter(scope.row.choices,scope.row.correctChoice) === key">
                                *
@@ -61,18 +62,18 @@
 
 <script lang="ts">
 
-import {Component, Provide, Vue} from "vue-property-decorator";
-import {namespace} from "vuex-class";
-import Classroom from "../../../../entity/classroom";
-import service from "../../../../utils/request";
-import {MultipleChoiceEntry, MultipleChoiceEntryMixxin} from "../../../../entity/quiz-question";
-import QuizSession from "../../../../entity/quiz-session";
-import {HydraCollection} from "../../../../entity/hydra";
-import {mixins} from "vue-class-component";
-import _ from "lodash";
-import NProgress from "nprogress";
+    import {Component, Provide} from "vue-property-decorator";
+    import {namespace} from "vuex-class";
+    import Classroom from "../../../../entity/classroom";
+    import service from "../../../../utils/request";
+    import {MultipleChoiceEntry, MultipleChoiceEntryMixxin} from "../../../../entity/quiz-question";
+    import QuizSession from "../../../../entity/quiz-session";
+    import {HydraCollection} from "../../../../entity/hydra";
+    import {mixins} from "vue-class-component";
+    import _ from "lodash";
+    import NProgress from "nprogress";
 
-const classroomShowModule = namespace('dashboard/classroom/show');
+    const classroomShowModule = namespace('dashboard/classroom/show');
 
 interface ReportItem{
     choices: MultipleChoiceEntry[],
@@ -128,11 +129,9 @@ export default class StandardItemReport extends mixins(MultipleChoiceEntryMixxin
     getSessionByRange(sessions:QuizSession[],percent:number, flip:boolean) {
         const count = Math.round(sessions.length * percent);
 
-        const result =  _.take(_.sortBy(sessions, [function (value: QuizSession) {
+        return _.take(_.sortBy(sessions, [function (value: QuizSession) {
             return flip ? value.score : -value.score;
         }]), count);
-
-        return result;
     }
 
     getNumberOfResponses(item: ReportItem,entry:MultipleChoiceEntry): number{
@@ -188,7 +187,6 @@ export default class StandardItemReport extends mixins(MultipleChoiceEntryMixxin
 
         let type = this.hydraType(response.data)
         if (type === 'hydra:Collection') {
-
             this.collection = response.data;
             return true;
         }

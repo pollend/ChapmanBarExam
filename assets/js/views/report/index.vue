@@ -10,6 +10,11 @@
                         prop="submittedAt"
                         label="Submitted At">
                 </el-table-column>
+                <el-table-column label="Score" min-width="100px">
+                    <template slot-scope="scope">
+                        {{scope.row.score}} / {{scope.row.quiz.max_score}} ({{scope.row.score/scope.row.quiz.max_score}}%)
+                    </template>
+                </el-table-column>
                 <el-table-column
                         prop="quiz.name"
                         label="Name">

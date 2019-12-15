@@ -24,9 +24,6 @@ export class ExistFilter implements FilterOps{
     }
 }
 
-
-
-
 export class SearchFilter implements FilterOps {
     prop: string;
     target:string;
@@ -100,7 +97,7 @@ export class ItemsPerPageFilter implements FilterOps{
     apply(builder: FilterBuilder): op {
         return {key: 'itemsPerPage', value: this.numberItem +''};
     }
-    
+
 }
 
 export class FilterBuilder {
