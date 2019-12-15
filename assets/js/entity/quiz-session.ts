@@ -1,9 +1,10 @@
 import {Hydra} from "./hydra";
 import {Quiz} from "./quiz";
+import User from "./user";
 
 export default interface QuizSession extends Hydra{
     id: number,
-    owner: string,
+    owner: User,
     quiz: Quiz,
     classroom: string,
     responses: string[],

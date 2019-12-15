@@ -25,7 +25,6 @@
         @Provide() tab: string = '';
 
         handleTab(tab: any, event: string) {
-
             this.$router.push({name: tab.name, params: {class_id: this.$route.params.class_id}})
         }
 

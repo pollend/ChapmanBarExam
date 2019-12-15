@@ -77,7 +77,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"user:get"})
+     * @Groups({"user:get","quiz_session:get"})
      */
     protected $id;
 
@@ -90,7 +90,7 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column(name="username",type="string",length=100,nullable=false)
-     * @Groups({"get","put","post"})
+     * @Groups({"get","put","post","quiz_session:get"})
      * @Assert\NotBlank()
      * @Assert\Length(min="4",max="100")
      */
@@ -107,7 +107,7 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column(name="email",type="string",length=100,nullable=false)
-     * @Groups({"user:get"})
+     * @Groups({"user:get","quiz_session:get"})
      * @Assert\Email()
      */
     protected $email;

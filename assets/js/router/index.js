@@ -57,10 +57,15 @@ export const routes = [
           { path: '/class/:class_id/', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/container'), children: [
               { path: 'report',name: 'dashboard.class.report', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/index') },
               { path: 'report/:report_id/', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/container'), children: [
-                    { path: 'distribution',name: 'dashboard.class.report.score_distribution', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/score-distribution') },
-                    { path: 'standard',name: 'dashboard.class.report.item_analysis', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/standard-item') },
-                    { path: 'students', name: 'dashboard.class.report.student_reports', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/user-reports') },
-                    { path: 'students/:user_id/:session_id/', name: 'dashboard.class.report.student_report', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/student-overview-report') }
+                    { path: 'distribution',name: 'dashboard.class.report.score_distribution.index', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/score-distribution') },
+                    { path: 'standard',name: 'dashboard.class.report.item_analysis.index', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/standard-item') },
+                    { path: '/', name: 'dashboard.class.report.students', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/student'), children: [
+                        { path: '/', name: 'dashboard.class.report.students.index', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/student/user-reports')},
+                        { path: '/', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/student/container'), children: [
+                            { path: 'standard/:user_id/:session_id', name: 'dashboard.class.report.students.standard', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/student/standard')},
+                            { path: 'breakdown/:user_id/:session_id', name: 'dashboard.class.report.students.breakdown', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/exam/student/breakdown')}
+                        ]},
+                    ]},
                  ]
               },
               { path: '',name: 'dashboard.class', meta: {roles: [ROLE_ADMIN]}, component: () => import('../views/dashboard/classes/show') },

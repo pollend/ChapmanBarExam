@@ -14,8 +14,6 @@
     </div>
 </template>
 
-<!--@click.native.prevent="viewReport()"-->
-
 <script lang="ts">
 
 import {Component, Provide, Vue, Watch} from "vue-property-decorator";
@@ -49,7 +47,9 @@ export default class ClassesExams extends Vue {
     }
 
     viewReport(row: Quiz){
-        this.$router.push({'name':'dashboard.class.report.score_distribution','params':{'class_id' : this.classroom.id+'', 'report_id' : row.id+''}})
+        this.$router.push({
+            'name':'dashboard.class.report.score_distribution.index',
+            'params':{'class_id' : this.classroom.id+'', 'report_id' : row.id+''}})
     }
 
     async created() {

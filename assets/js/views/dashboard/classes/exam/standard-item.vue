@@ -32,7 +32,7 @@
                    </el-table-column>
                </el-table-column>
 <!--               <el-table-column label="Point Biserial"></el-table-column>-->
-               <el-table-column width="150" label="Correct Answer">
+               <el-table-column width="150" label="Non Response">
                    <template slot-scope="scope">
                         {{getCharacter(scope.row.choices,scope.row.correctChoice)}}
                    </template>

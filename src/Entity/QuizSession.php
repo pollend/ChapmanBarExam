@@ -11,6 +11,7 @@ use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 
 /**
@@ -91,7 +92,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
  *          }
  *     }
  * )
- *
+ * @ApiFilter(OrderFilter::class, properties={"score", "submittedAt"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(ExistsFilter::class, properties={"submittedAt"})
  * @ApiFilter(SearchFilter::class, properties={"id":"exact","owner":"exact","classroom":"exact","quiz":"exact"})
  */
@@ -179,7 +180,7 @@ class QuizSession
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
      * })
-     * @Groups({"quiz_session:get:report"})
+     * @Groups({"quiz_session:get:report","quiz_session:get"})
      */
     protected $owner;
 
