@@ -40,9 +40,8 @@ import {QuizQuestion} from "../../entity/quiz-question";
 import {MultipleChoiceResponse} from "../../entity/quiz-response";
 import NProgress from 'nprogress';
 import _ from 'lodash';
-import QuestionResponseResult from "./component/QuestionResponseResult";
-import QuestionTicks from "./component/QuestionTicks";
-
+import QuestionResponseResult from "../../components/Exam/QuestionResponseResult";
+import QuestionTicks from "../../components/Exam/QuestionTicks";
 
 @Component({components: {QuestionResponseResult,QuestionTicks}})
 export default class ReportShowOverview extends Vue {

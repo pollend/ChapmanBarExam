@@ -52,9 +52,9 @@
     import {Prop, Provide, Vue} from "vue-property-decorator";
     import Component, {mixins} from "vue-class-component";
     import _ from "lodash";
-    import {HydraCollection, hydraID} from "../../../entity/hydra";
-    import {MultipleChoiceEntryMixxin, MultipleChoiceQuestion, QuizQuestion} from "../../../entity/quiz-question";
-    import {MultipleChoiceResponse} from "../../../entity/quiz-response";
+    import {HydraCollection, hydraID} from "../../entity/hydra";
+    import {MultipleChoiceEntryMixxin, MultipleChoiceQuestion, QuizQuestion} from "../../entity/quiz-question";
+    import {MultipleChoiceResponse} from "../../entity/quiz-response";
 
     @Component
     export default class QuestionTicks extends mixins(MultipleChoiceEntryMixxin) {

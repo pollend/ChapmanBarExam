@@ -39,8 +39,8 @@ import {mixins} from "vue-class-component";
     import service from "../../../../../utils/request";
     import _ from "lodash";
 
-    import QuestionResponseResult from "../../../../report/component/QuestionResponseResult.vue";
-    import QuestionTicks from "../../../../report/component/QuestionTicks.vue";
+    import QuestionResponseResult from "../../../../../components/Exam/QuestionResponseResult";
+    import QuestionTicks from "../../../../../components/Exam/QuestionTicks";
 
 @Component({
     components: {QuestionResponseResult,QuestionTicks},

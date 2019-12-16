@@ -5,17 +5,7 @@
             <div v-if="quiz">
                 <el-card v-for="(questionGroups,group_index) in questionGroups(quiz)" >
                     <template v-for="(question,index) in orderQuestions(questionGroups)">
-                       <div class="question-container">
-                           <div class="question-number">{{index}}.</div>
-                           <div class="question-form">
-                                <template v-if="hydraType(question) === 'MultipleChoiceQuestion'">
-                                    <multiple-choice-form :question="question"></multiple-choice-form>
-                                </template>
-                                <template v-else-if="hydraType(question) === 'TextBlockQuestion'">
-
-                                </template>
-                           </div>
-                       </div>
+                        <QuestionEntry :index="index"  :question="question"/>
                     </template>
                 </el-card>
             </div>
@@ -32,13 +22,15 @@
     import _ from "lodash";
     import {QuizQuestion} from "../../../entity/quiz-question";
     import MultipleChoiceForm from "./component/multi-choice-form.vue";
+    import QuestionEntry from "./component/QuestionEntry"
 
     import NProgress from 'nprogress';
 
-    @Component({components: {MultipleChoiceForm}})
+    @Component({components: {QuestionEntry}})
     export default class ShowExam extends mixins(HydraMixxin){
         @Provide() quiz: Quiz = null;
         @Provide() isLoading: boolean = false;
+        @Provide() editEntry: number = 0
 
         questionGroups(quiz : Quiz){
             return _.groupBy(quiz.questions,(q) => {

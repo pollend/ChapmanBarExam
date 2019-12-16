@@ -30,14 +30,14 @@ class QuestionTag
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"tag:get"})
+     * @Groups({"tag:get","quiz_question:get:ROLE_ADMIN"})
      */
     protected $id;
 
     /**
      * @var string
      * @ORM\Column(name="name",type="string",length=50,nullable=false)
-     * @Groups({"tag:get"})
+     * @Groups({"tag:get","quiz_question:get:ROLE_ADMIN"})
      */
     protected $name;
 

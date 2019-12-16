@@ -34,7 +34,6 @@
     import service from "../../utils/request";
     import NProgress from "nprogress";
 
-
     @Component
     export default class BreakdownReport extends Vue {
         @Provide() breakdown: any[] = [];

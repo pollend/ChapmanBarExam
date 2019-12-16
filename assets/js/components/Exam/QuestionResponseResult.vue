@@ -38,10 +38,10 @@
 <script lang="ts">
     import {Prop, Provide} from "vue-property-decorator";
     import Component, {mixins} from "vue-class-component";
-    import {ValidateMix} from "../../../mixxins/validate-mix";
-    import {HydraCollection, HydraMixxin} from "../../../entity/hydra";
-    import {MultipleChoiceEntryMixxin, QuizQuestion} from "../../../entity/quiz-question";
-    import {MultipleChoiceResponse} from "../../../entity/quiz-response";
+    import {ValidateMix} from "../../mixxins/validate-mix";
+    import {HydraCollection, HydraMixxin} from "../../entity/hydra";
+    import {MultipleChoiceEntryMixxin, QuizQuestion} from "../../entity/quiz-question";
+    import {MultipleChoiceResponse} from "../../entity/quiz-response";
     import MultipleChoiceSelection from "./MultipleChoiceSelection";
     import _ from "lodash";
 

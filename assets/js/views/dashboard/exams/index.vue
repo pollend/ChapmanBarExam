@@ -8,7 +8,7 @@
                 <el-table-column sortable="true" prop="name" label="Name"></el-table-column>
                 <el-table-column label="Actions" min-width="100px">
                     <template slot-scope="scope">
-<!--                        <el-button @click="handleView(scope.row)">View</el-button>-->
+                        <el-button @click="handleView(scope.row)">View</el-button>
                     </template>
                 </el-table-column>
             </data-tables-server>
@@ -40,7 +40,6 @@ export default class ListExams extends Vue {
     handleView(row: Quiz){
         this.$router.push({'name':'dashboard.exam.show','params':{'quiz_id' : row.id+''}})
     }
-
 
     async loadData(queryInfo: any) {
         this.loading = true;

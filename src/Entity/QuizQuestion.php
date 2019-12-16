@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * })
  * @ApiResource(
  *     itemOperations={
- *        "put" = {
+ *        "patch" = {
  *              "access_control"="is_granted('ROLE_ADMIN')"
  *         },
  *         "get" = {
@@ -107,6 +107,7 @@ abstract class QuizQuestion
      * Many Groups have Many Users.
      *
      * @ORM\ManyToMany(targetEntity="QuestionTag", inversedBy="questions")
+     * @Groups({"quiz_question:get:ROLE_ADMIN","quiz:get:ROLE_ADMIN"})
      *
      * @var PersistentCollection
      */

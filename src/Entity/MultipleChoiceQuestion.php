@@ -35,6 +35,7 @@ class MultipleChoiceQuestion extends QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="correct_entry_id", referencedColumnName="id")
      * })
+     * @Groups({"quiz:get:ROLE_ADMIN"})
      */
     protected $correctEntry;
 

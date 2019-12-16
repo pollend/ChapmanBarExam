@@ -86,6 +86,7 @@ class Quiz
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizQuestion",mappedBy="quiz")
      * @Groups({"quiz_questions","quiz:get"})
+     * @ORM\OrderBy({"order" = "ASC"})
      */
     protected $questions;
 
@@ -178,7 +179,6 @@ class Quiz
     {
         return $this->questions;
     }
-
     /**
      * @return PersistentCollection
      */
