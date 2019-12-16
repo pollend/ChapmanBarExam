@@ -27,10 +27,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * })
  * @ApiResource(
  *     itemOperations={
- *        "patch" = {
+ *         "get" = {
  *              "access_control"="is_granted('ROLE_ADMIN')"
  *         },
- *         "get" = {
+ *         "put" = {
+ *              "normalization_context"={"groups"={"quiz_question:put"}},
  *              "access_control"="is_granted('ROLE_ADMIN')"
  *         }
  *     },
@@ -76,7 +77,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`order`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @Groups({"quiz_question:get","quiz:get"})
+     * @Groups({"quiz_question:get","quiz:get","quiz_question:put"})
      */
     protected $order;
 
@@ -84,7 +85,7 @@ abstract class QuizQuestion
      * @var int
      * @ORM\Column(name="`group`",type="integer",nullable=false)
      * @ORM\OrderBy({"name" = "ASC"})
-     * @Groups({"quiz_question:get","quiz:get"})
+     * @Groups({"quiz_question:get","quiz:get","quiz_question:put"})
      */
     protected $group;
 

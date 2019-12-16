@@ -2,16 +2,34 @@
     <div>
         <el-button v-if="!edit" @click="edit = !edit"  size="mini" type="primary" icon="el-icon-edit"></el-button>
         <template v-if="edit">
-            <el-form-item v-for="(entry,index) in question.entries" class="multiple-choice-entry-container">
-                <el-row>
-                    <el-col :span="2">
-                        <div class="multiple-choice-entry-index">{{index}}.</div>
-                    </el-col>
-                    <el-col :span="21">
-                        <el-input class="multiple-choice-entry" v-model="entry.content"></el-input>
-                    </el-col>
-                </el-row>
-            </el-form-item>
+            <template v-if="question['@type']=== 'MultipleChoiceQuestion'">
+                <el-form v-if="question">
+                    <el-form-item>
+                        <el-row>
+                            <el-col :span="1">
+                                <div class="multiple-choice-entry-index">{{index}}.</div>
+                            </el-col>
+                            <el-col :span="22">
+                                <el-input :disabled="isLoading" v-model="question.content"  type="textarea"></el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                    <el-form-item v-for="(entry,index) in  orderEntries(question.entries)" class="multiple-choice-entry-container">
+                        <el-row>
+                            <el-col :span="1">
+                                <div class="multiple-choice-entry-index">{{index}}.</div>
+                            </el-col>
+                            <el-col :span="22">
+                                <el-input  :disabled="isLoading" class="multiple-choice-entry" v-model="entry.content"></el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-form>
+            </template>
+            <el-row>
+                <el-button  :disabled="isLoading" @click="cancel">Cancel</el-button>
+                <el-button  :disabled="isLoading"  :loading="isLoading" @click="save">Save</el-button>
+            </el-row>
         </template>
         <template v-else>
             <template v-if="question['@type']=== 'MultipleChoiceQuestion'">
@@ -39,20 +57,63 @@
 </template>
 
 <script lang="ts">
-    import {Prop, Provide, Vue} from "vue-property-decorator";
+    import {Model, Prop, Provide, Vue} from "vue-property-decorator";
     import Component, {mixins} from "vue-class-component";
-    import {MultipleChoiceEntryMixxin, QuizQuestion} from "../../../../entity/quiz-question";
+    import {MultipleChoiceEntryMixxin, MultipleChoiceQuestion, QuizQuestion} from "../../../../entity/quiz-question";
     import {ValidateMix} from "../../../../mixxins/validate-mix";
-    import {HydraMixxin} from "../../../../entity/hydra";
+    import {Hydra, HydraMixxin} from "../../../../entity/hydra";
     import MultipleChoiceSelection from "../../../../components/Exam/MultipleChoiceSelection.vue";
-
+    import service from "../../../../utils/request";
 
     @Component({components:{MultipleChoiceSelection}})
     export default class QuestionEntryPreview extends mixins(ValidateMix,HydraMixxin,MultipleChoiceEntryMixxin){
-        @Prop() question: QuizQuestion
+        @Model() question: QuizQuestion | MultipleChoiceQuestion
         @Prop() index: number
 
         @Provide() question_mark: string = '';
         @Provide() edit: boolean = false
+        @Provide() isLoading: boolean = false
+
+        async cancel() {
+            this.edit = false
+            await this.refresh()
+        }
+
+        async refresh() {
+            const result = await service({
+                url: this.hydraID(this.question),
+                method: 'GET'
+            });
+            Object.assign(this.question,result.data)
+        }
+
+        async save() {
+            this.isLoading = true
+            if(this.question['@type']=== 'MultipleChoiceQuestion') {
+                const multipleChoiceQuestion : MultipleChoiceQuestion = <MultipleChoiceQuestion>this.question
+                const response = await service({
+                    url: this.hydraID(this.question),
+                    method: 'PUT',
+                    data: {
+                        "content": multipleChoiceQuestion.content
+                    }
+                });
+
+                for(let entry of multipleChoiceQuestion.entries){
+                    await service({
+                        url: this.hydraID(entry),
+                        method: 'PUT',
+                        data: {
+                            "content":  entry.content
+                        }
+                    });
+                }
+
+                this.edit = false
+                await this.refresh()
+                this.isLoading = false
+            }
+
+        }
     }
 </script>

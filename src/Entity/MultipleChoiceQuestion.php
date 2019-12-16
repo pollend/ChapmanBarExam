@@ -17,7 +17,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *     collectionOperations={"get"},
- *     itemOperations={"get"}
+ *     itemOperations={
+ *          "get" = {
+ *               "normalization_context"={"groups"={"quiz_question:get"}},
+ *               "access_control"="is_granted('ROLE_ADMIN')"
+ *          },
+ *          "put" = {
+ *              "normalization_context"={"groups"={"quiz_question:put"}},
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *         },
+ *    }
  * )
  */
 class MultipleChoiceQuestion extends QuizQuestion
@@ -25,7 +34,7 @@ class MultipleChoiceQuestion extends QuizQuestion
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @Groups({"quiz_question:get","quiz:get"})
+     * @Groups({"quiz_question:get","quiz:get","quiz_question:put"})
      */
     protected $content;
 
@@ -35,7 +44,7 @@ class MultipleChoiceQuestion extends QuizQuestion
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="correct_entry_id", referencedColumnName="id")
      * })
-     * @Groups({"quiz:get:ROLE_ADMIN"})
+     * @Groups({"quiz:get:ROLE_ADMIN","quiz_question:put"})
      */
     protected $correctEntry;
 

@@ -6,6 +6,7 @@
                 <el-card v-for="(questionGroups,group_index) in questionGroups(quiz)" >
                     <template v-for="(question,index) in orderQuestions(questionGroups)">
                         <QuestionEntry :index="index"  :question="question"/>
+<!--                        <MultipleChoiceForm :question="question"></MultipleChoiceForm>-->
                     </template>
                 </el-card>
             </div>
@@ -26,7 +27,7 @@
 
     import NProgress from 'nprogress';
 
-    @Component({components: {QuestionEntry}})
+    @Component({components: {QuestionEntry,MultipleChoiceForm}})
     export default class ShowExam extends mixins(HydraMixxin){
         @Provide() quiz: Quiz = null;
         @Provide() isLoading: boolean = false;

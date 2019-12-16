@@ -21,7 +21,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     itemOperations={
  *          "get"= {
  *              "normalization_context"={"groups"={"tag:get"}}
- *          }
+ *          },
+ *         "put" = {
+ *              "normalization_context"={"groups"={"multiple_choice:put"}},
+ *              "access_control"="is_granted('ROLE_ADMIN')"
+ *         }
  *     }
  * )
  */
@@ -40,7 +44,7 @@ class MultipleChoiceEntry
     /**
      * @var int
      * @ORM\Column(name="`order`",type="smallint",nullable=false)
-     * @Groups({"quiz_question:get","quiz_response:get","tag:get","quiz:get"})
+     * @Groups({"quiz_question:get","quiz_response:get","tag:get","quiz:get","multiple_choice:put"})
      * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $order;
@@ -48,7 +52,7 @@ class MultipleChoiceEntry
     /**
      * @var string
      * @ORM\Column(name="content",type="text",nullable=false)
-     * @Groups({"quiz_question:get","quiz_response:get","tag:get","quiz:get"})
+     * @Groups({"quiz_question:get","quiz_response:get","tag:get","quiz:get","multiple_choice:put"})
      */
     protected $content;
 
