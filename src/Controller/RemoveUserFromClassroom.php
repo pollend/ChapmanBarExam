@@ -35,7 +35,7 @@ class RemoveUserFromClassroom
             if ($users->contains($user)) {
                 $users->removeElement($user);
                 /** @var UserWhitelist $whitelist */
-                if($whitelist = $userWhitelistRepository->byEmail($user->getEmail(),$classroom)){
+                foreach($userWhitelistRepository->byEmail($user->getEmail(),$classroom) as $whitelist){
                     $this->em->remove($whitelist);
                 }
                 $this->em->persist($classroom);

@@ -15,7 +15,7 @@ class UserWhitelistRepository extends EntityRepository
             ->setParameter('email',$email)
             ->setParameter('classroom',$classroom)
             ->getQuery()
-            ->getSingleResult();
+            ->getResult();
 
     }
 }
