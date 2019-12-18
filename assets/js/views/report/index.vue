@@ -40,11 +40,13 @@ import service from "../../utils/request";
 import {ExistFilter, FilterBuilder, SearchFilter} from "../../utils/filter";
 import {HydraCollection} from "../../entity/hydra";
 import QuizSession from "../../entity/quiz-session";
+import {mixins} from "vue-class-component";
+import {ValidateMix} from "../../mixxins/validate-mix";
 
 const authModule = namespace('auth')
 
 @Component
-export default class ReportList extends Vue {
+export default class ReportList extends mixins(ValidateMix) {
     @authModule.Getter("user") user: User;
     @Provide() reports: HydraCollection<QuizSession> = null;
 
@@ -58,7 +60,7 @@ export default class ReportList extends Vue {
         }).then((response) => {
             this.reports = response.data;
         }).catch((error) => {
-
+            this.hydraErrorWithNotify(error);
         });
     }
 }

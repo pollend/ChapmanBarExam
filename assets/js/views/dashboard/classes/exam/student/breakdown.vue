@@ -35,9 +35,10 @@ import {mixins} from "vue-class-component";
 import {HydraMixxin} from "../../../../../entity/hydra";
     import NProgress from "nprogress";
     import service from "../../../../../utils/request";
+    import {ValidateMix} from "../../../../../mixxins/validate-mix";
 
 @Component
-export default class BreakdownReport  extends mixins(HydraMixxin) {
+export default class BreakdownReport  extends mixins(HydraMixxin,ValidateMix) {
     @Provide() breakdown: any[] = [];
 
     @Watch('$route.params.session_id')
@@ -59,9 +60,10 @@ export default class BreakdownReport  extends mixins(HydraMixxin) {
                 e.percentScore = parseFloat(((+e['score'] / +e['maxScore']) * 100.0) + '').toFixed(2) + "%";
             });
         }).catch((err) => {
-
+            this.hydraErrorWithNotify(err)
         });
         NProgress.done()
+
     }
 
     async created() {

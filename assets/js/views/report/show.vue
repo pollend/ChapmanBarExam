@@ -42,9 +42,11 @@ import NProgress from 'nprogress';
 import _ from 'lodash';
 import QuestionResponseResult from "../../components/Exam/QuestionResponseResult";
 import QuestionTicks from "../../components/Exam/QuestionTicks";
+import {mixins} from "vue-class-component";
+import {ValidateMix} from "../../mixxins/validate-mix";
 
 @Component({components: {QuestionResponseResult,QuestionTicks}})
-export default class ReportShowOverview extends Vue {
+export default class ReportShowOverview extends mixins(ValidateMix) {
     @Provide() questions: HydraCollection<QuizQuestion> = null;
     @Provide() responses: HydraCollection<MultipleChoiceResponse> = null;
     async created() {
@@ -55,7 +57,7 @@ export default class ReportShowOverview extends Vue {
         }).then((response) => {
             this.responses = response.data;
         }).catch((err) => {
-
+            this.hydraErrorWithNotify(err)
         }),
         service({
             url: '/_api/questions/sessions/' + this.$router.currentRoute.params['session_id'],
@@ -64,7 +66,7 @@ export default class ReportShowOverview extends Vue {
             this.questions = response.data;
             this.questions['hydra:member'] = _.orderBy(this.questions['hydra:member'],['order'])
         }).catch((err) => {
-
+            this.hydraErrorWithNotify(err)
         })]);
         NProgress.done();
     }

@@ -41,11 +41,12 @@ import {mixins} from "vue-class-component";
 
     import QuestionResponseResult from "../../../../../components/Exam/QuestionResponseResult";
     import QuestionTicks from "../../../../../components/Exam/QuestionTicks";
+    import {ValidateMix} from "../../../../../mixxins/validate-mix";
 
 @Component({
     components: {QuestionResponseResult,QuestionTicks},
 })
-export default class StandardReport  extends mixins(HydraMixxin) {
+export default class StandardReport  extends mixins(HydraMixxin,ValidateMix) {
     @Provide() questions: HydraCollection<QuizQuestion> = null;
     @Provide() responses: HydraCollection<MultipleChoiceResponse> = null;
 
@@ -64,7 +65,7 @@ export default class StandardReport  extends mixins(HydraMixxin) {
             }).then((response) => {
                 this.responses = response.data;
             }).catch((err) => {
-
+                this.hydraErrorWithNotify(err);
             }),
             service({
                 url: '/_api/questions/sessions/' +  this.$route.params['session_id'],
@@ -73,7 +74,7 @@ export default class StandardReport  extends mixins(HydraMixxin) {
                 this.questions = response.data;
                 this.questions['hydra:member'] = _.orderBy(this.questions['hydra:member'], ['order'])
             }).catch((err) => {
-
+                this.hydraErrorWithNotify(err);
             })]);
         NProgress.done();
     }
