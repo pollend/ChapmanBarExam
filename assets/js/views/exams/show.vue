@@ -42,12 +42,14 @@ import service from "../../utils/request";
 import {HydraCollection} from "../../entity/hydra";
 import {MultipleChoiceEntry, MultipleChoiceQuestion, TextBlockQuestion} from "../../entity/quiz-question";
 import _ from 'lodash';
+import {mixins} from "vue-class-component";
+import {ValidateMix} from "../../mixxins/validate-mix";
 
 const authModule = namespace('auth');
 const quizSessionModel = namespace('app/user-quiz-session');
 
 @Component
-export default class ShowQuizPage extends Vue {
+export default class ShowQuizPage extends mixins(ValidateMix) {
     @authModule.Getter("user") user: User;
     @quizSessionModel.Getter("session") session: QuizSession;
     @quizSessionModel.Action("submit") submit: ({}) => Promise<QuizSession>;
@@ -66,7 +68,7 @@ export default class ShowQuizPage extends Vue {
             this.questions = response.data;
             NProgress.done();
         }).catch((err) => {
-            console.log(err);
+            this.hydraErrorWithNotify(err);
 
         });
     }
@@ -112,6 +114,8 @@ export default class ShowQuizPage extends Vue {
                 }
                 NProgress.done();
             }).catch((err) => {
+            NProgress.done();
+            this.hydraErrorWithNotify(err)
 
         });
     }

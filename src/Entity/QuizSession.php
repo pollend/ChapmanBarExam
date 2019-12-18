@@ -106,7 +106,7 @@ class QuizSession
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
      *
-     * @Groups({"quiz_session:get","quiz_session:get:report"})
+     * @Groups({"quiz_session:get","quiz_session:get:report","user:get"})
      */
     protected $id;
 
@@ -115,7 +115,7 @@ class QuizSession
      *
      * @ORM\Column(name="score", type="integer", nullable=true)
      *
-     * @Groups({"quiz_session:get","quiz_session:get:report"})
+     * @Groups({"quiz_session:get","quiz_session:get:report","user:get"})
      */
     protected $score;
 
@@ -138,7 +138,7 @@ class QuizSession
     /**
      * @var \DateTime
      * @ORM\Column(name="submitted_at",type="datetime",nullable=true)
-     * @Groups({"quiz_session:get"})
+     * @Groups({"quiz_session:get","user:get"})
      */
     protected $submittedAt;
 
@@ -150,7 +150,7 @@ class QuizSession
      *   @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      * })
      *
-     * @Groups({"quiz_session:get"})
+     * @Groups({"quiz_session:get","user:get"})
      */
     protected $quiz;
 

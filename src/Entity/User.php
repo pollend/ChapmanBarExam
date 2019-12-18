@@ -62,7 +62,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *         "normalization_context"={"groups" = {"user:get"}}
  *     }
  * })
- * @ApiFilter(SearchFilter::class,properties={"id":"exact","classes":"exact"})
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","classes":"exact","quizSession.quiz"})
  */
 class User implements UserInterface
 {

@@ -57,7 +57,7 @@ class Quiz
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get","quizes:get"})
+     * @Groups({"classroom:get","quiz_session:get","quiz-access:get","quiz:get","quizes:get","user:get"})
      */
     protected $id;
 
