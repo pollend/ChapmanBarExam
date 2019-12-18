@@ -4,13 +4,22 @@ import {Sort} from "@/utils/filter";
         <el-button-group>
             <el-button @click="updateFilter('BestAttempt')" type="primary">Best Attempt</el-button>
             <el-button @click="updateFilter('MostRecent')" type="primary">Most Recent</el-button>
+            <el-button @click="updateFilter('Average')" type="primary">Average</el-button>
         </el-button-group>
         <data-tables-server  layout="table" :loading="loading" :data="results">
-<!--            <el-table-column label="Score" prop="score"  min-width="100px">-->
-<!--                <template slot-scope="scope" v-if="scope.quizSessions.length > 0">-->
-<!--                    {{scope.row.quizSessions[0].score}} / {{ scope.row.quizSessions[0].quiz.max_score}} ({{scope.row.quizSessions[0].score/ scope.row.quizSessions[0].quiz.max_score}}%)-->
-<!--                </template>-->
-<!--            </el-table-column>-->
+            <el-table-column label="Score" prop="score"  min-width="100px">
+                <template slot-scope="scope">
+                    <template v-if="filter == 'BestAttempt'">
+                        {{getBestAttempt(scope.row.quizSessions)}} / {{ getQuizMaxScore(scope.row.quizSessions)}} ({{getBestAttempt(scope.row.quizSessions)/ getQuizMaxScore(scope.row.quizSessions)}}%)
+                    </template>
+                    <template v-else-if="filter == 'MostRecent'">
+                        {{scope.row.quizSessions[0].score}} / {{ getQuizMaxScore(scope.row.quizSessions)}} ({{scope.row.quizSessions[0].score/ getQuizMaxScore(scope.row.quizSessions)}}%)
+                    </template>
+                    <template v-else-if="filter == 'Average'">
+                        {{getAverage(scope.row.quizSessions)}} / {{ getQuizMaxScore(scope.row.quizSessions)}} ({{getAverage(scope.row.quizSessions)/ getQuizMaxScore(scope.row.quizSessions)}}%)
+                    </template>
+                </template>
+            </el-table-column>
             <el-table-column prop="email" label="Email"/>
             <el-table-column label="Actions" min-width="100px">
                 <template slot-scope="scope">
@@ -45,6 +54,7 @@ interface UserEntry {
 
 enum FilterRule {
     BestAttempt = "BestAttempt",
+    Average = "Average",
     MostRecent = "MostRecent"
 }
 
@@ -56,8 +66,18 @@ export default class UserReports  extends mixins(HydraMixxin){
     @Provide() users: HydraCollection<User> = null;
     @Provide() loading: boolean = false;
     @Provide() filter:FilterRule = FilterRule.BestAttempt
-    @Provide() payload: QuizSession[][] = []
 
+    getQuizMaxScore(sessions: QuizSession[]){
+        return sessions.length > 0 ? sessions[0].quiz.max_score : 0
+    }
+
+    getBestAttempt(session: QuizSession[]){
+        return (+_.max(_.map(session, (v) => v.score))).toFixed(2)
+    }
+
+    getAverage(session: QuizSession[]){
+        return (+_.sum(_.map(session, (v) => v.score))/session.length).toFixed(2)
+    }
 
     get results() {
         return this.users ? _.filter(this.users["hydra:member"], (value) => value.quizSessions.length > 0) : []
