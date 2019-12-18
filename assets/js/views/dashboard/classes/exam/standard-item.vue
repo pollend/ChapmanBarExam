@@ -32,19 +32,19 @@
                    </el-table-column>
                </el-table-column>
 <!--               <el-table-column label="Point Biserial"></el-table-column>-->
-               <el-table-column width="150" label="Non Response">
+               <el-table-column width="150" label="Answers">
                    <template slot-scope="scope">
                         {{getCharacter(scope.row.choices,scope.row.correctChoice)}}
                    </template>
                </el-table-column>
-               <el-table-column label="Response Frequencies - 0 indicates correct answer">
-                   <el-table-column width="100" label="Correct">
+               <el-table-column label="Response Frequencies">
+                   <el-table-column width="120" label="Non Response">
                        <template slot-scope="scope">
                            {{ scope.row.nonResponse.length }}
                        </template>
                    </el-table-column>
                     <!-- , 'E', 'F', 'G', 'H', 'I', 'J' removed extra entries-->
-                   <el-table-column v-for="key in ['A', 'B', 'C', 'D']" width="40" :label="key" :key="key">
+                   <el-table-column v-for="key in ['A', 'B', 'C', 'D']" width="60" :label="key" :key="key">
                        <template slot-scope="scope">
                            <template v-if="getCharacter(scope.row.choices,scope.row.correctChoice) === key">
                                *
