@@ -80,13 +80,13 @@ class StandardDistributionReportHandler implements MessageHandlerInterface
                     $sessionCount = $sessionsByOwner->count();
                     $count = 0;
 
-                    $classUsers = $classroom->getUsers();
+//                    $classUsers = $classroom->getUsers();
 
                     foreach ($sessionsByOwner as $userId => $sessions) {
 
-                        // filter out users that are removed
-                        if(!$classUsers->containsKey($userId))
-                            continue;
+//                        // filter out users that are removed
+//                        if(!$classUsers->containsKey($userId))
+//                            continue;
 
                         $count++;
                         $this->cache->get(DistributionReport::getStatusKey($report), function (ItemInterface $item1) use ($sessionCount, $count) {

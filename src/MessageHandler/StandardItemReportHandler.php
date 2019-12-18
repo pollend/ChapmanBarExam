@@ -75,7 +75,7 @@ class StandardItemReportHandler implements MessageHandlerInterface
 
 
 
-                    $classUsers = $classroom->getUsers();
+//                    $classUsers = $classroom->getUsers();
 
                     /**
                      * @var int $uid
@@ -84,8 +84,8 @@ class StandardItemReportHandler implements MessageHandlerInterface
                     foreach ($sessions->groupBy(function ($item, $key) {
                         return $item->getOwner()->getId();
                     }) as $uid => $value) {
-                        if(!$classUsers->containsKey($uid))
-                            continue;
+//                        if(!$classUsers->containsKey($uid))
+//                            continue;
 
                         $targetSessions->add($value->sortBy(function ($session, $key) {
                             return -$session->getScore();
