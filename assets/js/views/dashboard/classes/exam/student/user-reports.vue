@@ -6,17 +6,18 @@ import {Sort} from "@/utils/filter";
             <el-button @click="updateFilter('MostRecent')" type="primary">Most Recent</el-button>
             <el-button @click="updateFilter('Average')" type="primary">Average</el-button>
         </el-button-group>
+        <p>Class Average: {{TotalAverage}}/{{quizMaxScore}} ({{(TotalAverage/quizMaxScore).toFixed(2)}})</p>
         <data-tables-server  layout="table" :loading="loading" :data="results">
             <el-table-column label="Score" prop="score"  min-width="100px">
                 <template slot-scope="scope">
                     <template v-if="filter == 'BestAttempt'">
-                        {{getBestAttempt(scope.row.quizSessions)}} / {{ getQuizMaxScore(scope.row.quizSessions)}} ({{getBestAttempt(scope.row.quizSessions)/ getQuizMaxScore(scope.row.quizSessions)}}%)
+                        {{getBestAttempt(scope.row.quizSessions)}} / {{ quizMaxScore}} ({{getBestAttempt(scope.row.quizSessions)/ quizMaxScore}}%)
                     </template>
                     <template v-else-if="filter == 'MostRecent'">
-                        {{scope.row.quizSessions[0].score}} / {{ getQuizMaxScore(scope.row.quizSessions)}} ({{scope.row.quizSessions[0].score/ getQuizMaxScore(scope.row.quizSessions)}}%)
+                        {{scope.row.quizSessions[0].score}} / {{ quizMaxScore}} ({{scope.row.quizSessions[0].score/ quizMaxScore}}%)
                     </template>
                     <template v-else-if="filter == 'Average'">
-                        {{getAverage(scope.row.quizSessions)}} / {{ getQuizMaxScore(scope.row.quizSessions)}} ({{getAverage(scope.row.quizSessions)/ getQuizMaxScore(scope.row.quizSessions)}}%)
+                        {{getAverage(scope.row.quizSessions)}} / {{ quizMaxScore}} ({{getAverage(scope.row.quizSessions)/ quizMaxScore}}%)
                     </template>
                 </template>
             </el-table-column>
@@ -67,8 +68,9 @@ export default class UserReports  extends mixins(HydraMixxin){
     @Provide() loading: boolean = false;
     @Provide() filter:FilterRule = FilterRule.BestAttempt
 
-    getQuizMaxScore(sessions: QuizSession[]){
-        return sessions.length > 0 ? sessions[0].quiz.max_score : 0
+
+    get quizMaxScore(){
+        return this.results.length > 0 ? this.results[0].quizSessions[0].quiz.max_score : 0
     }
 
     getBestAttempt(session: QuizSession[]){
@@ -77,6 +79,24 @@ export default class UserReports  extends mixins(HydraMixxin){
 
     getAverage(session: QuizSession[]){
         return (+_.sum(_.map(session, (v) => v.score))/session.length).toFixed(2)
+    }
+
+    get TotalAverage(){
+        if(this.users) {
+            var entr = _.map(this.results, (u) => {
+                switch (this.filter) {
+                    case FilterRule.BestAttempt:
+                        return +this.getBestAttempt(u.quizSessions)
+                    case FilterRule.MostRecent:
+                        return +u.quizSessions[0].score
+                    case FilterRule.Average:
+                        return +this.getAverage(u.quizSessions)
+
+                }
+            });
+            return _.sum(entr)/entr.length
+        }
+        return  0
     }
 
     get results() {
@@ -100,7 +120,7 @@ export default class UserReports  extends mixins(HydraMixxin){
 
         this.loading = true
         const builder = new FilterBuilder();
-        builder.addFilter(new SearchFilter("classes",this.$route.params.class_id));
+        builder.addFilter(new SearchFilter("quizSessions.classroom",this.$route.params.class_id));
         builder.addFilter(new SearchFilter("quizSessions.quiz",this.$route.params.report_id));
         builder.addFilter(new ItemsPerPageFilter(200));
         const response = await service({

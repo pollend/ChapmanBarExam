@@ -62,7 +62,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *         "normalization_context"={"groups" = {"user:get"}}
  *     }
  * })
- * @ApiFilter(SearchFilter::class,properties={"id":"exact","classes":"exact","quizSession.quiz"})
+ * @ApiFilter(SearchFilter::class,properties={"id":"exact","quizSessions.quiz":"exact","quizSessions.classroom":"exact"})
  */
 class User implements UserInterface
 {
@@ -277,6 +277,13 @@ class User implements UserInterface
         return $this->quizSessions->matching(Criteria::create()->where(Criteria::expr()->isNull('submittedAt')));
     }
 
+    /**
+     * @return mixed
+     */
+    public function getClasses()
+    {
+        return $this->classes;
+    }
 
     /**
      * Removes sensitive data from the user.
