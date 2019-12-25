@@ -123,7 +123,7 @@ export default class ShowQuizPage extends mixins(ValidateMix) {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .question_statement {
         margin-bottom: 1rem;
     }
