@@ -12,12 +12,11 @@
                 </p>
                 <template>
                     <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
-                        ({{mapCharacterIndex(index)}})
                         <template v-if="q['@id'] in questionResponse">
-                            <multiple-choice-selection :type="checkHydraMatch(questionResponse[q['@id']].choice,e) ? (questionResponse[q['@id']].correctResponse? 'correct': 'in-correct') : ''"  :content="e.content"></multiple-choice-selection>
+                            <multiple-choice-selection :type="checkHydraMatch(questionResponse[q['@id']].choice,e) ? (questionResponse[q['@id']].correctResponse? 'correct': 'in-correct') : ''"  :content=" '(' + mapCharacterIndex(index) + ') '+ e.content"></multiple-choice-selection>
                         </template>
                         <template v-else>
-                            <multiple-choice-selection :content="e.content"></multiple-choice-selection>
+                            <multiple-choice-selection :content=" '(' + mapCharacterIndex(index) + ') '+ e.content"></multiple-choice-selection>
                         </template>
                     </div>
                 </template>

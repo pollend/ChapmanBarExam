@@ -9,7 +9,7 @@
                     <template>
                         <el-radio-group v-model="q.value">
                             <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
-                                <el-radio :label="e.id">({{mapCharacterIndex(index)}}) {{ e.content }}</el-radio>
+                                <el-radio class="multiple-choice-entry" :label="e.id">({{mapCharacterIndex(index)}}) {{ e.content }}</el-radio>
                             </div>
                         </el-radio-group>
                     </template>
@@ -123,8 +123,24 @@ export default class ShowQuizPage extends mixins(ValidateMix) {
 
 </script>
 
-<style>
+<style lang="scss" scoped>
     .question_statement {
         margin-bottom: 1rem;
+    }
+    .multiple-choice-entry{
+        width: 100%;
+        margin-bottom: 5px;
+        .el-radio__label{
+            width: 100%;
+            display: block;
+            word-wrap: break-word;
+            white-space: normal;
+            padding-left: 20px;
+        }
+        .el-radio__input{
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
     }
 </style>
