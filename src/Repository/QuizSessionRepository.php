@@ -6,6 +6,7 @@ use App\Entity\Classroom;
 use App\Entity\Quiz;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use function Doctrine\ORM\QueryBuilder;
 
 class QuizSessionRepository extends EntityRepository
 {
@@ -43,6 +44,17 @@ class QuizSessionRepository extends EntityRepository
         return $qb->where($qb->expr()->eq('q.classroom',':classroom'))
             ->andWhere($qb->expr()->eq('q.quiz',':quiz'))
             ->setParameters(['classroom' => $classroom, 'quiz' => $quiz])
+            ->getQuery()
+            ->getResult();
+
+    }
+
+    public function getSessionsByClassAndQuizAndUser(Quiz $quiz, Classroom $classroom,User $user){
+        $qb = $this->createQueryBuilder('q');
+        return $qb->where($qb->expr()->eq('q.classroom',':classroom'))
+            ->andWhere($qb->expr()->eq('q.quiz',':quiz'))
+            ->andWhere($qb->expr()->eq('q.owner',':owner'))
+            ->setParameters(['classroom' => $classroom, 'quiz' => $quiz, 'owner' => $user])
             ->getQuery()
             ->getResult();
 

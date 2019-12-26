@@ -54,6 +54,13 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "access_control"="is_granted('ROLE_ADMIN')",
  *          "normalization_context"={"groups" = {"user:get","timestamp"}}
  *     },
+ *     "filter_by_class_exam" = {
+ *          "method"="GET",
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "normalization_context"={"groups" = {"user:get","timestamp", "quiz_session:get"}},
+ *          "controller"=App\Controller\GetUserByClassroomAndExam::class,
+ *          "path"= "/users/classroom/{class_id}/quiz/{exam_id}"
+ *     },
  *     "get_me" = {
  *         "method" = "GET",
  *         "path"= "/users/me",
@@ -124,7 +131,6 @@ class User implements UserInterface
      */
     protected $password;
 
-
     /**
      * Many Groups have Many Users.
      *
@@ -136,7 +142,6 @@ class User implements UserInterface
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="QuizSession",mappedBy="owner")
-     * @Groups({"user:get"})
      */
     protected $quizSessions;
 

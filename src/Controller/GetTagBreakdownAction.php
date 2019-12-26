@@ -10,7 +10,6 @@ use App\Entity\QuizSession;
 use App\Event\QuestionResultsEvent;
 use App\Repository\QuestionRepository;
 use App\Repository\QuestionTagRepository;
-use App\utility\TagPayload;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;

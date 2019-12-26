@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 use Doctrine\ORM\NoResultException;
+use function Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends EntityRepository
 {
@@ -17,9 +18,19 @@ class UserRepository extends EntityRepository
                 ->setParameter('email', $email)
                 ->getQuery()
                 ->getSingleResult();
-        }catch (NoResultException $e){
+        } catch (NoResultException $e) {
             return null;
         }
+    }
 
+    public function filterByClassAndExam($classroom, $quiz) {
+        $qb = $this->createQueryBuilder('u');
+        return $qb->join('u.quizSessions','s')
+            ->andWhere($qb->expr()->eq('s.quiz',':quiz'))
+            ->andWhere($qb->expr()->eq('s.classroom',':classroom'))
+            ->setParameters([
+                'classroom' => $classroom,
+                'quiz' => $quiz
+            ])->getQuery()->getResult();
     }
 }
