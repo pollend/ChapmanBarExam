@@ -38,8 +38,8 @@
                 </p>
                 <template>
                     <div v-for="(e,index) in orderEntries(question.entries)"  :key="e.id" >
-                        ({{mapCharacterIndex(index)}})
-                        <multiple-choice-selection :type="checkHydraMatch(question.correctEntry,e) ? 'correct': ''"  :content="e.content"></multiple-choice-selection>
+
+                        <multiple-choice-selection :type="checkHydraMatch(question.correctEntry,e) ? 'correct': ''"  :content=" '('+ mapCharacterIndex(index) + ') '+ e.content"></multiple-choice-selection>
                     </div>
                 </template>
             </template>
@@ -117,3 +117,4 @@
         }
     }
 </script>
+

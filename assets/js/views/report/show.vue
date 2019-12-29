@@ -3,7 +3,7 @@
         <div class="columns is-mobile">
             <div class="column is-5 is-pulled-left">
                 <p>
-                    Score #: {{ }}
+                    Score #: {{ report.score }} / {{ report.quiz.max_score }}
                 </p>
                 <p>
                     Course #:
@@ -35,7 +35,7 @@
 <script lang="ts">
 import {Vue, Component, Provide} from "vue-property-decorator";
 import service from "../../utils/request";
-import {HydraCollection} from "../../entity/hydra";
+import {Hydra, HydraCollection} from "../../entity/hydra";
 import {QuizQuestion} from "../../entity/quiz-question";
 import {MultipleChoiceResponse} from "../../entity/quiz-response";
 import NProgress from 'nprogress';
@@ -44,11 +44,14 @@ import QuestionResponseResult from "../../components/Exam/QuestionResponseResult
 import QuestionTicks from "../../components/Exam/QuestionTicks";
 import {mixins} from "vue-class-component";
 import {ValidateMix} from "../../mixxins/validate-mix";
+import {ExistFilter, FilterBuilder, SearchFilter} from "../../utils/filter";
+import QuizSession from "../../entity/quiz-session";
 
 @Component({components: {QuestionResponseResult,QuestionTicks}})
 export default class ReportShowOverview extends mixins(ValidateMix) {
     @Provide() questions: HydraCollection<QuizQuestion> = null;
     @Provide() responses: HydraCollection<MultipleChoiceResponse> = null;
+    @Provide() report: QuizSession = null;
     async created() {
         NProgress.start();
         await Promise.all([service({
@@ -67,6 +70,14 @@ export default class ReportShowOverview extends mixins(ValidateMix) {
             this.questions['hydra:member'] = _.orderBy(this.questions['hydra:member'],['order'])
         }).catch((err) => {
             this.hydraErrorWithNotify(err)
+        }),
+        service({
+            url: '/_api/quiz_sessions/' + this.$router.currentRoute.params['session_id'],
+            method: 'GET'
+        }).then((response) => {
+            this.report = response.data;
+        }).catch((error) => {
+            this.hydraErrorWithNotify(error);
         })]);
         NProgress.done();
     }

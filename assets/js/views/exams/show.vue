@@ -130,6 +130,7 @@ export default class ShowQuizPage extends mixins(ValidateMix) {
     .multiple-choice-entry{
         width: 100%;
         margin-bottom: 5px;
+        position: relative;
         .el-radio__label{
             width: 100%;
             display: block;

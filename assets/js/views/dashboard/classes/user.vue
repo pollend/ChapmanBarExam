@@ -1,5 +1,6 @@
 <template>
     <data-tables-server :loading="loading" :data="users" :total="count" @query-change="loadCollection" :pagination-props="{ pageSizes: [10, 50, 100, 200] }">
+        <el-table-column sortable="true" prop="username" label="User"></el-table-column>
         <el-table-column sortable="true" prop="email" label="Email"></el-table-column>
         <!-- TODO: Add sorting for number of students -->
         <el-table-column prop="lastLogin" label="Last Logged In"></el-table-column>

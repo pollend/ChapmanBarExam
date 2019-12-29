@@ -97,7 +97,7 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column(name="username",type="string",length=100,nullable=false)
-     * @Groups({"get","put","post","quiz_session:get"})
+     * @Groups({"user:get","quiz_session:get"})
      * @Assert\NotBlank()
      * @Assert\Length(min="4",max="100")
      */

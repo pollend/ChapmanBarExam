@@ -21,7 +21,8 @@ import {Sort} from "@/utils/filter";
                     </template>
                 </template>
             </el-table-column>
-            <el-table-column prop="email" label="Email"/>
+            <el-table-column prop="user.email" label="Email"/>
+            <el-table-column prop="user.username" label="User"/>
             <el-table-column label="Actions" min-width="100px">
                 <template slot-scope="scope">
                     <el-button @click="handleView(scope.row)">View</el-button>

@@ -23,7 +23,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * @ApiResource(
  *     itemOperations={
  *          "get" = {
- *              "access_control"="is_granted('ROLE_ADMIN') | is_granted('ROLE_USER') and object.owner == user"
+ *              "access_control"="is_granted('ROLE_ADMIN') || (is_granted('ROLE_USER') && object.getOwner() == user)",
+ *              "normalization_context"={"groups"={"quiz_session:get", "timestamp"}}
  *          },
  *          "put" = {
  *              "access_control"="is_granted('ROLE_ADMIN')"

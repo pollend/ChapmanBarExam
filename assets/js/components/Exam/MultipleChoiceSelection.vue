@@ -49,6 +49,7 @@
     }
 
     .multiple-choice-entry{
+        position: relative;
         width: 100%;
         margin-bottom: 5px;
         /*.el-radio__label{*/
