@@ -188,7 +188,7 @@ class QuizSession
     /**
      * @var PersistentCollection
      * @ORM\OneToMany(targetEntity="QuizResponse",mappedBy="session")
-     *
+     * @Groups({"quiz_session:get"})
      */
     protected $responses;
 

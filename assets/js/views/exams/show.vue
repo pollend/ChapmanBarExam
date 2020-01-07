@@ -7,7 +7,7 @@
                         {{(index + 1)}}. {{q.content}}
                     </p>
                     <template>
-                        <el-radio-group v-model="q.value">
+                        <el-radio-group v-model="q.value" @change="handleQuestionChange(q)">
                             <div v-for="(e,index) in orderEntries(q.entries)"  :key="e.id" >
                                 <el-radio class="multiple-choice-entry" :label="e.id">({{mapCharacterIndex(index)}}) {{ e.content }}</el-radio>
                             </div>
@@ -39,36 +39,85 @@ import {namespace} from "vuex-class";
 import User from "../../entity/user";
 import QuizSession from "../../entity/quiz-session";
 import service from "../../utils/request";
-import {HydraCollection} from "../../entity/hydra";
+import {HydraCollection, hydraID, HydraMixxin} from "../../entity/hydra";
 import {MultipleChoiceEntry, MultipleChoiceQuestion, TextBlockQuestion} from "../../entity/quiz-question";
 import _ from 'lodash';
 import {mixins} from "vue-class-component";
 import {ValidateMix} from "../../mixxins/validate-mix";
+import {MultipleChoiceResponse, QuizQuestionResponse} from "../../entity/quiz-response";
 
 const authModule = namespace('auth');
 const quizSessionModel = namespace('app/user-quiz-session');
 
 @Component
-export default class ShowQuizPage extends mixins(ValidateMix) {
+export default class ShowQuizPage extends mixins(ValidateMix,HydraMixxin) {
     @authModule.Getter("user") user: User;
     @quizSessionModel.Getter("session") session: QuizSession;
     @quizSessionModel.Action("submit") submit: ({}) => Promise<QuizSession>;
+    @quizSessionModel.Action("save") save: ({}) => Promise<QuizSession>;
     @Provide() questions: HydraCollection<MultipleChoiceQuestion | TextBlockQuestion> = null;
 
-    created() {
-       this.query();
+    async created() {
+        await this.update()
     }
 
-    query(){
+    async  update () {
         NProgress.start();
-        service({
-            url: '/_api/questions/sessions/' + this.session.id + '/page/' + this.$router.currentRoute.params['page'],
-            method: 'GET'
-        }).then((response) => {
-            this.questions = response.data;
-            NProgress.done();
-        }).catch((err) => {
+        let result: HydraCollection<MultipleChoiceQuestion | TextBlockQuestion> = null;
+        try {
+            let response = await service({
+                url: '/_api/questions/sessions/' + this.session.id + '/page/' + this.$router.currentRoute.params['page'],
+                method: 'GET'
+            });
+            result = response.data;
+        } catch (err) {
             this.hydraErrorWithNotify(err);
+            NProgress.done();
+            return
+        }
+
+        for(let response of this.session.responses){
+            if(response["@type"] == 'MultipleChoiceResponse'){
+                let resp: MultipleChoiceResponse = response as MultipleChoiceResponse;
+                let question = result["hydra:member"].find((q) => {
+                    return this.checkHydraMatch(q,resp.question)
+                }) as MultipleChoiceQuestion;
+
+                let entry = question.entries.find((v) => {
+                    return this.checkHydraMatch(v,resp.choice)
+                });
+                (question as any)['value'] = entry.id;
+            }
+        }
+        this.questions = result;
+        NProgress.done();
+    }
+
+
+    async handleQuestionChange(question: MultipleChoiceQuestion|TextBlockQuestion) {
+
+        let target: any = {};
+        let q: any = question;
+        if (q.value) {
+            target[q.id] = q.value;
+        }
+
+        this.save({session: this.session, page: +this.$router.currentRoute.params['page'], payload: target})
+            .then((session: QuizSession) => {
+                if (session.submittedAt) {
+                    this.$router.push({name: 'app.home'});
+                } else {
+                    this.$router.push({
+                        name: 'app.session.page',
+                        params: {['page']: session.currentPage + ''}
+                    }, () => {
+                        this.update();
+                    });
+                }
+                NProgress.done();
+            }).catch((err) => {
+            NProgress.done();
+            this.hydraErrorWithNotify(err)
 
         });
     }
@@ -99,17 +148,16 @@ export default class ShowQuizPage extends mixins(ValidateMix) {
     submitResults() {
         let result = this.getValues();
         NProgress.start();
-        this.submit({session: this.session , page:  +this.$router.currentRoute.params['page'], payload: result})
-            .then((session:QuizSession) => {
-                if(session.submittedAt){
-                    this.$router.push({name:'app.home'});
-                }
-                else {
+        this.submit({session: this.session, page: +this.$router.currentRoute.params['page'], payload: result})
+            .then((session: QuizSession) => {
+                if (session.submittedAt) {
+                    this.$router.push({name: 'app.home'});
+                } else {
                     this.$router.push({
                         name: 'app.session.page',
                         params: {['page']: session.currentPage + ''}
                     }, () => {
-                        this.query();
+                        this.update();
                     });
                 }
                 NProgress.done();

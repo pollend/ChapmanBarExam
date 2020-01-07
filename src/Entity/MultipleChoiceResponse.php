@@ -25,7 +25,7 @@ class MultipleChoiceResponse extends QuizResponse
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="choice_entry_id", referencedColumnName="id")
      * })
-     * @Groups({"quiz_response:get"})
+     * @Groups({"quiz_response:get","quiz_session:get"})
      */
     protected $choice;
 

@@ -37,13 +37,33 @@ const actions: ActionTree<SessionState,RootState> = {
     begin(context,access){
 
     },
-    submit(context,payload:{session:QuizSession, page: number , payload: {}}) : Promise<QuizSession>
-    {
+    submit(context,payload:{session:QuizSession, page: number , payload: {}}) : Promise<QuizSession> {
         return new Promise<QuizSession>((resolve,reject) => {
 
             service({
                 url: '/_api/quiz_sessions/' + payload.session.id + '/questions/' + payload.page,
                 method:'POST',
+                data: payload.payload
+            }).then(async (response) => {
+                const session: QuizSession = response.data;
+                // only set the session if it's a live session
+                if (session.submittedAt === null) {
+                    context.commit(QUIZ_SESSION_SET_SESSION, session);
+                } else {
+                    context.commit(QUIZ_SESSION_CLEAR_SESSION);
+                }
+                resolve(session);
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    },
+    save(context, payload:{session: QuizSession, page:number, payload: {}}): Promise<QuizSession> {
+        return new Promise<QuizSession>((resolve,reject) => {
+
+            service({
+                url: '/_api/quiz_sessions/' + payload.session.id + '/questions/' + payload.page,
+                method:'PUT',
                 data: payload.payload
             }).then(async (response) => {
                 const session: QuizSession = response.data;

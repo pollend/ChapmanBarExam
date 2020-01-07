@@ -1,14 +1,13 @@
 import {Hydra} from "./hydra";
-import {MultipleChoiceEntry} from "./quiz-question";
+import {MultipleChoiceEntry, MultipleChoiceQuestion} from "./quiz-question";
 
 export interface QuizQuestionResponse extends Hydra {
     id: number;
     session: string;
-    question:string;
+    question: MultipleChoiceQuestion;
 }
 
 export interface MultipleChoiceResponse extends QuizQuestionResponse{
-    choice: string | MultipleChoiceEntry;
+    choice: MultipleChoiceEntry;
     correctResponse: boolean;
-
 }

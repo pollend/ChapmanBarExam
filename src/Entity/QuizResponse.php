@@ -45,7 +45,7 @@ abstract class QuizResponse
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id", type="bigint", nullable=false)
-     * @Groups({"quiz_response:get"})
+     * @Groups({"quiz_response:get","quiz_session:get"})
      */
     protected $id;
 
@@ -65,7 +65,7 @@ abstract class QuizResponse
      * @ORM\JoinColumns({
      *      @ORM\JoinColumn(name="question_id",referencedColumnName="id")
      * })
-     * @Groups({"quiz_response:get"})
+     * @Groups({"quiz_response:get","quiz_session:get"})
      */
     protected $question;
 

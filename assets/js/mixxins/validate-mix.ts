@@ -8,9 +8,10 @@ export class ValidateMix extends Vue {
     hydraErrorWithNotify(err : AxiosError): boolean {
         if(err.isAxiosError) {
             const error: HydraError = err.response.data;
+            let msg = error["hydra:description"]? error["hydra:description"]: JSON.stringify(error["hydra:description"])
             this.$notify.error({
                 title: error["hydra:title"],
-                message: error["hydra:description"]
+                message: msg
             });
             return true;
         }

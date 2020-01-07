@@ -21,11 +21,10 @@ export interface HydraCollection<T extends Hydra | {}> extends Hydra{
 @Component
 export class HydraMixxin extends Vue {
     hydraID(target: Hydra | string): string {
-        if (target instanceof String) {
-            return <string>target;
+        if (target instanceof String || typeof(target) === 'string') {
+            return target as string;
         } else {
-            const hy: Hydra = <Hydra>target;
-            return hy["@id"];
+            return  (target as Hydra)["@id"];
         }
     }
 
@@ -47,7 +46,7 @@ export class HydraMixxin extends Vue {
 export function hydraID(target: any) : string {
     if(target instanceof String){
         return <string>target;
-    }else {
+    } else {
         const hy: Hydra = target;
         return hy["@id"];
     }
