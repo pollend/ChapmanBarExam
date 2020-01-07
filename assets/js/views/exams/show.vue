@@ -82,11 +82,12 @@ export default class ShowQuizPage extends mixins(ValidateMix,HydraMixxin) {
                 let question = result["hydra:member"].find((q) => {
                     return this.checkHydraMatch(q,resp.question)
                 }) as MultipleChoiceQuestion;
-
-                let entry = question.entries.find((v) => {
-                    return this.checkHydraMatch(v,resp.choice)
-                });
-                (question as any)['value'] = entry.id;
+                if(question) {
+                    let entry = question.entries.find((v) => {
+                        return this.checkHydraMatch(v, resp.choice)
+                    });
+                    (question as any)['value'] = entry.id;
+                }
             }
         }
         this.questions = result;
