@@ -17,6 +17,7 @@ use App\Repository\QuizResponseRepository;
 use App\Security\QuizSessionVoter;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
@@ -82,6 +83,7 @@ class CreateQuestionBySessionAndPageAction
             foreach ($data as $key => $target) {
                 if ($questions->has($key)) {
                     $question = $questions[$key];
+                    $response = null;
                     $response = $responseRepository->filterResponseBySessionAndQuestion($session, $question);
                     if ($question instanceof MultipleChoiceQuestion) {
                         $response = $response ? $response : new MultipleChoiceResponse();

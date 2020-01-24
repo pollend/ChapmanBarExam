@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev-server": "encore dev-server --port 9000",
+    "dev-server": "encore dev-server --port 9000 --hot",
     "dev": "encore dev",
     "watch": "encore dev --watch",
     "build": "encore production --progress"
