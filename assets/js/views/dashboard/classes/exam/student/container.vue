@@ -87,7 +87,7 @@
 
         async loadCollection(query: {}) {
             const filter = buildSortQueryForVueDataTable(query);
-            filter.addFilter(new ExistFilter('submittedAt', true))
+            // filter.addFilter(new ExistFilter('submittedAt', true))
             filter.addFilter(new SearchFilter("owner", this.$route.params["user_id"]  + ''))
             filter.addFilter(new SearchFilter("quiz",this.$route.params["report_id"] + ''))
             filter.addFilter(new SearchFilter("classroom",this.$route.params["class_id"] + ''))
